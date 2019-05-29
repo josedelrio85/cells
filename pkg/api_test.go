@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func testHandlerFunction(t *testing.T) {
+func TestHandlerFunction(t *testing.T) {
 	assert := assert.New(t)
 
 	tests := []struct {
