@@ -2,6 +2,7 @@ package apic2c
 
 import (
 	"bytes"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -14,19 +15,39 @@ func TestHandlerFunction(t *testing.T) {
 
 	tests := []struct {
 		Description string
-		// Storer Storer
+		Storer      Storer
 		TypeRequest string
 		StatusCode  int
+		Lead        Lead
 	}{
 		{
 			Description: "when HandleFunction receive a GET request",
 			TypeRequest: http.MethodGet,
 			StatusCode:  http.StatusMethodNotAllowed,
+			Lead:        Lead{},
 		},
 		{
 			Description: "when HandleFunction receive a POST request",
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusOK,
+			Lead:        Lead{},
+		},
+		{
+			Description: "when HandleFunction TODO DESCRIPTION",
+			TypeRequest: http.MethodPost,
+			StatusCode:  http.StatusOK,
+			Storer: &FakeDb{
+				OpenFunc:        func() error { return nil },
+				CloseFunc:       func() error { return nil },
+				CreateTableFunc: func(interface{}) error { return nil },
+				UpdateFunc:      func(interface{}, string, []string) error { return nil },
+			},
+			Lead: Lead{
+				SouID:     15,
+				LeatypeID: 1,
+				LeaPhone:  "666666666",
+				LeaIP:     "127.0.0.1",
+			},
 		},
 	}
 
@@ -35,7 +56,12 @@ func TestHandlerFunction(t *testing.T) {
 		ts := httptest.NewServer(ch.HandleFunction())
 		defer ts.Close()
 
-		var body []byte
+		body, err := json.Marshal(test.Lead)
+		if err != nil {
+			t.Errorf("error marshaling test json: Err: %v", err)
+			return
+		}
+
 		req, err := http.NewRequest(test.TypeRequest, ts.URL, bytes.NewBuffer(body))
 		if err != nil {
 			t.Errorf("error createing the test Request: err %v", err)
