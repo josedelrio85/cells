@@ -6,13 +6,12 @@ import "sync"
 type FakeDb struct {
 	OpenFunc         func() error
 	OpenCalls        int
-	// GetIdentityFunc  func(Interaction) (*Identity, error)
-	// GetIdentityCalls int
 	CloseFunc        func() error
 	CloseCalls       int
-	CreateTableFunc  func() error
+	CreateTableFunc  func(table interface{}) error
 	CreateTableCalls int
-
+	UpdateFunc       func(element interface{}, wCond string, wFields []string) error
+	UpdateCalls      int
 	sync.Mutex
 }
 
@@ -24,14 +23,6 @@ func (f *FakeDb) Open() error {
 	return f.Open()
 }
 
-// GetIdentity is a method to test GetIdentity function
-// func (f *FakeDb) GetIdentity(interaction Interaction) (*Identity, error) {
-// 	f.Lock()
-// 	defer f.Unlock()
-// 	f.GetIdentityCalls++
-// 	return f.GetIdentityFunc(interaction)
-// }
-
 // Close is a method to test Close function
 func (f *FakeDb) Close() {
 	f.Lock()
@@ -41,9 +32,17 @@ func (f *FakeDb) Close() {
 }
 
 // CreateTable is a method to test CreateTable function
-func (f *FakeDb) CreateTable() error {
+func (f *FakeDb) CreateTable(table interface{}) error {
 	f.Lock()
 	defer f.Unlock()
 	f.CreateTableCalls++
-	return f.CreateTableFunc()
+	return f.CreateTableFunc(table)
+}
+
+// Update is a method to test Update function
+func (f *FakeDb) Update(element interface{}, wCond string, wFields []string) error {
+	f.Lock()
+	defer f.Unlock()
+	f.UpdateCalls++
+	return f.Update(element, wCond, wFields)
 }
