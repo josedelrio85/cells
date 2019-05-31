@@ -41,12 +41,17 @@ func main() {
 
 	lead := apic2c.Lead{}
 	leadtest := apic2c.LeadTest{}
+	source := apic2c.Source{}
 
 	if err := database.CreateTable(lead); err != nil {
 		log.Fatalf("error creating the table. err: %s", err)
 	}
 
 	if err := database.CreateTable(leadtest); err != nil {
+		log.Fatalf("error creating the table. err: %s", err)
+	}
+
+	if err := database.CreateTable(source); err != nil {
 		log.Fatalf("error creating the table. err: %s", err)
 	}
 
