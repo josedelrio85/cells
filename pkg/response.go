@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"runtime"
+	"strconv"
 
 	"github.com/bysidecar/voalarm"
 )
@@ -56,6 +57,16 @@ func responseOk(w http.ResponseWriter, message string) {
 		Code:    http.StatusOK,
 		Message: message,
 		Success: true,
+	}
+	response(w, ra)
+}
+
+// responseLeontel calls response function passing the data obtained from Leontel proxy
+func responseLeontel(w http.ResponseWriter, resp *LeontelResp) {
+	ra := ResponseAPI{
+		Code:    http.StatusOK,
+		Message: strconv.FormatInt(resp.ID, 10),
+		Success: resp.Success,
 	}
 	response(w, ra)
 }
