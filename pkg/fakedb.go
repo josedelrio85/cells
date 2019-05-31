@@ -12,6 +12,8 @@ type FakeDb struct {
 	CreateTableCalls int
 	UpdateFunc       func(element interface{}, wCond string, wFields []string) error
 	UpdateCalls      int
+	InsertFunc       func(element interface{}) error
+	InsertCalls      int
 	sync.Mutex
 }
 
@@ -45,4 +47,12 @@ func (f *FakeDb) Update(element interface{}, wCond string, wFields []string) err
 	defer f.Unlock()
 	f.UpdateCalls++
 	return f.Update(element, wCond, wFields)
+}
+
+// Insert is a method to test insert function
+func (f *FakeDb) Insert(element interface{}) error {
+	f.Lock()
+	defer f.Unlock()
+	f.InsertCalls++
+	return f.Insert(element)
 }
