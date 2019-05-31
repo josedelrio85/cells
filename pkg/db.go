@@ -65,10 +65,10 @@ func (env *Database) Close() {
 // CreateTable automatically migrate your schema, to keep your schema update to date.
 // and create the table if not exists
 func (env *Database) CreateTable(table interface{}) error {
-	env.db.Debug().AutoMigrate(table)
+	env.db.AutoMigrate(table)
 
-	if !env.db.Debug().HasTable(table) {
-		env.db.Debug().CreateTable(table)
+	if !env.db.HasTable(table) {
+		env.db.CreateTable(table)
 	}
 	return nil
 }
@@ -109,4 +109,9 @@ func (LeadTest) TableName() string {
 // TableName sets the default table name
 func (Source) TableName() string {
 	return "sources"
+}
+
+// TableName sets the default table name
+func (Leatype) TableName() string {
+	return "leadtypes"
 }
