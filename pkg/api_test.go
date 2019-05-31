@@ -39,12 +39,13 @@ func TestHandlerFunction(t *testing.T) {
 			Description: "when HandleFunction TODO DESCRIPTION",
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusOK,
-			Storer: &FakeDb{
-				OpenFunc:        func() error { return nil },
-				CloseFunc:       func() error { return nil },
-				CreateTableFunc: func(interface{}) error { return nil },
-				UpdateFunc:      func(interface{}, string, []string) error { return nil },
-			},
+			// Storer: &FakeDb{
+			// 	OpenFunc:        func() error { return nil },
+			// 	CloseFunc:       func() error { return nil },
+			// 	CreateTableFunc: func(interface{}) error { return nil },
+			// 	UpdateFunc:      func(interface{}, string, []string) error { return nil },
+			// 	InsertFunc:			 func(interface{}) error {return nil},
+			// },
 			Lead: Lead{
 				SouID:     15,
 				LeatypeID: 1,
