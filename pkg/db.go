@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"log"
 
+	_ "github.com/go-sql-driver/mysql" // go mysql driver
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql" // mysql import driver for gorm
 )
 
 // Database is a struct to manage DB environment configuration.
@@ -21,16 +23,15 @@ type Database struct {
 	db *gorm.DB
 }
 
-type firstobject struct {
-	ID int64
-}
-
 // Storer is an interface used to force the handler to implement
 // the described methods
 type Storer interface {
 	Open() error
 	Close()
-	CreateTable() error
+	CreateTable(table interface{}) error
+	Update(element interface{}, wCond string, wFields []string) error
+	Insert(element interface{}) error
+	Instance() *gorm.DB
 }
 
 // Open function opens a database connection using Database struct parameters
@@ -63,11 +64,44 @@ func (env *Database) Close() {
 
 // CreateTable automatically migrate your schema, to keep your schema update to date.
 // and create the table if not exists
-func (env *Database) CreateTable() error {
-	env.db.AutoMigrate(&firstobject{})
+func (env *Database) CreateTable(table interface{}) error {
+	env.db.Debug().AutoMigrate(table)
 
-	if !env.db.HasTable(&firstobject{}) {
-		env.db.CreateTable(&firstobject{})
+	if !env.db.Debug().HasTable(table) {
+		env.db.Debug().CreateTable(table)
 	}
 	return nil
+}
+
+// Insert generates a new row
+func (env *Database) Insert(element interface{}) error {
+	env.db.Debug().Create(element)
+	return nil
+}
+
+// Update generates a new row
+func (env *Database) Update(element interface{}, wCond string, wFields []string) error {
+	// env.db.Model(&element).Where("active = ?", true).Update("name", "hello")
+	wFieldsArr := []interface{}{}
+	for _, z := range wFields {
+		wFieldsArr = append(wFieldsArr, z)
+	}
+	env.db.Debug().Model(&element).Where(wCond, true).Update(wFieldsArr...)
+
+	return nil
+}
+
+// Instance returns an instance of gorm DB
+func (env *Database) Instance() *gorm.DB {
+	return env.db
+}
+
+// TableName sets the default table name
+func (Lead) TableName() string {
+	return "leads"
+}
+
+// TableName sets the default table name
+func (LeadTest) TableName() string {
+	return "lead_tests"
 }
