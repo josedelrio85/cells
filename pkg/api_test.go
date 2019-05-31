@@ -13,6 +13,9 @@ import (
 func TestHandlerFunction(t *testing.T) {
 	assert := assert.New(t)
 
+	phoneTest := "666666666"
+	ipTest := "127.0.0.1"
+
 	tests := []struct {
 		Description string
 		Storer      Storer
@@ -45,8 +48,8 @@ func TestHandlerFunction(t *testing.T) {
 			Lead: Lead{
 				SouID:     15,
 				LeatypeID: 1,
-				LeaPhone:  "666666666",
-				LeaIP:     "127.0.0.1",
+				LeaPhone:  &phoneTest,
+				LeaIP:     &ipTest,
 			},
 		},
 	}
