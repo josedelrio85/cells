@@ -105,3 +105,8 @@ func (Lead) TableName() string {
 func (LeadTest) TableName() string {
 	return "lead_tests"
 }
+
+// TableName sets the default table name
+func (Source) TableName() string {
+	return "sources"
+}
