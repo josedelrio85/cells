@@ -15,23 +15,6 @@ type Handler struct {
 	LeadTest LeadTest
 }
 
-// HandleFunction is a function used to manage all received requests.
-// Only POST method accepted.
-// Decode the identity json request ____
-// Returns an StatusMethodNotAllowed state if other kind of request is received.
-// Returns StatusInternalServerError when decoding the body content fails.
-func (ch *Handler) HandleFunction() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-		if err := ch.Lead.Decode(r.Body); err != nil {
-			message := fmt.Sprintf("Error decoding lead, Err: %v", err)
-			responseError(w, message, err)
-			return
-		}
-		responseOk(w, "OK")
-	})
-}
-
 // TestHandler blablabla
 func (ch *Handler) TestHandler(w http.ResponseWriter, req *http.Request) {
 
@@ -51,6 +34,8 @@ func (ch *Handler) RcableHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	ch.Lead.SouID = 15
+	destiny := "LEONTEL"
+	ch.Lead.LeaDestiny = &destiny
 	// check if the time of the request complains with the on time requirementes. Returns true if ok, false otherwise.
 	// ch.Lead.LeatypeID = isInSchedule(ch.Lead.SouID) ? 1 : 20;
 	ch.Lead.LeatypeID = 1
