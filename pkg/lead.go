@@ -4,10 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
+	"net"
+	"fmt"
+	"io"
+
+	"github.com/jinzhu/gorm"
 )
 
 // LeadLeontel represents the data structure of lea_leads Leontel table
@@ -15,18 +19,18 @@ type LeadLeontel struct {
 	// lea_ fields
 	LeaID            int64     `json:"-"`
 	LeaType          int64     `json:"lea_type,omitempty"`
-	LeaTs            time.Time `json:"-"`
+	LeaTs            *time.Time `json:"-"`
 	LeaSource        int64     `json:"lea_source,omitempty"`
 	LeaLot           int64     `json:"-"`
 	LeaAssigned      int64     `json:"-"`
-	LeaScheduled     time.Time `json:"lea_scheduled,omitempty"`
+	LeaScheduled     *time.Time `json:"lea_scheduled,omitempty"`
 	LeaScheduledAuto int64     `json:"lea_scheduled_auto,omitempty"`
 	LeaCost          float64   `json:"-"`
 	LeaSeen          int64     `json:"-"`
 	LeaClosed        int64     `json:"lea_closed,omitempty"`
 	LeaNew           int64     `json:"-"`
 	LeaClient        int64     `json:"-"`
-	LeaDateControl   time.Time `json:"-"`
+	LeaDateControl   *time.Time `json:"-"`
 
 	// most used fields
 	Telefono       *string `json:"TELEFONO,omitempty"`
@@ -48,7 +52,7 @@ type LeadLeontel struct {
 	Tipocliente              *string   `json:"tipocliente,omitempty"`
 	Escliente                *string   `json:"escliente,omitempty"`
 	Tiposolicitud            *string   `json:"tiposolicitud,omitempty"`
-	Fechasolicitud           time.Time `json:"fechasolicitud,omitempty"`
+	Fechasolicitud           *time.Time `json:"fechasolicitud,omitempty"`
 	Poblacion                *string   `json:"poblacion,omitempty"`
 	Provincia                *string   `json:"provincia,omitempty"`
 	Direccion                *string   `json:"direccion,omitempty"`
@@ -63,7 +67,7 @@ type LeadLeontel struct {
 	Compaiaactualfibraadsl   *string   `json:"compaiaactualfibraadsl,omitempty"`
 	Companiaactualmovil      *string   `json:"companiaactualmovil,omitempty"`
 	Fibraactual              *string   `json:"fibraactual,omitempty"`
-	Moviactuallineaprincipal *string   `json:"moviactuallineaprincipal"`
+	Moviactuallineaprincipal *string   `json:"moviactuallineaprincipal,omitempty"`
 	Numerolineasadicionales  int64     `json:"numerolineasadicionales,omitempty"`
 	Tarifaactualsiniva       float64   `json:"tarifaactualsiniva,omitempty"`
 	Motivocambio             *string   `json:"motivocambio,omitempty"`
@@ -130,64 +134,43 @@ type LeontelResp struct {
 	ID      int64 `json:"id"`
 }
 
-// SendLeadToLeontel sends the lead to Leontel endpoint
-// Returns the response sended by the endpoint
-func (l *Lead) SendLeadToLeontel() (*LeontelResp, error) {
-
-	leadLeontel := l.LeadToLeontel()
-
-	bytevalues, err := json.Marshal(leadLeontel)
-	if err != nil {
-		return nil, err
+// Decode reques's body into a Lead struct
+func (lead *Lead) Decode(body io.ReadCloser) error {
+	if err := json.NewDecoder(body).Decode(lead); err != nil {
+		return err
 	}
-
-	endpoint := "http://localhost:8888/leads/store"
-	resp, err := http.Post(endpoint, "application/json", bytes.NewBuffer(bytevalues))
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	data, _ := ioutil.ReadAll(resp.Body)
-	leontelresp := LeontelResp{}
-	json.Unmarshal(data, &leontelresp)
-
-	return &leontelresp, nil
+	return nil
 }
 
 // LeadToLeontel maps values from Lead struct (webservice.leads table)
 // as an appropiate lead Leontel input for each campaign
-func (l *Lead) LeadToLeontel() LeadLeontel {
-	log.Println("LeadToLeontel")
-	log.Println(l)
-
-	leontel := LeadLeontel{
-		LeaSource: l.SouIDLeontel,
-		LeaType:   l.LeatypeIDLeontel,
-		Telefono:  l.LeaPhone,
-		Nombre:    l.LeaName,
-		URL:       l.LeaURL,
-		IP:        l.LeaIP,
-		Wsid:      l.LeaID,
+func (lead *Lead) LeadToLeontel() LeadLeontel {
+	leontel := LeadLeontel{	
+		LeaSource: lead.SouIDLeontel,
+		LeaType:   lead.LeatypeIDLeontel,
+		Telefono:  lead.LeaPhone,
+		Nombre:    lead.LeaName,
+		URL:       lead.LeaURL,
+		IP:        lead.LeaIP,
+		Wsid:      lead.LeaID,
 	}
-	log.Println("---------------------")
 
 	// TODO avoid use of huge switch. How??
-	switch souid := l.SouID; souid {
+	switch souid := lead.SouID; souid {
 	case 1, 21, 22:
 		// Creditea Abandonos
 		// lea_aux1 => 1 | 0 ??
 		// lea_surname => apellido1
 		// lea_aux2 => dninie
 		// lea_aux3 => asnef
-		leontel.Apellido1 = l.LeaSurname
-		leontel.Dninie = l.LeaAux2
-		leontel.Asnef = l.LeaAux3
+		leontel.Apellido1 = lead.LeaSurname
+		leontel.Dninie = lead.LeaAux2
+		leontel.Asnef = lead.LeaAux3
 	case 9, 58:
 		// Creditea EndToEnd + CREDITEA HM CORTO
 		// lea_aux1 (dni)=> dninie
 		// lea_aux2 (cantidadsolicitada)=> observaciones (DNI: $dninie Cantidad solicitada: $cantidadSolicitada)
-		leontel.Dninie = l.LeaAux1
+		leontel.Dninie = lead.LeaAux1
 		// leontel.Observaciones = fmt.Sprintf("DNI:%s Cantidad solicitada:%s", *l.LeaAux1, *l.LeaAux2)
 	case 10:
 		// Creditea FB (no activo)
@@ -200,7 +183,7 @@ func (l *Lead) LeadToLeontel() LeadLeontel {
 		// __ => observaciones (DNI: lea_aux4 Ingresos netos: lea_aux3
 		// Tipo contrato lea_aux2 Cantidad solicitada lea_aux1)
 		// lean_name => Nombre
-		leontel.Nombre = l.LeaName
+		leontel.Nombre = lead.LeaName
 		// leontel.Observaciones = fmt.Sprintf(`
 		// "DNI:%s Ingresos netos:%s Tipo Contrato:%s Cantidad solicitada:%s"`,
 		// 	*l.LeaAux4, *l.LeaAux3, *l.LeaAux2, *l.LeaAux1)
@@ -213,11 +196,11 @@ func (l *Lead) LeadToLeontel() LeadLeontel {
 		// Yoigo
 		// lea_aux2 => observaciones
 		// lea_aux3 => observaciones2
-		leontel.Observaciones = l.LeaAux2
-		leontel.Observaciones2 = l.LeaAux3
+		leontel.Observaciones = lead.LeaAux2
+		leontel.Observaciones2 = lead.LeaAux3
 	case 52:
 		// Incidencia Microsoft
-		souidor, _ := strconv.Atoi(*l.LeaAux3)
+		souidor, _ := strconv.Atoi(*lead.LeaAux3)
 		switch bb := souidor; bb {
 		case 46:
 		case 49:
@@ -231,28 +214,28 @@ func (l *Lead) LeadToLeontel() LeadLeontel {
 			// lea_aux9 + sou_id => tipouso
 			// lea_aux10 => Office365
 			// observations => observaciones2
-			leontel.Tipoordenador = l.LeaAux4
-			leontel.Sector = l.LeaAux5
-			leontel.Presupuesto = l.LeaAux6
-			leontel.Rendimiento = l.LeaAux7
-			leontel.Movilidad = l.LeaAux8
-			// leontel.Tipouso = fmt.Sprintf("%s %d", l.LeaAux9, l.SouID)
-			leontel.Office365 = l.LeaAux10
-			leontel.Observaciones2 = l.Observations
+			leontel.Tipoordenador = lead.LeaAux4
+			leontel.Sector = lead.LeaAux5
+			leontel.Presupuesto = lead.LeaAux6
+			leontel.Rendimiento = lead.LeaAux7
+			leontel.Movilidad = lead.LeaAux8
+			// leontel.Tipouso = fmt.Sprintf("%s %d", lead.LeaAux9, lead.SouID)
+			leontel.Office365 = lead.LeaAux10
+			leontel.Observaciones2 = lead.Observations
 		case 50:
 			// Antes incidencia 31, 32, 33, 34, 35
 			// Microsoft
 			// lea_aux10 => observaciones2
-			leontel.Observaciones2 = l.LeaAux10
+			leontel.Observaciones2 = lead.LeaAux10
 		case 51:
 			// Antes incidencia 36, 37, 38, 39, 40
 			// Microsoft
 			// lea_aux10 => observaciones2
-			leontel.Observaciones2 = l.LeaAux10
+			leontel.Observaciones2 = lead.LeaAux10
 		case 48:
 			// Microsoft
 			// lea_aux10 => observaciones2
-			leontel.Observaciones2 = l.LeaAux10
+			leontel.Observaciones2 = lead.LeaAux10
 		default:
 		}
 	case 25:
@@ -264,19 +247,84 @@ func (l *Lead) LeadToLeontel() LeadLeontel {
 		// lea_aux2 => cantidadofrecida
 		// lea_aux4 => ncliente
 		// observations => observaciones
-		leontel.Dninie = l.LeaAux1
-		leontel.Cantidadofrecida = l.LeaAux2
-		leontel.Ncliente = l.LeaAux4
-		leontel.Observaciones = l.Observations
+		leontel.Dninie = lead.LeaAux1
+		leontel.Cantidadofrecida = lead.LeaAux2
+		leontel.Ncliente = lead.LeaAux4
+		leontel.Observaciones = lead.Observations
 	default:
 	}
 
 	return leontel
 }
 
-func test(value *string) string {
-	if value == nil {
-		return ""
+// SendLeadToLeontel sends the lead to Leontel endpoint
+// Returns the response sended by the endpoint
+func (lead *Lead) SendLeadToLeontel() (*LeontelResp, error) {
+
+	leadLeontel := lead.LeadToLeontel()
+	bytevalues, err := json.Marshal(leadLeontel)
+	if err != nil {
+		return nil, err
 	}
-	return *value
+
+	endpoint := "http://localhost:8888/leads/store"
+	resp, err := http.Post(endpoint, "application/json", bytes.NewBuffer(bytevalues))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	data, _ := ioutil.ReadAll(resp.Body)
+	leontelresp := []LeontelResp{}
+	json.Unmarshal(data, &leontelresp)
+
+	return &leontelresp[0], nil
 }
+
+// UpdatePostLeontel updates lead row after the insertion in Leontel is made and its result is succesful
+func (lead *Lead) UpdatePostLeontel(db *gorm.DB, leontelID int64) error {
+	status := "SENT"
+	now := time.Now()
+	crmid := strconv.FormatInt(leontelID, 10)
+	if err := db.Model(lead).Where("lea_id = ?", lead.LeaID).Update(Lead{LeaExtracted: &now, LeaStatus: &status, LeaCrmid: &crmid}); err != nil {
+		return fmt.Errorf("Error updating Lead row after inserting Leontel: %#v", err)
+	}
+	return nil
+}
+
+// GetLeontelValues queries for the Leontel equivalences
+// of sou_id and lea_type values
+func (lead *Lead) GetLeontelValues(db *gorm.DB) error {
+	source := Source{}
+	leatype := 	Leatype{}
+	if err := db.Where("sou_id = ?", lead.SouID).First(&source); err != nil {
+		return fmt.Errorf("Error retrieving SouIDLeontel value: %#v", err)
+	}
+	if err := db.Where("leatype_id = ?", lead.LeatypeID).First(&leatype); err != nil {
+		return fmt.Errorf("error retrieving LeatypeIDLeontel value: %#v", err)
+	}
+	lead.SouIDLeontel = source.SouIdcrm
+	lead.LeatypeIDLeontel = leatype.LeatypeIdcrm
+	return nil
+}
+
+// GetParams retrieves values for ip, port and url properties
+func (lead *Lead) GetParams(w http.ResponseWriter, req *http.Request) error {
+	ip, _, err := net.SplitHostPort(req.RemoteAddr)
+	if err != nil {
+		return err
+	}
+
+	userIP := net.ParseIP(ip)
+	if userIP == nil {
+		return fmt.Errorf("Error parsing IP value: %#v", err)
+	}
+	// forward := req.Header.Get("X-Forwarded-For")
+
+	lead.LeaIP = &ip
+	url := fmt.Sprintf("%s%s", req.Host, req.URL.Path) 
+	lead.LeaURL = &url
+
+	return nil
+}
+
