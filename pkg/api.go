@@ -86,4 +86,4 @@ func Middleware(h http.Handler) http.Handler {
 // TODO other task is the skill to substitute requested sou_id for test queue sou_id (15)
 // TODO another task is to set the property lea_destiny from 'LEONTEL' to 'TEST'
 
-
+// TODO think about what kind of response want to offer. Must respect the dependant code distributed on prod environment 

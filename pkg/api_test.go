@@ -57,7 +57,7 @@ func TestHandlerFunction(t *testing.T) {
 
 	for _, test := range tests {
 		ch := Handler{}
-		ts := httptest.NewServer(ch.HandleFunction())
+		ts := httptest.NewServer(ch.ch)
 		defer ts.Close()
 
 		body, err := json.Marshal(test.Lead)
