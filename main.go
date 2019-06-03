@@ -61,8 +61,8 @@ func main() {
 	rcable := base.PathPrefix("/rcable").Subrouter()
 	rcable.HandleFunc("/incomingC2C", ch.RcableHandler)
 
-	creditea := base.PathPrefix("/creditea").Subrouter()
-	creditea.HandleFunc("/test", ch.TestHandler)
+	creditea := base.PathPrefix("/test").Subrouter()
+	creditea.HandleFunc("/testupdate", ch.TestHandler)
 
 	router.Use(apic2c.Middleware)
 	log.Fatal(http.ListenAndServe(":5000", cors.Default().Handler(router)))
