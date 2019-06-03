@@ -117,6 +117,10 @@ type Lead struct {
 
 	SouIDLeontel     int64 `sql:"-" json:"sou_id_leontel"`
 	LeatypeIDLeontel int64 `sql:"-" json:"lea_type_leontel"`
+
+	Gclid *string `sql:"-" json:"glcid"`
+	Domain *string `sql:"-" json:"domain"`
+
 }
 
 // LeadTest struct represents the fields of the leads table
