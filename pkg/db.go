@@ -75,7 +75,9 @@ func (env *Database) CreateTable(table interface{}) error {
 
 // Insert generates a new row
 func (env *Database) Insert(element interface{}) error {
-	env.db.Debug().Create(element)
+	if result := env.db.Debug().Create(element); result.Error != nil {
+		return fmt.Errorf("Error Insert element: %#v", result.Error)
+	}
 	return nil
 }
 
