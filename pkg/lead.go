@@ -117,6 +117,7 @@ type Lead struct {
 
 	SouIDLeontel     int64 `sql:"-" json:"sou_id_leontel"`
 	LeatypeIDLeontel int64 `sql:"-" json:"lea_type_leontel"`
+	LeatypeDescLeontel string `sql:"-" json:"lea_type_desc_leontel"`
 
 	Gclid *string `sql:"-" json:"glcid"`
 	Domain *string `sql:"-" json:"domain"`
@@ -244,7 +245,8 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		}
 	case 25:
 		// Incidencia Microsoft
-
+		leontel.Observaciones = lead.Observations
+		leontel.Observaciones2 = &lead.LeatypeDescLeontel
 	case 53:
 		// IPF
 		// lea_aux1 => dninie
@@ -290,8 +292,8 @@ func (lead *Lead) UpdatePostLeontel(db *gorm.DB, leontelID int64) error {
 	status := "SENT"
 	now := time.Now()
 	crmid := strconv.FormatInt(leontelID, 10)
-	if err := db.Model(lead).Where("lea_id = ?", lead.LeaID).Update(Lead{LeaExtracted: &now, LeaStatus: &status, LeaCrmid: &crmid}); err != nil {
-		return fmt.Errorf("Error updating Lead row after inserting Leontel: %#v", err)
+	if result := db.Model(lead).Where("lea_id = ?", lead.LeaID).Update(Lead{LeaExtracted: &now, LeaStatus: &status, LeaCrmid: &crmid}); result.Error != nil {
+		return fmt.Errorf("Error updating Lead row after inserting Leontel: %#v", result.Error)
 	}
 	return nil
 }
@@ -301,14 +303,16 @@ func (lead *Lead) UpdatePostLeontel(db *gorm.DB, leontelID int64) error {
 func (lead *Lead) GetLeontelValues(db *gorm.DB) error {
 	source := Source{}
 	leatype := 	Leatype{}
-	if err := db.Where("sou_id = ?", lead.SouID).First(&source); err != nil {
-		return fmt.Errorf("Error retrieving SouIDLeontel value: %#v", err)
+	
+	if result := db.Where("sou_id = ?", lead.SouID).First(&source); result.Error != nil {
+		return fmt.Errorf("Error retrieving SouIDLeontel value: %#v", result.Error)
 	}
-	if err := db.Where("leatype_id = ?", lead.LeatypeID).First(&leatype); err != nil {
-		return fmt.Errorf("error retrieving LeatypeIDLeontel value: %#v", err)
+	if result := db.Where("leatype_id = ?", lead.LeatypeID).First(&leatype); result.Error != nil {
+		return fmt.Errorf("error retrieving LeatypeIDLeontel value: %#v", result.Error)
 	}
 	lead.SouIDLeontel = source.SouIdcrm
 	lead.LeatypeIDLeontel = leatype.LeatypeIdcrm
+	lead.LeatypeDescLeontel = leatype.LeatypeDescription
 	return nil
 }
 
