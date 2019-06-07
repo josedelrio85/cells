@@ -1,4 +1,4 @@
-package apic2c
+package leads
 
 import (
 	"fmt"
@@ -98,24 +98,4 @@ func (env *Database) Update(element interface{}, wCond string, wFields []string)
 // Instance returns an instance of gorm DB
 func (env *Database) Instance() *gorm.DB {
 	return env.db
-}
-
-// TableName sets the default table name
-func (Lead) TableName() string {
-	return "leads"
-}
-
-// TableName sets the default table name
-func (LeadTest) TableName() string {
-	return "lead_tests"
-}
-
-// TableName sets the default table name
-func (Source) TableName() string {
-	return "sources"
-}
-
-// TableName sets the default table name
-func (Leatype) TableName() string {
-	return "leadtypes"
 }

@@ -1,4 +1,4 @@
-package apic2c
+package leads
 
 import (
 	"bytes"
@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	model "github.com/bysidecar/api_ws/pkg/model"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -21,19 +23,19 @@ func TestHandlerFunction(t *testing.T) {
 		Storer      Storer
 		TypeRequest string
 		StatusCode  int
-		Lead        Lead
+		Lead        model.Lead
 	}{
 		{
 			Description: "when HandleFunction receive a GET request",
 			TypeRequest: http.MethodGet,
 			StatusCode:  http.StatusMethodNotAllowed,
-			Lead:        Lead{},
+			Lead:        model.Lead{},
 		},
 		{
 			Description: "when HandleFunction receive a POST request",
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusOK,
-			Lead:        Lead{},
+			Lead:        model.Lead{},
 		},
 		{
 			Description: "when HandleFunction TODO DESCRIPTION",
@@ -46,7 +48,7 @@ func TestHandlerFunction(t *testing.T) {
 			// 	UpdateFunc:      func(interface{}, string, []string) error { return nil },
 			// 	InsertFunc:			 func(interface{}) error {return nil},
 			// },
-			Lead: Lead{
+			Lead: model.Lead{
 				SouID:     15,
 				LeatypeID: 1,
 				LeaPhone:  &phoneTest,
