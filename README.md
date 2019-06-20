@@ -1,4 +1,4 @@
-# API C2C Go!
+# Leads API
 
 This repository contains an implementation of an API to handle C2C data generated in our LP's and store it.
 

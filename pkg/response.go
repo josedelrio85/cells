@@ -1,4 +1,4 @@
-package apic2c
+package leads
 
 import (
 	"encoding/json"
@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"runtime"
 	"strconv"
+	
+	model "github.com/bysidecar/api_ws/pkg/model"
 
 	"github.com/bysidecar/voalarm"
 )
@@ -62,7 +64,7 @@ func responseOk(w http.ResponseWriter, message string) {
 }
 
 // responseLeontel calls response function passing the data obtained from Leontel proxy
-func responseLeontel(w http.ResponseWriter, resp *LeontelResp) {
+func responseLeontel(w http.ResponseWriter, resp *model.LeontelResp) {
 	ra := ResponseAPI{
 		Code:    http.StatusOK,
 		Message: strconv.FormatInt(resp.ID, 10),

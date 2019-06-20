@@ -6,7 +6,9 @@ import (
 	"os"
 	"strconv"
 
-	apic2c "github.com/bysidecar/api_ws/pkg"
+	leads "github.com/bysidecar/api_ws/pkg"
+	model "github.com/bysidecar/api_ws/pkg/model"
+
 	"github.com/rs/cors"
 
 	"github.com/gorilla/mux"
@@ -20,7 +22,7 @@ func main() {
 		log.Fatalf("Error parsing to string Database's port %s, Err: %s", port, err)
 	}
 
-	database := &apic2c.Database{
+	database := &leads.Database{
 		Host:      GetSetting("DB_HOST"),
 		Port:      portInt,
 		User:      GetSetting("DB_USER"),
@@ -30,7 +32,7 @@ func main() {
 		ParseTime: "True",
 		Loc:       "Local",
 	}
-	ch := apic2c.Handler{
+	ch := leads.Handler{
 		Storer: database,
 	}
 
@@ -39,24 +41,21 @@ func main() {
 	}
 	defer database.Close()
 
-	lead := apic2c.Lead{}
-	if err := database.CreateTable(lead); err != nil {
+	if err := database.CreateTable(model.Lead{}); err != nil {
 		log.Fatalf("error creating the table. err: %s", err)
 	}
 
-	router := mux.NewRouter().StrictSlash(true)
-	base := router.PathPrefix("/apic2c").Subrouter()
+	if err := database.CreateTable(model.RcableExp{}); err != nil {
+		log.Fatalf("error creating the table. err: %s", err)
+	}
 
-	rcable := base.PathPrefix("/rcable").Subrouter()
-	rcable.HandleFunc("/incomingC2C", ch.RcableHandler)
+	if err := database.CreateTable(model.Microsoft{}); err != nil {
+		log.Fatalf("error creating the table. err: %s", err)
+	}
 
-	rcableexp := base.PathPrefix("/rcableexp").Subrouter()
-	rcableexp.HandleFunc("/incomingC2C", ch.RcableExpHandler)
 
-	creditea := base.PathPrefix("/test").Subrouter()
-	creditea.HandleFunc("/testupdate", ch.TestHandler)
-
-	router.Use(apic2c.Middleware)
+	router := mux.NewRouter()
+	router.PathPrefix("/store/leads/").Handler(ch.HandleFunction()).Methods(http.MethodPost)
 	log.Fatal(http.ListenAndServe(":5000", cors.Default().Handler(router)))
 }
 
