@@ -6,8 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	leads "github.com/bysidecar/api_ws/pkg"
-	model "github.com/bysidecar/api_ws/pkg/model"
+	leads "github.com/bysidecar/leads/pkg"
 
 	"github.com/rs/cors"
 
@@ -15,7 +14,6 @@ import (
 )
 
 func main() {
-
 	port := GetSetting("DB_PORT")
 	portInt, err := strconv.ParseInt(port, 10, 64)
 	if err != nil {
@@ -41,18 +39,9 @@ func main() {
 	}
 	defer database.Close()
 
-	if err := database.CreateTable(model.Lead{}); err != nil {
+	if err := database.AutoMigrate(); err != nil {
 		log.Fatalf("error creating the table. err: %s", err)
 	}
-
-	if err := database.CreateTable(model.RcableExp{}); err != nil {
-		log.Fatalf("error creating the table. err: %s", err)
-	}
-
-	if err := database.CreateTable(model.Microsoft{}); err != nil {
-		log.Fatalf("error creating the table. err: %s", err)
-	}
-
 
 	router := mux.NewRouter()
 	router.PathPrefix("/store/leads/").Handler(ch.HandleFunction()).Methods(http.MethodPost)

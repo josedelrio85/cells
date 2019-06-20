@@ -2,15 +2,15 @@ package leads
 
 import (
 	"bytes"
-	"os"
-	"errors"
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
-	"time"
-	"net"
+	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"net"
+	"net/http"
+	"os"
+	"time"
 
 	"github.com/jinzhu/gorm"
 )
@@ -18,36 +18,30 @@ import (
 // Lead struct represents the fields of the leads table
 type Lead struct {
 	gorm.Model
-	LeaID        				int64      	`json:"-"`
-	LeaTs        				*time.Time 	`sql:"DEFAULT:current_timestamp" json:"-" `
-	LeaDestiny   				*string    	`json:"lea_destiny,omitempty"`
-	LeaCrmid     				*string    	`json:"-"`
-	SouID        				int64      	`json:"sou_id,omitempty"`
-	LeatypeID    				int64      	`json:"lea_type,omitempty"`
-	UtmSource    				*string    	`json:"utm_source,omitempty"`
-	SubSource    				*string    	`json:"sub_source,omitempty"`
-	LeaPhone     				*string    	`json:"phone,omitempty"`
-	LeaMail      				*string    	`json:"mail,omitempty"`
-	LeaName      				*string    	`json:"name,omitempty"`
-	LeaDNI			 				*string			`json:"dni,omitempty"`
-	LeaURL       				*string    	`json:"url,omitempty"`
-	LeaIP        				*string    	`json:"ip,omitempty"`	
-	IsLeontel						bool				`json:"leontel,omitempty"`
-	SouIDLeontel     		int64 			`sql:"-" json:"sou_id_leontel"`
-	LeatypeIDLeontel 		int64 			`sql:"-" json:"lea_type_leontel"`
-	LeatypeDescLeontel 	string 			`sql:"-" json:"lea_type_desc_leontel"`
-	Gclid 							*string 		`json:"gclid"`
-	Domain 							*string 		`json:"domain"`
-	Observations				*string			`sql:"type:text" json:"observations"`
-	RcableExp						RcableExp		`json:"rcableexp"`
-	Microsoft 					Microsoft		`json:"microsoft"`
-	Creditea 						Creditea		`json:"creditea"`
-}
-
-// TableName sets the default table name
-func (Lead) TableName() string {
-	// TODO change this name for lead or leads(?)+
-	return "leadnew"
+	LeaID              int64      `json:"-"`
+	LeaTs              *time.Time `sql:"DEFAULT:current_timestamp" json:"-" `
+	LeaDestiny         *string    `json:"lea_destiny,omitempty"`
+	LeaCrmid           *string    `json:"-"`
+	SouID              int64      `json:"sou_id,omitempty"`
+	LeatypeID          int64      `json:"lea_type,omitempty"`
+	UtmSource          *string    `json:"utm_source,omitempty"`
+	SubSource          *string    `json:"sub_source,omitempty"`
+	LeaPhone           *string    `json:"phone,omitempty"`
+	LeaMail            *string    `json:"mail,omitempty"`
+	LeaName            *string    `json:"name,omitempty"`
+	LeaDNI             *string    `json:"dni,omitempty"`
+	LeaURL             *string    `json:"url,omitempty"`
+	LeaIP              *string    `json:"ip,omitempty"`
+	IsLeontel          bool       `json:"leontel,omitempty"`
+	SouIDLeontel       int64      `sql:"-" json:"sou_id_leontel"`
+	LeatypeIDLeontel   int64      `sql:"-" json:"lea_type_leontel"`
+	LeatypeDescLeontel string     `sql:"-" json:"lea_type_desc_leontel"`
+	Gclid              *string    `json:"gclid"`
+	Domain             *string    `json:"domain"`
+	Observations       *string    `sql:"type:text" json:"observations"`
+	RcableExp          RcableExp  `json:"rcableexp"`
+	Microsoft          Microsoft  `json:"microsoft"`
+	Creditea           Creditea   `json:"creditea"`
 }
 
 // Decode reques's body into a Lead struct
@@ -61,18 +55,18 @@ func (lead *Lead) Decode(body io.ReadCloser) error {
 // LeadToLeontel maps values from Lead struct (webservice.leads table)
 // as an appropiate lead Leontel input for each campaign
 func (lead *Lead) LeadToLeontel() LeadLeontel {
-	leontel := LeadLeontel{	
+	leontel := LeadLeontel{
 		LeaSource: lead.SouIDLeontel,
 		LeaType:   lead.LeatypeIDLeontel,
 		Telefono:  lead.LeaPhone,
 		Nombre:    lead.LeaName,
 		URL:       lead.LeaURL,
 		IP:        lead.LeaIP,
-		Email: 		 lead.LeaMail,
-		Dninie: 	 lead.LeaDNI,
+		Email:     lead.LeaMail,
+		Dninie:    lead.LeaDNI,
 		// Wsid:      lead.LeaID,
 	}
-	// TODO actually we update lea_crmid field from webservice.leads table with the data 
+	// TODO actually we update lea_crmid field from webservice.leads table with the data
 	// TODO returned from Leontel, and in Leontel set the wsid field with the lea_id value from
 	// todo webservice insert. How to handle this situation? we have to make an update action
 	// todo in some point if we want to keep this functionality.
@@ -97,7 +91,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		// R Cable + R Cable Empresas
 	case 7:
 		// Hercules
-	case 8: 
+	case 8:
 		// Seguro para movil
 	case 9, 58:
 		// Creditea EndToEnd + CREDITEA HM CORTO
@@ -120,7 +114,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		// lea_aux3 (ingresos netos)
 		// lea_aux4 (dni) => dninie
 		args := []*string{
-			lead.LeaDNI, 
+			lead.LeaDNI,
 			lead.Creditea.Ingresosnetos,
 			lead.Creditea.Tipocontrato,
 			lead.Creditea.Cantidadsolicitada,
@@ -165,11 +159,11 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 	case 48:
 		// Microsoft Calculadora
 		// => observaciones2
-		// anos_ordenadores_media: {$anos_ordenadores_media} 
-		// sistema_operativo_instalado: {$sistema_operativo_instalado} 
-		// frecuencia_bloqueo_ordenadores: {$frecuencia_bloqueo_ordenadores} 
-		// num_dispositivos_empresa: {$num_dispositivos_empresa} 
-		// reparaciones_ultimo_ano: {$reparaciones_ultimo_ano} 
+		// anos_ordenadores_media: {$anos_ordenadores_media}
+		// sistema_operativo_instalado: {$sistema_operativo_instalado}
+		// frecuencia_bloqueo_ordenadores: {$frecuencia_bloqueo_ordenadores}
+		// num_dispositivos_empresa: {$num_dispositivos_empresa}
+		// reparaciones_ultimo_ano: {$reparaciones_ultimo_ano}
 		// tiempo_arrancar_dispositivos: {$tiempo_arrancar_dispositivos}
 		args := []*string{
 			lead.Microsoft.Anosordenadoresmedia,
@@ -196,19 +190,19 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		// Microsoft FichaProducto
 		// => observaciones2
 
-		// Tipo: {$productType} 
+		// Tipo: {$productType}
 		// Producto: {$name}
-		// idProducto: {$id} 
-		// precioOriginal: {$originalPrice} 
-		// Precio: {$price} 
-		// Marca: {$brand} 
+		// idProducto: {$id}
+		// precioOriginal: {$originalPrice}
+		// Precio: {$price}
+		// Marca: {$brand}
 		// %Descuento: {$discountPercentage}
-		// Cod. descuento: {$discountCode} 
-		// Tipo Procesador: {$typeOfProcessor} 
-		// Capacidad HDD: {$hardDiskCapacity} 
-		// Gráfica: {$graphics} 
+		// Cod. descuento: {$discountCode}
+		// Tipo Procesador: {$typeOfProcessor}
+		// Capacidad HDD: {$hardDiskCapacity}
+		// Gráfica: {$graphics}
 		// Wireless: {$wirelessInterface}
-		
+
 		args := []*string{
 			lead.Microsoft.Producttype,
 			lead.Microsoft.Productname,
@@ -237,7 +231,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		// "lea_aux4" => $lead->clientId,
 		// "observations" => $observations
 
-		// TODO| this is not in production, but in case to pass to production 
+		// TODO| this is not in production, but in case to pass to production
 		// TODO| must rename the fields that they send or map the values received
 	case 54:
 		// R Cable Expansion
@@ -289,8 +283,8 @@ func (lead *Lead) SendLeadToLeontel() (*LeontelResp, error) {
 // of sou_id and lea_type values
 func (lead *Lead) GetLeontelValues(db *gorm.DB) error {
 	source := Source{}
-	leatype := 	Leatype{}
-	
+	leatype := Leatype{}
+
 	if result := db.Where("sou_id = ?", lead.SouID).First(&source); result.Error != nil {
 		return fmt.Errorf("Error retrieving SouIDLeontel value: %#v", result.Error)
 	}
@@ -319,20 +313,20 @@ func (lead *Lead) GetParams(w http.ResponseWriter, req *http.Request) error {
 	// forward := req.Header.Get("X-Forwarded-For")
 
 	lead.LeaIP = &ip
-	url := fmt.Sprintf("%s%s", req.Host, req.URL.Path) 
+	url := fmt.Sprintf("%s%s", req.Host, req.URL.Path)
 	lead.LeaURL = &url
 
 	return nil
 }
 
-// concatPointerStrs concats an undefined number 
+// concatPointerStrs concats an undefined number
 // of *string params into string separated by --
 func concatPointerStrs(args ...*string) string {
 	var buffer bytes.Buffer
 	tam := len(args) - 1
 	for i, arg := range args {
 		buffer.WriteString(*arg)
-		if i < tam{
+		if i < tam {
 			buffer.WriteString(" -- ")
 		}
 	}
