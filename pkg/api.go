@@ -2,11 +2,10 @@ package leads
 
 import (
 	"strconv"
-	"encoding/json"
 	"fmt"
 	"net/http"
 
-	model "github.com/bysidecar/api_ws/pkg/model"
+	model "github.com/bysidecar/leads/pkg/model"
 )
 
 // Handler is a struct created to use its ch property as element that implements
@@ -27,8 +26,9 @@ func (ch *Handler) HandleFunction() http.Handler {
 			return
 		}
 
-		// todo set lea_destiny value
+		// TODO think about hibernated campaings, should reject them?
 
+		// TODO set lea_destiny value
 		if err := ch.Lead.GetLeontelValues(ch.Storer.Instance()); err != nil {
 			message := fmt.Sprintf("Error retrieving Leontel values, Err: %v", err)
 			responseError(w, message, err)
@@ -55,8 +55,9 @@ func (ch *Handler) HandleFunction() http.Handler {
 			return
 		}
 
-		fmt.Println(&ch.Lead)
-		json.NewEncoder(w).Encode(&ch.Lead)
+		// json.NewEncoder(w).Encode(&ch.Lead)
+		id := fmt.Sprintf("%d", ch.Lead.ID)
+		responseOk(w, id)
 	})
 }
 

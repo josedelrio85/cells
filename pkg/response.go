@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"strconv"
 	
-	model "github.com/bysidecar/api_ws/pkg/model"
+	model "github.com/bysidecar/leads/pkg/model"
 
 	"github.com/bysidecar/voalarm"
 )

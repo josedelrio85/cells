@@ -6,8 +6,8 @@ import (
 	"os"
 	"strconv"
 
-	leads "github.com/bysidecar/api_ws/pkg"
-	model "github.com/bysidecar/api_ws/pkg/model"
+	leads "github.com/bysidecar/leads/pkg"
+	model "github.com/bysidecar/leads/pkg/model"
 
 	"github.com/rs/cors"
 
@@ -52,7 +52,6 @@ func main() {
 	if err := database.CreateTable(model.Microsoft{}); err != nil {
 		log.Fatalf("error creating the table. err: %s", err)
 	}
-
 
 	router := mux.NewRouter()
 	router.PathPrefix("/store/leads/").Handler(ch.HandleFunction()).Methods(http.MethodPost)
