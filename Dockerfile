@@ -12,12 +12,15 @@ COPY . $GOPATH/src/github.com/bysidecar/leads/
 WORKDIR $GOPATH/src/github.com/bysidecar/leads/
 
 # Fetch dependencies.
-RUN go get -d -v
+# RUN go get -d -v
+# Enable Go Modules
+ENV GO111MODULE=on
 # Build the binary.
-RUN go build -o /go/bin/leads
+RUN go build -mod=vendor -o /go/bin/leads
 
 # Final image
 FROM alpine
+
 # Copy our static executable.
 COPY --from=builder /go/bin/leads /go/bin/leads
 
