@@ -13,6 +13,7 @@ type Microsoft struct {
 	Rendimiento   *string `json:"rendimiento"`
 	Movilidad     *string `json:"movilidad"`
 	Office365     *string `json:"office365"`
+	Tipouso				*string `json:"tipouso"`
 	Observaciones *string `json:"observaciones"`
 
 	Producttype        *string `json:"producttype"`
@@ -36,6 +37,7 @@ type Microsoft struct {
 	TiempoArrancarDispositivos  *string `json:"tiempo_arrancar_dispositivos"`
 
 	Index bool `json:"index"`
+	Oldsouid int64 `json:"oldsouid"`
 }
 
 // TableName sets the default table name
