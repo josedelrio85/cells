@@ -12,3 +12,8 @@ type Creditea struct {
 	Tipocontrato       *string `json:"tipocontrato"`
 	Ingresosnetos      *string `json:"ingresosnetos"`
 }
+
+// TableName sets the default table name
+func (Creditea) TableName() string {
+	return "creditea"
+}
