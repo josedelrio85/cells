@@ -15,7 +15,6 @@ import (
 )
 
 func main() {
-
 	port := GetSetting("DB_PORT")
 	portInt, err := strconv.ParseInt(port, 10, 64)
 	if err != nil {
@@ -32,6 +31,7 @@ func main() {
 		ParseTime: "True",
 		Loc:       "Local",
 	}
+
 	ch := leads.Handler{
 		Storer: database,
 	}
@@ -50,6 +50,10 @@ func main() {
 	}
 
 	if err := database.CreateTable(model.Microsoft{}); err != nil {
+		log.Fatalf("error creating the table. err: %s", err)
+	}
+
+	if err := database.CreateTable(model.Creditea{}); err != nil {
 		log.Fatalf("error creating the table. err: %s", err)
 	}
 
