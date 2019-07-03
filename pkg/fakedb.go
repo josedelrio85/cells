@@ -1,6 +1,10 @@
 package leads
 
-import "sync"
+import (
+	"sync"
+
+	"github.com/jinzhu/gorm"
+)
 
 // FakeDb is a struct used to test Db functionality with fake methods.
 type FakeDb struct {
@@ -14,6 +18,8 @@ type FakeDb struct {
 	UpdateCalls      int
 	InsertFunc       func(element interface{}) error
 	InsertCalls      int
+	InstanceFunc     func() *gorm.DB
+	InstanceCalls    int
 	sync.Mutex
 }
 
@@ -55,4 +61,12 @@ func (f *FakeDb) Insert(element interface{}) error {
 	defer f.Unlock()
 	f.InsertCalls++
 	return f.Insert(element)
+}
+
+// Instance is a method to test insert function
+func (f *FakeDb) Instance() *gorm.DB {
+	f.Lock()
+	defer f.Unlock()
+	f.InstanceCalls++
+	return f.Instance()
 }
