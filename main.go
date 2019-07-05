@@ -30,6 +30,7 @@ func main() {
 		ParseTime: "True",
 		Loc:       "Local",
 	}
+
 	ch := leads.Handler{
 		Storer: database,
 	}

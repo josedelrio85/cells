@@ -22,8 +22,8 @@ type Lead struct {
 	LeaTs              *time.Time `sql:"DEFAULT:current_timestamp" json:"-" `
 	LeaDestiny         *string    `json:"lea_destiny,omitempty"`
 	LeaCrmid           *string    `json:"-"`
-	SouID              int64      `json:"sou_id,omitempty"`
-	LeatypeID          int64      `json:"lea_type,omitempty"`
+	SouID              int64      `json:"sou_id"`
+	LeatypeID          int64      `json:"lea_type"`
 	UtmSource          *string    `json:"utm_source,omitempty"`
 	SubSource          *string    `json:"sub_source,omitempty"`
 	LeaPhone           *string    `json:"phone,omitempty"`
@@ -36,12 +36,18 @@ type Lead struct {
 	SouIDLeontel       int64      `sql:"-" json:"sou_id_leontel"`
 	LeatypeIDLeontel   int64      `sql:"-" json:"lea_type_leontel"`
 	LeatypeDescLeontel string     `sql:"-" json:"lea_type_desc_leontel"`
-	Gclid              *string    `json:"gclid"`
-	Domain             *string    `json:"domain"`
-	Observations       *string    `sql:"type:text" json:"observations"`
-	RcableExp          RcableExp  `json:"rcableexp"`
-	Microsoft          Microsoft  `json:"microsoft"`
-	Creditea           Creditea   `json:"creditea"`
+	Gclid              *string    `json:"gclid,omitempty"`
+	Domain             *string    `json:"domain,omitempty"`
+	Observations       *string    `sql:"type:text" json:"observations,omitempty"`
+	RcableExp          RcableExp  `json:"rcableexp,omitempty"`
+	Microsoft          Microsoft  `json:"microsoft,omitempty"`
+	Creditea           Creditea   `json:"creditea,omitempty"`
+}
+
+// TableName sets the default table name
+func (Lead) TableName() string {
+	// TODO change this name for lead or leads(?)+
+	return "leadnew"
 }
 
 // Decode reques's body into a Lead struct
@@ -66,10 +72,10 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		Dninie:    lead.LeaDNI,
 		// Wsid:      lead.LeaID,
 	}
-	// TODO actually we update lea_crmid field from webservice.leads table with the data
-	// TODO returned from Leontel, and in Leontel set the wsid field with the lea_id value from
-	// todo webservice insert. How to handle this situation? we have to make an update action
-	// todo in some point if we want to keep this functionality.
+	// TODO| actually we update lea_crmid field from webservice.leads table with the data
+	// TODO| returned from Leontel, and in Leontel set the wsid field with the lea_id value from
+	// TODO| webservice insert. How to handle this situation? we have to make an update action
+	// TODO| in some point if we want to keep this functionality.
 
 	switch souid := lead.SouID; souid {
 	case 1, 21, 22:
@@ -138,21 +144,20 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		// Sanal
 	case 25:
 		// Microsoft Mundo R
-	case 46:
-	case 49:
+	case 46, 49:
 		// Microsoft Hazelcambio + Recomendador
-		// leontel.Tipouso = fmt.Sprintf("%s %d", lead.LeaAux9, lead.SouID)
-
 		leontel.Tipoordenador = lead.Microsoft.Tipoordenador
 		leontel.Sector = lead.Microsoft.Sector
+		leontel.Tipouso = lead.Microsoft.Tipouso
+
 		leontel.Presupuesto = lead.Microsoft.Presupuesto
 		leontel.Rendimiento = lead.Microsoft.Rendimiento
 		leontel.Movilidad = lead.Microsoft.Movilidad
-		// leontel.Tipouso = lead.Microsoft.Tipo
 		leontel.Office365 = lead.Microsoft.Office365
 		leontel.Observaciones2 = lead.Observations
 
 		// Setear Microsoft Global
+		lead.Microsoft.Oldsouid = lead.SouID
 		lead.SouID = 52
 		lead.SouIDLeontel = 61
 		leontel.LeaSource = lead.SouIDLeontel
@@ -165,6 +170,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		// num_dispositivos_empresa: {$num_dispositivos_empresa}
 		// reparaciones_ultimo_ano: {$reparaciones_ultimo_ano}
 		// tiempo_arrancar_dispositivos: {$tiempo_arrancar_dispositivos}
+
 		args := []*string{
 			lead.Microsoft.Anosordenadoresmedia,
 			lead.Microsoft.SistemaOperativoInstalado,
@@ -177,12 +183,14 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		leontel.Observaciones2 = &observations
 
 		// Setear Microsoft Global
+		lead.Microsoft.Oldsouid = lead.SouID
 		lead.SouID = 52
 		lead.SouIDLeontel = 61
 		leontel.LeaSource = lead.SouIDLeontel
 	case 50:
 		// Microsoft Ofertas
 		// Setear Microsoft Global
+		lead.Microsoft.Oldsouid = lead.SouID
 		lead.SouID = 52
 		lead.SouIDLeontel = 61
 		leontel.LeaSource = lead.SouIDLeontel
@@ -221,6 +229,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		leontel.Observaciones2 = &observations
 
 		// Setear Microsoft Global
+		lead.Microsoft.Oldsouid = lead.SouID
 		lead.SouID = 52
 		lead.SouIDLeontel = 61
 		leontel.LeaSource = lead.SouIDLeontel
@@ -325,9 +334,11 @@ func concatPointerStrs(args ...*string) string {
 	var buffer bytes.Buffer
 	tam := len(args) - 1
 	for i, arg := range args {
-		buffer.WriteString(*arg)
-		if i < tam {
-			buffer.WriteString(" -- ")
+		if arg != nil {
+			buffer.WriteString(*arg)
+			if i < tam {
+				buffer.WriteString(" -- ")
+			}
 		}
 	}
 	return buffer.String()

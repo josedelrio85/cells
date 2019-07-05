@@ -1,7 +1,6 @@
 package leads
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -27,13 +26,28 @@ func (ch *Handler) HandleFunction() http.Handler {
 			return
 		}
 
-		// todo set lea_destiny value
+		if ch.Lead.SouID == 0 {
+			err := fmt.Errorf("Request does not contain sou_id value")
+			message := fmt.Sprintf("Error decoding lead => no sou_id!, Err: %v", err)
+			responseError(w, message, err)
+			return
+		}
 
+		if ch.Lead.LeatypeID == 0 {
+			ch.Lead.LeatypeID = 1
+		}
+
+		// TODO think about hibernated campaings, should reject them?
+
+		// TODO set lea_destiny value
 		if err := ch.Lead.GetLeontelValues(ch.Storer.Instance()); err != nil {
 			message := fmt.Sprintf("Error retrieving Leontel values, Err: %v", err)
 			responseError(w, message, err)
 			return
 		}
+
+		// todo delete this, for dev purposes only
+		ch.Lead.LeadToLeontel()
 
 		// todo delete this if when you want to test leontel insert
 		if false {
@@ -55,8 +69,9 @@ func (ch *Handler) HandleFunction() http.Handler {
 			return
 		}
 
-		fmt.Println(&ch.Lead)
-		json.NewEncoder(w).Encode(&ch.Lead)
+		// json.NewEncoder(w).Encode(&ch.Lead)
+		id := fmt.Sprintf("%d", ch.Lead.ID)
+		responseOk(w, id)
 	})
 }
 
