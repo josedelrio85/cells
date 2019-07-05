@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	model "github.com/bysidecar/api_ws/pkg/model"
+	model "github.com/bysidecar/leads/pkg/model"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -59,18 +59,18 @@ func TestHandlerFunction(t *testing.T) {
 
 	for _, test := range tests {
 		ch := Handler{}
-		ts := httptest.NewServer(ch.ch)
+		ts := httptest.NewServer(ch.HandleFunction())
 		defer ts.Close()
 
 		body, err := json.Marshal(test.Lead)
 		if err != nil {
-			t.Errorf("error marshaling test json: Err: %v", err)
+			t.Errorf("error marshalling test json: Err: %v", err)
 			return
 		}
 
 		req, err := http.NewRequest(test.TypeRequest, ts.URL, bytes.NewBuffer(body))
 		if err != nil {
-			t.Errorf("error createing the test Request: err %v", err)
+			t.Errorf("error creating the test Request: err %v", err)
 			return
 		}
 
@@ -81,6 +81,6 @@ func TestHandlerFunction(t *testing.T) {
 			return
 		}
 
-		assert.Equal(resp.StatusCode, test.StatusCode)
+		assert.Equal(test.StatusCode, resp.StatusCode)
 	}
 }
