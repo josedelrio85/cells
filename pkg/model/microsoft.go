@@ -13,7 +13,7 @@ type Microsoft struct {
 	Rendimiento   *string `json:"rendimiento"`
 	Movilidad     *string `json:"movilidad"`
 	Office365     *string `json:"office365"`
-	Tipouso				*string `json:"tipouso"`
+	Tipouso       *string `json:"tipouso"`
 	Observaciones *string `json:"observaciones"`
 
 	Producttype        *string `json:"producttype"`
@@ -36,8 +36,8 @@ type Microsoft struct {
 	ReparacionesUltimoAno       *string `json:"reparaciones_ultimo_ano"`
 	TiempoArrancarDispositivos  *string `json:"tiempo_arrancar_dispositivos"`
 
-	Index bool `json:"index"`
-	Oldsouid int64 `json:"oldsouid"`
+	Pageindex bool  `json:"index"`
+	Oldsouid  int64 `json:"oldsouid"`
 }
 
 // TableName sets the default table name
@@ -59,7 +59,7 @@ func (lead *Lead) beforeIncidence() (int64, int64) {
 	case "microsoftprofesional.es":
 		tipo = 2
 		souid = 50
-		if !lead.Microsoft.Index {
+		if !lead.Microsoft.Pageindex {
 			tipo = 3
 			souid = 51
 		}

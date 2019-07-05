@@ -6,11 +6,11 @@ import "github.com/jinzhu/gorm"
 type RcableExp struct {
 	gorm.Model
 
-	LeadID    uint    `sql:"column:lea_id"`
-	Location  *string `json:"location,omitempty"`
-	Answer    *string `json:"answer,omitempty"`
-	Values    *string `json:"values,omitempty"`
-	Coverture *string `json:"coverture,omitempty"`
+	LeadID     uint    `sql:"column:lea_id"`
+	Location   *string `json:"location,omitempty"`
+	Answer     *string `json:"answer,omitempty"`
+	Respvalues *string `json:"values,omitempty"`
+	Coverture  *string `json:"coverture,omitempty"`
 }
 
 // TableName sets the default table name

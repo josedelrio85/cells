@@ -244,7 +244,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		// TODO| must rename the fields that they send or map the values received
 	case 54:
 		// R Cable Expansion
-		args := []*string{lead.LeaName, lead.RcableExp.Values, lead.RcableExp.Location, lead.RcableExp.Answer}
+		args := []*string{lead.LeaName, lead.RcableExp.Respvalues, lead.RcableExp.Location, lead.RcableExp.Answer}
 		observations := concatPointerStrs(args...)
 		lead.Observations = &observations
 		leontel.Observaciones = &observations

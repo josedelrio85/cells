@@ -1,115 +1,115 @@
-CREATE TABLE `leadnew` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `lea_id` bigint(20) DEFAULT NULL,
-  `lea_ts` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `lea_destiny` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `lea_crmid` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `sou_id` bigint(20) DEFAULT NULL,
-  `leatype_id` bigint(20) DEFAULT NULL,
-  `utm_source` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `sub_source` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `lea_phone` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `lea_mail` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `lea_name` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `lea_url` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `lea_ip` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `is_leontel` tinyint(1) DEFAULT NULL,
-  `lea_dni` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `gclid` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `domain` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `observations` text COLLATE utf8_spanish_ci,
-  PRIMARY KEY (`id`),
-  KEY `idx_leadnew_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci
+CREATE TABLE leadnew (
+  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  created_at timestamp NULL DEFAULT NULL,
+  updated_at timestamp NULL DEFAULT NULL,
+  deleted_at timestamp NULL DEFAULT NULL,
+  lea_id bigint(20) DEFAULT NULL,
+  lea_ts timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  lea_destiny varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  lea_crmid varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  sou_id bigint(20) DEFAULT NULL,
+  leatype_id bigint(20) DEFAULT NULL,
+  utm_source varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  sub_source varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  lea_phone varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  lea_mail varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  lea_name varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  lea_url varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  lea_ip varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  is_leontel tinyint(1) DEFAULT NULL,
+  lea_dni varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  gclid varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  domain varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  observations text COLLATE utf8_spanish_ci,
+  PRIMARY KEY (id),
+  KEY idx_leadnew_deleted_at (deleted_at)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 
-CREATE TABLE `creditea` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `lea_id` int(10) unsigned DEFAULT NULL,
-  `cantidadsolicitada` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `motivo` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `tipocontrato` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `ingresosnetos` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idx_creditea_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci
+CREATE TABLE creditea (
+  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  created_at timestamp NULL DEFAULT NULL,
+  updated_at timestamp NULL DEFAULT NULL,
+  deleted_at timestamp NULL DEFAULT NULL,
+  lea_id int(10) unsigned DEFAULT NULL,
+  cantidadsolicitada varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  motivo varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  tipocontrato varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  ingresosnetos varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  PRIMARY KEY (id),
+  KEY idx_creditea_deleted_at (deleted_at)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-CREATE TABLE `rcableexp` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `lea_id` int(10) unsigned DEFAULT NULL,
-  `location` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `answer` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `values` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `coverture` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idx_rcableexp_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci
-
-
-CREATE TABLE `microsoft` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `lea_id` int(10) unsigned DEFAULT NULL,
-  `tipoordenador` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `sector` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `presupuesto` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `rendimiento` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `movilidad` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `office365` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `observaciones` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `producttype` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `productname` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `product_id` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `originalprice` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `price` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `brand` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `discountpercentage` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `discountcode` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `typeofprocessor` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `harddiskcapacity` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `graphics` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `wirelessinterface` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `anosordenadoresmedia` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `sistema_operativo_instalado` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `frecuencia_bloque_ordenadores` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `numero_dispositivos_empresa` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `reparaciones_ultimo_ano` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `tiempo_arrancar_dispositivos` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `index` tinyint(1) DEFAULT NULL,
-  `oldsouid` bigint(20) DEFAULT NULL,
-  `tipouso` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idx_microsoft_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci
+CREATE TABLE rcableexp (
+  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  created_at timestamp NULL DEFAULT NULL,
+  updated_at timestamp NULL DEFAULT NULL,
+  deleted_at timestamp NULL DEFAULT NULL,
+  lea_id int(10) unsigned DEFAULT NULL,
+  location varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  answer varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  respvalues varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  coverture varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  PRIMARY KEY (id),
+  KEY idx_rcableexp_deleted_at (deleted_at)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 
-
-CREATE TABLE `sources` (
-  `sou_id` int(3) NOT NULL AUTO_INCREMENT,
-  `sou_description` varchar(30) CHARACTER SET utf8 COLLATE utf8_spanish_ci DEFAULT NULL,
-  `sou_idcrm` int(3) DEFAULT NULL,
-  PRIMARY KEY (`sou_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci ROW_FORMAT=COMPACT
+CREATE TABLE microsoft (
+  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  created_at timestamp NULL DEFAULT NULL,
+  updated_at timestamp NULL DEFAULT NULL,
+  deleted_at timestamp NULL DEFAULT NULL,
+  lea_id int(10) unsigned DEFAULT NULL,
+  tipoordenador varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  sector varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  presupuesto varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  rendimiento varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  movilidad varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  office365 varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  observaciones varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  producttype varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  productname varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  product_id varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  originalprice varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  price varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  brand varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  discountpercentage varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  discountcode varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  typeofprocessor varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  harddiskcapacity varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  graphics varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  wirelessinterface varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  anosordenadoresmedia varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  sistema_operativo_instalado varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  frecuencia_bloque_ordenadores varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  numero_dispositivos_empresa varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  reparaciones_ultimo_ano varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  tiempo_arrancar_dispositivos varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  pageindex tinyint(1) DEFAULT NULL,
+  oldsouid bigint(20) DEFAULT NULL,
+  tipouso varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  PRIMARY KEY (id),
+  KEY idx_microsoft_deleted_at (deleted_at)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 
 
-CREATE TABLE `leadtypes` (
-  `leatype_id` int(3) NOT NULL AUTO_INCREMENT,
-  `leatype_description` varchar(50) CHARACTER SET utf8 COLLATE utf8_spanish_ci DEFAULT NULL,
-  `leatype_idcrm` int(3) DEFAULT NULL,
-  PRIMARY KEY (`leatype_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci ROW_FORMAT=COMPACT
+CREATE TABLE sources (
+  sou_id int(3) NOT NULL AUTO_INCREMENT,
+  sou_description varchar(50) CHARACTER SET utf8 COLLATE utf8_spanish_ci DEFAULT NULL,
+  sou_idcrm int(3) DEFAULT NULL,
+  PRIMARY KEY (sou_id)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci ROW_FORMAT=COMPACT;
+
+
+
+CREATE TABLE leadtypes (
+  leatype_id int(3) NOT NULL AUTO_INCREMENT,
+  leatype_description varchar(50) CHARACTER SET utf8 COLLATE utf8_spanish_ci DEFAULT NULL,
+  leatype_idcrm int(3) DEFAULT NULL,
+  PRIMARY KEY (leatype_id)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci ROW_FORMAT=COMPACT;
 
 
 
