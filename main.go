@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	leads "github.com/bysidecar/leads/pkg"
+	hooks "github.com/bysidecar/leads/pkg/hooks"
 
 	"github.com/rs/cors"
 
@@ -33,6 +34,9 @@ func main() {
 
 	ch := leads.Handler{
 		Storer: database,
+		ActiveHooks: []hooks.Hookable{
+			hooks.Asnef{},
+		},
 	}
 
 	if err := database.Open(); err != nil {
