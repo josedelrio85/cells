@@ -299,9 +299,9 @@ func TestLeadToLeontel(t *testing.T) {
 				SouID:     54,
 				LeatypeID: 1,
 				RcableExp: model.RcableExp{
-					Values:   &t1,
-					Location: &t2,
-					Answer:   &t3,
+					Respvalues: &t1,
+					Location:   &t2,
+					Answer:     &t3,
 				},
 			},
 			ExpectedResult: model.LeadLeontel{

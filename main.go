@@ -49,6 +49,8 @@ func main() {
 	}
 
 	router := mux.NewRouter()
+
+	// TODO CHANGE /store/leads/ => /lead/store/
 	router.PathPrefix("/store/leads/").Handler(ch.HandleFunction()).Methods(http.MethodPost)
 	log.Fatal(http.ListenAndServe(":5000", cors.Default().Handler(router)))
 }
