@@ -60,6 +60,11 @@ func (ch *Handler) HandleFunction() http.Handler {
 			return
 		}
 
+		// TODO think about passport relation with lead. New properties on Lead entity?
+		passport := Passport{}
+		passport.Get(ch.Lead)
+		fmt.Println(passport)
+
 		// todo delete this, for dev purposes only
 		ch.Lead.LeadToLeontel()
 
