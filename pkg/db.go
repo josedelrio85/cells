@@ -82,7 +82,7 @@ func (d *Database) AutoMigrate() error {
 
 // Insert generates a new row
 func (d *Database) Insert(element interface{}) error {
-	if result := d.Debug().Create(element); result.Error != nil {
+	if result := d.Create(element); result.Error != nil {
 		return fmt.Errorf("Error Insert element: %#v", result.Error)
 	}
 	return nil
@@ -95,7 +95,7 @@ func (d *Database) Update(element interface{}, wCond string, wFields []string) e
 	for _, z := range wFields {
 		wFieldsArr = append(wFieldsArr, z)
 	}
-	d.Debug().Model(&element).Where(wCond, true).Update(wFieldsArr...)
+	d.Model(&element).Where(wCond, true).Update(wFieldsArr...)
 
 	//.Model(&user).Where("active = ?", true).Update("name", "hello")
 	// UPDATE users SET name='hello', updated_at='2013-11-17 21:34:10' WHERE id=111 AND active=true;
