@@ -10,6 +10,7 @@ import (
 type HookResponse struct {
 	Err        error
 	StatusCode int
+	Result     bool
 }
 
 // Hookable defines the interface to perform Hook actions on leads. A Hook is a
@@ -20,5 +21,5 @@ type HookResponse struct {
 // should be triggered for the given Lead.
 type Hookable interface {
 	Active(model.Lead) bool
-	Perform(model.Lead) HookResponse
+	Perform(*model.Lead) HookResponse
 }
