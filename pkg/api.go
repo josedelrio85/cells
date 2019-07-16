@@ -40,11 +40,12 @@ func (ch *Handler) HandleFunction() http.Handler {
 		}
 
 		for _, hook := range ch.ActiveHooks {
+
 			if !hook.Active(ch.Lead) {
 				continue
 			}
 
-			hookResponse := hook.Perform(ch.Lead)
+			hookResponse := hook.Perform(&ch.Lead)
 
 			if hookResponse.Err != nil {
 				responseError(w, hookResponse.Err.Error(), hookResponse.Err)
@@ -63,7 +64,6 @@ func (ch *Handler) HandleFunction() http.Handler {
 		// TODO think about passport relation with lead. New properties on Lead entity?
 		passport := Passport{}
 		passport.Get(ch.Lead)
-		fmt.Println(passport)
 
 		// todo delete this, for dev purposes only
 		ch.Lead.LeadToLeontel()
