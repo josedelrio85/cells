@@ -36,6 +36,7 @@ func main() {
 		Storer: database,
 		ActiveHooks: []hooks.Hookable{
 			hooks.Asnef{},
+			hooks.Ontime{},
 		},
 	}
 
