@@ -5,15 +5,17 @@ import (
 	"net/http"
 	"strconv"
 
+	hooks "github.com/bysidecar/leads/pkg/hooks"
 	model "github.com/bysidecar/leads/pkg/model"
 )
 
 // Handler is a struct created to use its ch property as element that implements
 // http.Handler.Neededed to call HandleFunction as param in router Handler function.
 type Handler struct {
-	ch     http.Handler
-	Storer Storer
-	Lead   model.Lead
+	ch          http.Handler
+	Storer      Storer
+	Lead        model.Lead
+	ActiveHooks []hooks.Hookable
 }
 
 // HandleFunction is a function used to manage all received requests.
@@ -35,6 +37,18 @@ func (ch *Handler) HandleFunction() http.Handler {
 
 		if ch.Lead.LeatypeID == 0 {
 			ch.Lead.LeatypeID = 1
+		}
+
+		for _, hook := range ch.ActiveHooks {
+			if !hook.Active(ch.Lead) {
+				continue
+			}
+
+			hookResponse := hook.Perform(ch.Lead)
+
+			if hookResponse.Err != nil {
+				responseError(w, hookResponse.Err.Error(), hookResponse.Err)
+			}
 		}
 
 		// TODO think about hibernated campaings, should reject them?
