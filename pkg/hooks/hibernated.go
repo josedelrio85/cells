@@ -62,7 +62,7 @@ func (h Hibernated) Active(lead model.Lead) bool {
 // Perform returns the result of hibernated campaign validation
 // lead: The lead to check the hibernated campaign.
 // Returns a HookReponse with the hibernated campaign check result
-func (h Hibernated) Perform(lead model.Lead) HookResponse {
+func (h Hibernated) Perform(lead *model.Lead) HookResponse {
 	err := fmt.Errorf("An hibernated campaign was detected! => %d", lead.SouID)
 
 	return HookResponse{
