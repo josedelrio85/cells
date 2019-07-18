@@ -22,40 +22,40 @@ func TestActive(t *testing.T) {
 		{
 			Description: "when Asnef successfully is activated",
 			Lead: model.Lead{
-				SouID:     9,
-				IsLeontel: true,
+				SouID:         9,
+				IsSmartCenter: true,
 			},
 			Active: true,
 		},
 		{
 			Description: "when Asnef successfully is activated",
 			Lead: model.Lead{
-				SouID:     58,
-				IsLeontel: true,
+				SouID:         58,
+				IsSmartCenter: true,
 			},
 			Active: true,
 		},
 		{
 			Description: "when Asnef is not activated",
 			Lead: model.Lead{
-				SouID:     99,
-				IsLeontel: true,
+				SouID:         99,
+				IsSmartCenter: true,
 			},
 			Active: false,
 		},
 		{
 			Description: "when Asnef is not activated",
 			Lead: model.Lead{
-				SouID:     0,
-				IsLeontel: true,
+				SouID:         0,
+				IsSmartCenter: true,
 			},
 			Active: false,
 		},
 		{
-			Description: "when isleontel is false",
+			Description: "when IsSmartCenter is false",
 			Lead: model.Lead{
-				SouID:     9,
-				IsLeontel: false,
+				SouID:         9,
+				IsSmartCenter: false,
 			},
 			Active: false,
 		},
@@ -92,10 +92,10 @@ func TestPerform(t *testing.T) {
 		{
 			Description: "when Asnef successfully checks and gives ok to the lead",
 			Lead: model.Lead{
-				SouID:     9,
-				LeaPhone:  &phone,
-				LeaDNI:    &dni,
-				IsLeontel: true,
+				SouID:         9,
+				LeaPhone:      &phone,
+				LeaDNI:        &dni,
+				IsSmartCenter: true,
 				Creditea: model.Creditea{
 					Motivo: nil,
 				},
@@ -109,10 +109,10 @@ func TestPerform(t *testing.T) {
 		{
 			Description: "when Asnef/Already client checks were clicked. Client activates the limitation",
 			Lead: model.Lead{
-				SouID:     9,
-				LeaPhone:  &phone,
-				LeaDNI:    &dni,
-				IsLeontel: true,
+				SouID:         9,
+				LeaPhone:      &phone,
+				LeaDNI:        &dni,
+				IsSmartCenter: true,
 				Creditea: model.Creditea{
 					Cantidadsolicitada: &cantidad,
 					Motivo:             &motivo,
@@ -127,10 +127,10 @@ func TestPerform(t *testing.T) {
 		{
 			Description: "when Asnef validations is not passed",
 			Lead: model.Lead{
-				SouID:     9,
-				LeaPhone:  &candidates[0].Telefono,
-				LeaDNI:    &candidates[0].DNI,
-				IsLeontel: false,
+				SouID:         9,
+				LeaPhone:      &candidates[0].Telefono,
+				LeaDNI:        &candidates[0].DNI,
+				IsSmartCenter: false,
 				Creditea: model.Creditea{
 					Motivo: nil,
 				},
