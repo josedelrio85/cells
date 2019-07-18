@@ -23,6 +23,7 @@ func (ch *Handler) HandleFunction() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		ch.Lead = model.Lead{}
+
 		if err := ch.Lead.Decode(r.Body); err != nil {
 			message := fmt.Sprintf("Error decoding lead, Err: %v", err)
 			responseError(w, message, err)
@@ -89,7 +90,6 @@ func (ch *Handler) HandleFunction() http.Handler {
 			ch.Storer.Update(&ch.Lead, cond, fields)
 		}
 
-		// json.NewEncoder(w).Encode(&ch.Lead)
 		id := fmt.Sprintf("%d", ch.Lead.ID)
 		responseOk(w, id)
 	})
