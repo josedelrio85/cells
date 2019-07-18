@@ -3,12 +3,13 @@ CREATE TABLE leadnew (
   created_at timestamp NULL DEFAULT NULL,
   updated_at timestamp NULL DEFAULT NULL,
   deleted_at timestamp NULL DEFAULT NULL,
-  lea_id bigint(20) DEFAULT NULL,
+  legacy_id bigint(20) DEFAULT NULL,
   lea_ts timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  lea_destiny varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  lea_crmid varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  lea_smartcenter_id varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   sou_id bigint(20) DEFAULT NULL,
   leatype_id bigint(20) DEFAULT NULL,
+  passport_id varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  passport_id_grp varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   utm_source varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   sub_source varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   lea_phone varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
@@ -16,7 +17,7 @@ CREATE TABLE leadnew (
   lea_name varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   lea_url varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   lea_ip varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  is_leontel tinyint(1) DEFAULT NULL,
+  is_smartcenter tinyint(1) DEFAULT NULL,
   lea_dni varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   gclid varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   domain varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
@@ -36,6 +37,8 @@ CREATE TABLE creditea (
   motivo varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   tipocontrato varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   ingresosnetos varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  validacionlp varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  fuerahorario varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   PRIMARY KEY (id),
   KEY idx_creditea_deleted_at (deleted_at)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
@@ -174,8 +177,7 @@ insert into sources (sou_id, sou_description, sou_idcrm) values (57,'SANITAS',66
 insert into sources (sou_id, sou_description, sou_idcrm) values (58,'CREDITEA HM CORTO',67);
 insert into sources (sou_id, sou_description, sou_idcrm) values (59,'SANITAS EMISION',68);
 insert into sources (sou_id, sou_description, sou_idcrm) values (60,'ABANCA EMISIÓN',69);
-
-
+insert into sources (sou_id, sou_description, sou_idcrm) values (61,'CREDITEA BBDD ADSALSA',70);
 
 
 
