@@ -41,6 +41,14 @@ func (ch *Handler) HandleFunction() http.Handler {
 			ch.Lead.LeatypeID = 1
 		}
 
+		// TODO think about hibernated campaings, should reject them?
+
+		if err := ch.Lead.GetLeontelValues(ch.Storer.Instance()); err != nil {
+			message := fmt.Sprintf("Error retrieving Leontel values, Err: %v", err)
+			responseError(w, message, err)
+			return
+		}
+
 		for _, hook := range ch.ActiveHooks {
 
 			if !hook.Active(ch.Lead) {
@@ -57,14 +65,6 @@ func (ch *Handler) HandleFunction() http.Handler {
 				message := "An Unprocessable Entity was detected"
 				sendAlarm(message, err)
 			}
-		}
-
-		// TODO think about hibernated campaings, should reject them?
-
-		if err := ch.Lead.GetLeontelValues(ch.Storer.Instance()); err != nil {
-			message := fmt.Sprintf("Error retrieving Leontel values, Err: %v", err)
-			responseError(w, message, err)
-			return
 		}
 
 		if err := ch.Lead.GetPassport(); err != nil {
