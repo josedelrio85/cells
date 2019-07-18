@@ -41,8 +41,6 @@ func (ch *Handler) HandleFunction() http.Handler {
 			ch.Lead.LeatypeID = 1
 		}
 
-		// TODO think about hibernated campaings, should reject them?
-
 		if err := ch.Lead.GetLeontelValues(ch.Storer.Instance()); err != nil {
 			message := fmt.Sprintf("Error retrieving Leontel values, Err: %v", err)
 			responseError(w, message, err)
