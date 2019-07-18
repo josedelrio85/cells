@@ -54,7 +54,7 @@ func (a Ontime) Perform(lead *model.Lead) HookResponse {
 
 	var err error
 	inputholiday := InputDataOntime{
-		SouID: lead.SouID,
+		SouID: lead.SouIDLeontel,
 		Day:   time.Now().Format("2006-01-02"),
 	}
 
@@ -70,7 +70,7 @@ func (a Ontime) Perform(lead *model.Lead) HookResponse {
 	day := int(time.Now().Weekday())
 
 	inputontime := InputDataOntime{
-		SouID: lead.SouID,
+		SouID: lead.SouIDLeontel,
 		Day:   strconv.Itoa(day),
 		Hour:  hour,
 	}
