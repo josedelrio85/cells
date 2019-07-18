@@ -55,13 +55,14 @@ func (ch *Handler) HandleFunction() http.Handler {
 
 			hookResponse := hook.Perform(&ch.Lead)
 
-			if hookResponse.Err != nil {
-				responseError(w, hookResponse.Err.Error(), hookResponse.Err)
-			}
-
 			if hookResponse.StatusCode == http.StatusUnprocessableEntity {
 				message := "An Unprocessable Entity was detected"
-				sendAlarm(message, hookResponse.Err)
+				sendAlarm(message, http.StatusUnprocessableEntity, hookResponse.Err)
+				continue
+			}
+
+			if hookResponse.Err != nil {
+				responseError(w, hookResponse.Err.Error(), hookResponse.Err)
 			}
 		}
 
