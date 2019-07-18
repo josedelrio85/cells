@@ -53,7 +53,7 @@ func (h Hibernated) Active(lead model.Lead) bool {
 	// 4, 12, 16,
 	h = hibernated
 
-	if h.List[lead.SouID] {
+	if h.List[lead.SouID] || lead.SouIDLeontel == 0 {
 		return true
 	}
 	return false
