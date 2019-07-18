@@ -351,14 +351,14 @@ func TestGetLeontelValues(t *testing.T) {
 			},
 		},
 		{
-			Description: "EVO BANCO 3 => 4 | INACTIVIDAD 2 => 6",
+			Description: "EVO BANCO 3 => 4 | INACTIVIDAD 2 => 3",
 			Lead: model.Lead{
 				SouID:     3,
 				LeatypeID: 2,
 			},
 			ExpectedResult: model.Lead{
 				SouIDLeontel:     4,
-				LeatypeIDLeontel: 6,
+				LeatypeIDLeontel: 3,
 			},
 		},
 		{
