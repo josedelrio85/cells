@@ -37,13 +37,7 @@ func response(w http.ResponseWriter, ra ResponseAPI) {
 
 // responseError generates log, alarm and response when an error occurs
 func responseError(w http.ResponseWriter, message string, err error) {
-	fancyHandleError(err)
-
-	alarm := voalarm.NewClient("")
-	_, err = alarm.SendAlarm(voalarm.Acknowledgement, err)
-	if err != nil {
-		fancyHandleError(err)
-	}
+	sendAlarm(message, err)
 
 	ra := ResponseAPI{
 		Code:    http.StatusInternalServerError,
@@ -73,6 +67,18 @@ func responseLeontel(w http.ResponseWriter, resp *model.LeontelResp) {
 	response(w, ra)
 }
 
+// responseUnprocessable calls response function to inform user of something does not work 100% OK
+func responseUnprocessable(w http.ResponseWriter, message string, err error) {
+	sendAlarm(message, err)
+
+	ra := ResponseAPI{
+		Code:    http.StatusUnprocessableEntity,
+		Message: message,
+		Success: true,
+	}
+	response(w, ra)
+}
+
 // fancyHandleError logs the error and indicates the line and function
 func fancyHandleError(err error) (b bool) {
 	if err != nil {
@@ -82,4 +88,15 @@ func fancyHandleError(err error) (b bool) {
 		b = true
 	}
 	return
+}
+
+// sendAlarm to VictorOps plattform and format the error for more info
+func sendAlarm(message string, err error) {
+	fancyHandleError(err)
+
+	alarm := voalarm.NewClient("")
+	_, err = alarm.SendAlarm(voalarm.Acknowledgement, err)
+	if err != nil {
+		fancyHandleError(err)
+	}
 }
