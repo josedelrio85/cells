@@ -8,7 +8,6 @@ import (
 	"strconv"
 
 	model "github.com/bysidecar/leads/pkg/model"
-
 	"github.com/bysidecar/voalarm"
 )
 
@@ -94,6 +93,7 @@ func fancyHandleError(err error) (b bool) {
 func sendAlarm(message string, err error) {
 	fancyHandleError(err)
 
+	// TODO need to add another param into SendAlarm method ("leads") but first a vendorize process is needed
 	alarm := voalarm.NewClient("")
 	_, err = alarm.SendAlarm(voalarm.Acknowledgement, err)
 	if err != nil {
