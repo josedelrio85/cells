@@ -59,7 +59,7 @@ func (d *Database) Open() error {
 
 // Close Database.DB instance
 func (d *Database) Close() {
-	d.Close()
+	d.DB.Close()
 }
 
 // CreateTable automatically migrate your schema, to keep your schema update to date.
