@@ -11,6 +11,8 @@ type Creditea struct {
 	Motivo             *string `json:"motivo"`
 	Tipocontrato       *string `json:"tipocontrato,omitempty"`
 	Ingresosnetos      *string `json:"ingresosnetos,omitempty"`
+	Validacionlp       *string `json:"validacionlp,omitempty"`
+	Fuerahorario       *string `json:"fuerahorario,omitempty"`
 }
 
 // TableName sets the default table name
