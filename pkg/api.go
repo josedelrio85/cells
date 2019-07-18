@@ -78,8 +78,10 @@ func (ch *Handler) HandleFunction() http.Handler {
 			return
 		}
 
-		if false {
-			// if ch.Lead.IsSmartCenter
+		// TODO delete this line in production or if you want to send lead to Leontel
+		ch.Lead.IsSmartCenter = false
+
+		if ch.Lead.IsSmartCenter
 			leonresp, err := ch.Lead.SendLeadToLeontel()
 			if err != nil {
 				message := fmt.Sprintf("Error sending lead to SmartCenter, Err: %v", err)
