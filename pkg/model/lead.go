@@ -34,6 +34,7 @@ type Lead struct {
 	LeaIP              *string    `json:"ip,omitempty"`
 	IsLeontel          bool       `json:"leontel,omitempty"`
 	SouIDLeontel       int64      `sql:"-" json:"sou_id_leontel"`
+	SouDescLeontel     string     `sql:"-" json:"sou_desc_leontel"`
 	LeatypeIDLeontel   int64      `sql:"-" json:"lea_type_leontel"`
 	LeatypeDescLeontel string     `sql:"-" json:"lea_type_desc_leontel"`
 	Gclid              *string    `json:"gclid,omitempty"`
@@ -301,6 +302,7 @@ func (lead *Lead) GetLeontelValues(db *gorm.DB) error {
 		return fmt.Errorf("error retrieving LeatypeIDLeontel value: %#v", result.Error)
 	}
 	lead.SouIDLeontel = source.SouIdcrm
+	lead.SouDescLeontel = source.SouDescription
 	lead.LeatypeIDLeontel = leatype.LeatypeIdcrm
 	lead.LeatypeDescLeontel = leatype.LeatypeDescription
 	return nil
