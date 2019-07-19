@@ -13,9 +13,6 @@ type Creditea struct {
 	Fuerahorario       *string `json:"fuerahorario,omitempty"`
 	Asnef              bool    `json:"asnef"`
 	Yacliente          bool    `json:"yacliente"`
-
-	// Validacionlp *string `json:"validacionlp,omitempty"`
-	// Motivo       *string `json:"motivo"`
 }
 
 // TableName sets the default table name
