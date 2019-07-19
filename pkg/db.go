@@ -77,6 +77,10 @@ func (d *Database) AutoMigrate() error {
 		return err
 	}
 
+	if err := d.DB.AutoMigrate(model.Creditea{}).Error; err != nil {
+		return err
+	}
+
 	return nil
 }
 
