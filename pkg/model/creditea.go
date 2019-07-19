@@ -7,10 +7,10 @@ type Creditea struct {
 	gorm.Model
 
 	LeadID             uint    `sql:"column:lea_id"`
-	Cantidadsolicitada *string `json:"cantidadsolicitada"`
+	Cantidadsolicitada *string `json:"cantidadsolicitada,omitempty"`
 	Motivo             *string `json:"motivo"`
-	Tipocontrato       *string `json:"tipocontrato"`
-	Ingresosnetos      *string `json:"ingresosnetos"`
+	Tipocontrato       *string `json:"tipocontrato,omitempty"`
+	Ingresosnetos      *string `json:"ingresosnetos,omitempty"`
 }
 
 // TableName sets the default table name
