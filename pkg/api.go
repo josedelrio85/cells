@@ -41,6 +41,12 @@ func (ch *Handler) HandleFunction() http.Handler {
 			ch.Lead.LeatypeID = 1
 		}
 
+		if err := ch.Lead.GetLeontelValues(ch.Storer.Instance()); err != nil {
+			message := fmt.Sprintf("Error retrieving Leontel values, Err: %v", err)
+			responseError(w, message, err)
+			return
+		}
+
 		for _, hook := range ch.ActiveHooks {
 
 			if !hook.Active(ch.Lead) {
@@ -48,18 +54,15 @@ func (ch *Handler) HandleFunction() http.Handler {
 			}
 
 			hookResponse := hook.Perform(&ch.Lead)
+			if hookResponse.StatusCode == http.StatusUnprocessableEntity {
+				message := "An Unprocessable Entity was detected"
+				sendAlarm(message, http.StatusUnprocessableEntity, hookResponse.Err)
+				continue
+			}
 
 			if hookResponse.Err != nil {
 				responseError(w, hookResponse.Err.Error(), hookResponse.Err)
 			}
-		}
-
-		// TODO think about hibernated campaings, should reject them?
-
-		if err := ch.Lead.GetLeontelValues(ch.Storer.Instance()); err != nil {
-			message := fmt.Sprintf("Error retrieving Leontel values, Err: %v", err)
-			responseError(w, message, err)
-			return
 		}
 
 		if err := ch.Lead.GetPassport(); err != nil {
@@ -74,12 +77,14 @@ func (ch *Handler) HandleFunction() http.Handler {
 			return
 		}
 
-		if false {
-			// if ch.Lead.IsSmartCenter
+    // TODO delete this line in production or if you want to send lead to Leontel
+		ch.Lead.IsSmartCenter = false
+
+		if ch.Lead.IsSmartCenter {
 			leonresp, err := ch.Lead.SendLeadToLeontel()
 			if err != nil {
 				message := fmt.Sprintf("Error sending lead to SmartCenter, Err: %v", err)
-				// TODO should break the flow?
+				// TODO should break the flow? Maybe pass some info to responseOK method and handle the response in client
 				responseUnprocessable(w, message, err)
 			}
 			leontelID := strconv.FormatInt(leonresp.ID, 10)

@@ -3,6 +3,7 @@ package leads
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
@@ -380,6 +381,73 @@ func TestGetLeontelValues(t *testing.T) {
 
 		assert.Equal(test.ExpectedResult.SouIDLeontel, test.Lead.SouIDLeontel)
 		assert.Equal(test.ExpectedResult.LeatypeIDLeontel, test.Lead.LeatypeIDLeontel)
+	}
+}
+
+type LeontelRespTest struct {
+	Success bool  `json:"success"`
+	ID      int64 `json:"id"`
+}
+
+func TestSendLeadToLeontel(t *testing.T) {
+	assert := assert.New(t)
+
+	t3 := "c"
+	t4 := "D"
+	t5 := "000000000"
+	t6 := "99997896Z"
+
+	database := helperDb()
+
+	tests := []struct {
+		Description    string
+		Lead           model.Lead
+		ExpectedResult LeontelRespTest
+		Storer         Storer
+	}{
+		{
+			Description: "When send a valid lead to Leontel",
+			Lead: model.Lead{
+				SouID:            15,
+				SouIDLeontel:     23,
+				LeatypeID:        1,
+				LeatypeIDLeontel: 2,
+				LeaURL:           &t3,
+				LeaIP:            &t4,
+				LeaPhone:         &t5,
+				LeaDNI:           &t6,
+			},
+			ExpectedResult: LeontelRespTest{
+				Success: true,
+			},
+			Storer: &database,
+		},
+	}
+
+	for _, test := range tests {
+
+		if test.Storer != nil {
+			err := test.Storer.Open()
+			defer test.Storer.Close()
+			assert.NoError(err)
+		}
+
+		result, err := test.Lead.SendLeadToLeontel()
+
+		leontelID := strconv.FormatInt(result.ID, 10)
+		test.Lead.LeaSmartcenterID = &leontelID
+
+		test.Storer.Insert(&test.Lead)
+
+		cond := fmt.Sprintf("ID=%d", test.Lead.ID)
+		fields := []string{"LeaSmartcenterID"}
+		test.Storer.Update(&test.Lead, cond, fields)
+
+		assert.NoError(err)
+		assert.Equal(test.ExpectedResult.Success, result.Success)
+		assert.NotNil(test.Lead.LeaSmartcenterID)
+
+		test.Storer.Instance().Delete(test.Lead)
 	}
 }
 

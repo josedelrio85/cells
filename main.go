@@ -37,6 +37,7 @@ func main() {
 		ActiveHooks: []hooks.Hookable{
 			hooks.Asnef{},
 			hooks.Ontime{},
+			hooks.Hibernated{},
 		},
 	}
 

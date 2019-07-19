@@ -17,7 +17,7 @@ CREATE TABLE leadnew (
   lea_name varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   lea_url varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   lea_ip varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  is_smartcenter tinyint(1) DEFAULT NULL,
+  is_smart_center tinyint(1) DEFAULT NULL,
   lea_dni varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   gclid varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   domain varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,

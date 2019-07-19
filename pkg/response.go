@@ -8,7 +8,6 @@ import (
 	"strconv"
 
 	model "github.com/bysidecar/leads/pkg/model"
-
 	"github.com/bysidecar/voalarm"
 )
 
@@ -37,7 +36,7 @@ func response(w http.ResponseWriter, ra ResponseAPI) {
 
 // responseError generates log, alarm and response when an error occurs
 func responseError(w http.ResponseWriter, message string, err error) {
-	sendAlarm(message, err)
+	sendAlarm(message, http.StatusInternalServerError, err)
 
 	ra := ResponseAPI{
 		Code:    http.StatusInternalServerError,
@@ -69,7 +68,7 @@ func responseLeontel(w http.ResponseWriter, resp *model.LeontelResp) {
 
 // responseUnprocessable calls response function to inform user of something does not work 100% OK
 func responseUnprocessable(w http.ResponseWriter, message string, err error) {
-	sendAlarm(message, err)
+	sendAlarm(message, http.StatusUnprocessableEntity, err)
 
 	ra := ResponseAPI{
 		Code:    http.StatusUnprocessableEntity,
@@ -91,11 +90,21 @@ func fancyHandleError(err error) (b bool) {
 }
 
 // sendAlarm to VictorOps plattform and format the error for more info
-func sendAlarm(message string, err error) {
+func sendAlarm(message string, status int, err error) {
 	fancyHandleError(err)
 
+	mstype := voalarm.Acknowledgement
+	switch status {
+	case http.StatusInternalServerError:
+		mstype = voalarm.Critical
+	case http.StatusUnprocessableEntity:
+		mstype = voalarm.Info
+	}
+
+	// TODO need to add another param into SendAlarm method ("leads") but first a vendorize process is needed
 	alarm := voalarm.NewClient("")
-	_, err = alarm.SendAlarm(voalarm.Acknowledgement, err)
+	// _, err = alarm.SendAlarm(message, mstype, err)
+	_, err = alarm.SendAlarm(mstype, err)
 	if err != nil {
 		fancyHandleError(err)
 	}
