@@ -36,7 +36,7 @@ type InputData struct {
 //
 // Returns true if the Asnef Hook gets activated.
 func (a Asnef) Active(lead model.Lead) bool {
-	if lead.IsLeontel {
+	if lead.IsSmartCenter {
 		switch lead.SouID {
 		case 9:
 			return true
@@ -58,7 +58,7 @@ func (a Asnef) Perform(lead *model.Lead) HookResponse {
 	var statuscode int
 
 	if lead.Creditea.Motivo != nil {
-		lead.IsLeontel = false
+		lead.IsSmartCenter = false
 		return HookResponse{
 			StatusCode: http.StatusOK,
 			Err:        nil,
@@ -100,7 +100,7 @@ func (a Asnef) Perform(lead *model.Lead) HookResponse {
 	statuscode = http.StatusOK
 
 	if a.Result {
-		lead.IsLeontel = false
+		lead.IsSmartCenter = false
 		motivo := "Asnef/Ya cliente positivo"
 		lead.Creditea.Motivo = &motivo
 	}

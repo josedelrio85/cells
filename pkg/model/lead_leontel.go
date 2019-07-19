@@ -26,7 +26,7 @@ type LeadLeontel struct {
 	Observaciones            *string    `json:"observaciones,omitempty"`
 	URL                      *string    `json:"url,omitempty"`
 	Asnef                    *string    `json:"asnef,omitempty"`
-	Wsid                     int64      `json:"wsid,omitempty"`
+	Wsid                     uint       `json:"wsid,omitempty"`
 	IP                       *string    `json:"ip,omitempty"`
 	Email                    *string    `json:"Email,omitempty"`
 	Observaciones2           *string    `json:"observaciones2,omitempty"`

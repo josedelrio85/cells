@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net"
 	"net/http"
 	"os"
@@ -18,10 +19,11 @@ import (
 // Lead struct represents the fields of the leads table
 type Lead struct {
 	gorm.Model
-	LeaID              int64      `json:"-"`
+	LegacyID           int64      `json:"-"`
 	LeaTs              *time.Time `sql:"DEFAULT:current_timestamp" json:"-" `
-	LeaDestiny         *string    `json:"lea_destiny,omitempty"`
-	LeaCrmid           *string    `json:"-"`
+	LeaSmartcenterID   *string    `json:"-"`
+	PassportID         string     `json:"passport_id"`
+	PassportIDGrp      string     `json:"passport_id_group"`
 	SouID              int64      `json:"sou_id"`
 	LeatypeID          int64      `json:"lea_type"`
 	UtmSource          *string    `json:"utm_source,omitempty"`
@@ -32,7 +34,7 @@ type Lead struct {
 	LeaDNI             *string    `json:"dni,omitempty"`
 	LeaURL             *string    `json:"url,omitempty"`
 	LeaIP              *string    `json:"ip,omitempty"`
-	IsLeontel          bool       `json:"leontel,omitempty"`
+	IsSmartCenter      bool       `json:"smartcenter,omitempty"`
 	SouIDLeontel       int64      `sql:"-" json:"sou_id_leontel"`
 	SouDescLeontel     string     `sql:"-" json:"sou_desc_leontel"`
 	LeatypeIDLeontel   int64      `sql:"-" json:"lea_type_leontel"`
@@ -47,7 +49,7 @@ type Lead struct {
 
 // TableName sets the default table name
 func (Lead) TableName() string {
-	// TODO change this name for lead or leads(?)+
+	// TODO change this name for lead or leads
 	return "leadnew"
 }
 
@@ -71,12 +73,8 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		IP:        lead.LeaIP,
 		Email:     lead.LeaMail,
 		Dninie:    lead.LeaDNI,
-		// Wsid:      lead.LeaID,
+		Wsid:      lead.ID,
 	}
-	// TODO| actually we update lea_crmid field from webservice.leads table with the data
-	// TODO| returned from Leontel, and in Leontel set the wsid field with the lea_id value from
-	// TODO| webservice insert. How to handle this situation? we have to make an update action
-	// TODO| in some point if we want to keep this functionality.
 
 	switch souid := lead.SouID; souid {
 	case 1, 21, 22:
@@ -240,9 +238,6 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		// "lea_aux2" => $lead->productAmountTaken,
 		// "lea_aux4" => $lead->clientId,
 		// "observations" => $observations
-
-		// TODO| this is not in production, but in case to pass to production
-		// TODO| must rename the fields that they send or map the values received
 	case 54:
 		// R Cable Expansion
 		args := []*string{lead.LeaName, lead.RcableExp.Respvalues, lead.RcableExp.Location, lead.RcableExp.Answer}
@@ -308,8 +303,6 @@ func (lead *Lead) GetLeontelValues(db *gorm.DB) error {
 	return nil
 }
 
-// todo maybe this function is useful because the data returned will be the server data, not the client's
-
 // GetParams retrieves values for ip, port and url properties
 func (lead *Lead) GetParams(w http.ResponseWriter, req *http.Request) error {
 	ip, _, err := net.SplitHostPort(req.RemoteAddr)
@@ -344,4 +337,70 @@ func concatPointerStrs(args ...*string) string {
 		}
 	}
 	return buffer.String()
+}
+
+// GetPassport gets a passport and sets it into lead properties
+func (lead *Lead) GetPassport() error {
+	passport := Passport{}
+
+	interaction := Interaction{
+		Provider:    lead.SouDescLeontel,
+		Application: lead.LeatypeDescLeontel,
+		IP:          *lead.LeaIP,
+	}
+
+	if err := passport.Get(interaction); err != nil {
+		return err
+	}
+
+	lead.PassportID = passport.PassportID
+	lead.PassportIDGrp = passport.PassportIDGrp
+
+	return nil
+}
+
+// Passport struct represents the values of the Passport returned from Passport Service
+type Passport struct {
+	PassportIDGrp string `json:"passport_id_group"`
+	PassportID    string `json:"passport_id"`
+}
+
+// Interaction represents the structure needed to obtain a passport
+type Interaction struct {
+	Provider    string `json:"provider"`
+	Application string ` json:"application"`
+	IP          string `json:"ip"`
+}
+
+// Get function retrieves a passport for the incoming lead
+func (p *Passport) Get(interaction Interaction) error {
+	url := "https://passport.bysidecar.me/id/settle"
+
+	data := new(bytes.Buffer)
+	if err := json.NewEncoder(data).Encode(interaction); err != nil {
+		log.Fatalf("Error on encoding struct data.  %s, Err: %s", interaction, err)
+		return err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, url, data)
+	if err != nil {
+		log.Fatalf("Error on creating request object.  %s, Err: %s", url, err)
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	res, err := client.Do(req)
+	if err != nil {
+		log.Fatalf("Error on making request. Err: %s", err)
+		return err
+	}
+	defer res.Body.Close()
+
+	if err := json.NewDecoder(res.Body).Decode(p); err != nil {
+		log.Fatalf("Error on decoding response from Passport.  %s, Err: %s", res.Body, err)
+		return err
+	}
+
+	return nil
 }
