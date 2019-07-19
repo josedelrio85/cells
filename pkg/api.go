@@ -54,7 +54,6 @@ func (ch *Handler) HandleFunction() http.Handler {
 			}
 
 			hookResponse := hook.Perform(&ch.Lead)
-
 			if hookResponse.StatusCode == http.StatusUnprocessableEntity {
 				message := "An Unprocessable Entity was detected"
 				sendAlarm(message, http.StatusUnprocessableEntity, hookResponse.Err)
@@ -78,7 +77,7 @@ func (ch *Handler) HandleFunction() http.Handler {
 			return
 		}
 
-		// TODO delete this line in production or if you want to send lead to Leontel
+    // TODO delete this line in production or if you want to send lead to Leontel
 		ch.Lead.IsSmartCenter = false
 
 		if ch.Lead.IsSmartCenter {
