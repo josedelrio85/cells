@@ -22,4 +22,5 @@ type HookResponse struct {
 type Hookable interface {
 	Active(model.Lead) bool
 	Perform(*model.Lead) HookResponse
+	Test(interface{})
 }
