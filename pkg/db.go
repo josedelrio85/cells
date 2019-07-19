@@ -62,7 +62,7 @@ func (d *Database) Close() {
 	d.DB.Close()
 }
 
-// CreateTable automatically migrate your schema, to keep your schema update to date.
+// AutoMigrate automatically migrate your schema, to keep your schema update to date.
 // and create the table if not exists
 func (d *Database) AutoMigrate() error {
 	if err := d.DB.AutoMigrate(model.Lead{}).Error; err != nil {
@@ -106,6 +106,7 @@ func (d *Database) Update(element interface{}, wCond string, wFields []string) e
 	return nil
 }
 
+// Instance returns a db instance
 func (d *Database) Instance() *gorm.DB {
 	return d.DB
 }
