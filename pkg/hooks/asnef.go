@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	model "github.com/bysidecar/leads/pkg/model"
+	"github.com/jinzhu/gorm"
 )
 
 // Candidate blablabla
@@ -21,6 +22,7 @@ type Candidate struct {
 type Asnef struct {
 	Result bool   `json:"result,omitempty"`
 	Error  string `json:"error,omitempty"`
+	Db     *gorm.DB
 }
 
 // InputData is the data to check asnef/already client validation
@@ -53,6 +55,7 @@ func (a Asnef) Active(lead model.Lead) bool {
 // lead: The lead to check Asnef on.
 // Returns a HookReponse with the asnef check result.
 func (a Asnef) Perform(lead *model.Lead) HookResponse {
+	// TODO include pre asnef validation logic
 
 	url := "https://ws.bysidecar.es/lead/asnef/check"
 	var statuscode int
@@ -146,4 +149,43 @@ func GetCandidates(lead model.Lead) []Candidate {
 	}
 
 	return candidate
+}
+
+// Test blablabla
+func (a Asnef) Test(db *gorm.DB) {
+	a.Db = db
+}
+
+// Preasnef blablabla
+func (a Asnef) Preasnef(lead *model.Lead) {
+	// sou_id
+	// phone
+	// dni
+
+	// is_smart_center=0; date < 1 mes; sou_id creditea; dni like 'dni' or phone = phone;
+	// creditea.motivo = 'Check Cliente marcado.' or creditea.motivo = 'Check Asnef marcado.' or creditea.motivo = 'Asnef/Ya cliente positivo'
+
+	// si hay resultados => asnef positivo  || si no => sigue comprobando otra validación
+
+	// err := rg.db.Where("ip = ?", interaction.IP).Order("createdat desc").First(&ident).Error
+	// if err != nil && !gorm.IsRecordNotFoundError(err) {
+	// 	return nil, out, err
+	// }
+
+	// if gorm.IsRecordNotFoundError(err) {
+	// 	ident.createIdentity(interaction, "")
+	// 	rg.db.Create(ident)
+	// 	out = true
+	// }
+
+	leadalt := model.Lead{}
+	err := a.Db.Debug().Where("").First(&leadalt).Error
+
+	if err != nil && !gorm.IsRecordNotFoundError(err) {
+		return
+	}
+
+	if gorm.IsRecordNotFoundError(err) {
+
+	}
 }
