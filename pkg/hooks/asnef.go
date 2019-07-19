@@ -57,7 +57,7 @@ func (a Asnef) Perform(lead *model.Lead) HookResponse {
 	url := "https://ws.bysidecar.es/lead/asnef/check"
 	var statuscode int
 
-	if lead.Creditea.Motivo != nil {
+	if lead.Creditea.Asnef || lead.Creditea.Yacliente {
 		lead.IsSmartCenter = false
 		return HookResponse{
 			StatusCode: http.StatusOK,
@@ -101,8 +101,9 @@ func (a Asnef) Perform(lead *model.Lead) HookResponse {
 
 	if a.Result {
 		lead.IsSmartCenter = false
-		motivo := "Asnef/Ya cliente positivo"
-		lead.Creditea.Motivo = &motivo
+		// TODO how to difference if yacliente OR asnef ?
+		lead.Creditea.Asnef = true
+		lead.Creditea.Yacliente = true
 	}
 
 	return HookResponse{
