@@ -3,8 +3,10 @@ package leads
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	model "github.com/bysidecar/leads/pkg/model"
 	"github.com/jinzhu/gorm"
@@ -54,18 +56,32 @@ func (a Asnef) Active(lead model.Lead) bool {
 // Perform returns the result of asnef/already client validation
 // lead: The lead to check Asnef on.
 // Returns a HookReponse with the asnef check result.
-func (a Asnef) Perform(lead *model.Lead) HookResponse {
-	// TODO include pre asnef validation logic
-
-	url := "https://ws.bysidecar.es/lead/asnef/check"
-	var statuscode int
+func (a Asnef) Perform(db *gorm.DB, lead *model.Lead) HookResponse {
 
 	if lead.Creditea.Asnef || lead.Creditea.Yacliente {
 		lead.IsSmartCenter = false
 		return HookResponse{
 			StatusCode: http.StatusOK,
 			Err:        nil,
-			Result:     true,
+		}
+	}
+
+	preresult, err := helper(db, lead)
+	if err != nil {
+		lead.IsSmartCenter = false
+		return HookResponse{
+			StatusCode: http.StatusInternalServerError,
+			Err:        err,
+		}
+	}
+
+	if preresult {
+		lead.IsSmartCenter = false
+		lead.Creditea.Asnef = true
+		lead.Creditea.Yacliente = true
+		return HookResponse{
+			StatusCode: http.StatusOK,
+			Err:        nil,
 		}
 	}
 
@@ -74,6 +90,9 @@ func (a Asnef) Perform(lead *model.Lead) HookResponse {
 		DNI:   *lead.LeaDNI,
 		Phone: *lead.LeaPhone,
 	}
+
+	url := "https://ws.bysidecar.es/lead/asnef/check"
+	var statuscode int
 
 	data := new(bytes.Buffer)
 	if err := json.NewEncoder(data).Encode(asnefdata); err != nil {
@@ -104,7 +123,6 @@ func (a Asnef) Perform(lead *model.Lead) HookResponse {
 
 	if a.Result {
 		lead.IsSmartCenter = false
-		// TODO how to difference if yacliente OR asnef ?
 		lead.Creditea.Asnef = true
 		lead.Creditea.Yacliente = true
 	}
@@ -112,7 +130,6 @@ func (a Asnef) Perform(lead *model.Lead) HookResponse {
 	return HookResponse{
 		StatusCode: statuscode,
 		Err:        err,
-		Result:     a.Result,
 	}
 }
 
@@ -151,41 +168,45 @@ func GetCandidates(lead model.Lead) []Candidate {
 	return candidate
 }
 
-// Test blablabla
-func (a Asnef) Test(db *gorm.DB) {
-	a.Db = db
-}
-
-// Preasnef blablabla
-func (a Asnef) Preasnef(lead *model.Lead) {
-	// sou_id
-	// phone
-	// dni
-
-	// is_smart_center=0; date < 1 mes; sou_id creditea; dni like 'dni' or phone = phone;
-	// creditea.motivo = 'Check Cliente marcado.' or creditea.motivo = 'Check Asnef marcado.' or creditea.motivo = 'Asnef/Ya cliente positivo'
-
+// helper makes a prevalidation in leads BD to check for any match in the las month.
+// If the conditions are matched, returns true.
+func helper(db *gorm.DB, lead *model.Lead) (bool, error) {
 	// si hay resultados => asnef positivo  || si no => sigue comprobando otra validación
-
-	// err := rg.db.Where("ip = ?", interaction.IP).Order("createdat desc").First(&ident).Error
-	// if err != nil && !gorm.IsRecordNotFoundError(err) {
-	// 	return nil, out, err
-	// }
-
-	// if gorm.IsRecordNotFoundError(err) {
-	// 	ident.createIdentity(interaction, "")
-	// 	rg.db.Create(ident)
-	// 	out = true
-	// }
-
 	leadalt := model.Lead{}
-	err := a.Db.Debug().Where("").First(&leadalt).Error
+
+	source := model.Source{}
+	if result := db.Where("sou_id = ?", lead.SouID).First(&source); result.Error != nil {
+		log.Fatalf("Error retrieving SouIDLeontel value: %v", result.Error)
+	}
+	soudesc := fmt.Sprintf("%s%s%s", "%", source.SouDescription[:5], "%")
+
+	sources := []model.Source{}
+	db.Where("sou_description like ?", soudesc).Find(&sources)
+
+	stringsources := make([]string, 0)
+	for _, s := range sources {
+		stringsources = append(stringsources, fmt.Sprintf("%d", s.SouID))
+	}
+
+	dni := fmt.Sprintf("%s%s%s", "%", *lead.LeaDNI, "%")
+	twoHoursLess := time.Now().AddDate(0, -1, 0)
+	datecontrol := twoHoursLess.Format("2006-01-02")
+
+	query := db.Debug().Table("leadnew").Select("leadnew.ID")
+	query = query.Joins("JOIN creditea on leadnew.id = creditea.lea_id")
+	query = query.Where("leadnew.lea_ts > ?", datecontrol)
+	query = query.Where("leadnew.sou_id IN (?)", stringsources)
+	query = query.Where("leadnew.is_smart_center = ?", 0)
+	query = query.Where("leadnew.lea_dni like ? or leadnew.lea_phone = ?", dni, lead.LeaPhone)
+	query = query.Where("creditea.asnef = ? or creditea.yacliente = ?", 1, 1)
+	err := query.First(&leadalt).Error
 
 	if err != nil && !gorm.IsRecordNotFoundError(err) {
-		return
+		return false, err
 	}
 
 	if gorm.IsRecordNotFoundError(err) {
-
+		return false, nil
 	}
+	return true, nil
 }

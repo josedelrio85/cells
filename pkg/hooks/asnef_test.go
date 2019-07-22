@@ -1,7 +1,10 @@
 package leads
 
 import (
+	"log"
 	"net/http"
+	"os"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -74,8 +77,8 @@ func TestPerform(t *testing.T) {
 	assert := assert.New(t)
 
 	var asnef Asnef
-	phone := "665932355"
-	dni := "79317432t"
+	phone := "665932356"
+	dni := "21528205K"
 	cantidad := "1000"
 
 	lead := model.Lead{
@@ -103,7 +106,6 @@ func TestPerform(t *testing.T) {
 			Response: HookResponse{
 				Err:        nil,
 				StatusCode: http.StatusOK,
-				Result:     false,
 			},
 		},
 		{
@@ -122,11 +124,10 @@ func TestPerform(t *testing.T) {
 			Response: HookResponse{
 				Err:        nil,
 				StatusCode: http.StatusOK,
-				Result:     true,
 			},
 		},
 		{
-			Description: "when Yacliente checks is clicked. Client activates the limitation",
+			Description: "when Yacliente check is clicked. Client activates the limitation",
 			Lead: model.Lead{
 				SouID:         9,
 				LeaPhone:      &phone,
@@ -141,7 +142,6 @@ func TestPerform(t *testing.T) {
 			Response: HookResponse{
 				Err:        nil,
 				StatusCode: http.StatusOK,
-				Result:     true,
 			},
 		},
 		{
@@ -151,27 +151,57 @@ func TestPerform(t *testing.T) {
 				LeaPhone:      &candidates[0].Telefono,
 				LeaDNI:        &candidates[0].DNI,
 				IsSmartCenter: false,
-				Creditea: model.Creditea{
-					Asnef:     true,
-					Yacliente: true,
-				},
 			},
 			Response: HookResponse{
 				Err:        nil,
 				StatusCode: http.StatusOK,
-				Result:     true,
 			},
 		},
 	}
 
+	database := helperDb()
+	database.Open()
+	defer database.Close()
+
 	for _, test := range tests {
 		t.Run(test.Description, func(t *testing.T) {
-			response := asnef.Perform(&test.Lead)
+			log.Println(test.Description)
+			log.Println("-----------------")
+			response := asnef.Perform(database.DB, &test.Lead)
 
 			assert.Equal(test.Response, response)
-			assert.Equal(test.Response.Result, response.Result)
 			assert.Equal(test.Response.StatusCode, response.StatusCode)
 			assert.Equal(test.Response.Err, response.Err)
 		})
 	}
+}
+
+func helperDb() model.Database {
+
+	port := getSetting("DB_PORT")
+	portInt, err := strconv.ParseInt(port, 10, 64)
+	if err != nil {
+		log.Fatalf("Error parsing to string the Redshift's port %s, Err: %s", port, err)
+	}
+
+	database := model.Database{
+		Host:      getSetting("DB_HOST"),
+		Port:      portInt,
+		User:      getSetting("DB_USER"),
+		Pass:      getSetting("DB_PASS"),
+		Dbname:    getSetting("DB_NAME"),
+		Charset:   "utf8",
+		ParseTime: "True",
+		Loc:       "Local",
+	}
+	return database
+}
+
+func getSetting(setting string) string {
+	value, ok := os.LookupEnv(setting)
+	if !ok {
+		log.Fatalf("Init error, %s ENV var not found", setting)
+	}
+
+	return value
 }
