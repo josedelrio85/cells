@@ -192,7 +192,7 @@ func helper(db *gorm.DB, lead *model.Lead) (bool, error) {
 	twoHoursLess := time.Now().AddDate(0, -1, 0)
 	datecontrol := twoHoursLess.Format("2006-01-02")
 
-	query := db.Debug().Table("leadnew").Select("leadnew.ID")
+	query := db.Table("leadnew").Select("leadnew.ID")
 	query = query.Joins("JOIN creditea on leadnew.id = creditea.lea_id")
 	query = query.Where("leadnew.lea_ts > ?", datecontrol)
 	query = query.Where("leadnew.sou_id IN (?)", stringsources)
