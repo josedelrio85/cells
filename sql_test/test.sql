@@ -34,11 +34,11 @@ CREATE TABLE creditea (
   deleted_at timestamp NULL DEFAULT NULL,
   lea_id int(10) unsigned DEFAULT NULL,
   cantidadsolicitada varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  motivo varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   tipocontrato varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   ingresosnetos varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  validacionlp varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   fuerahorario varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  asnef tinyint(1) DEFAULT '0',
+  yacliente tinyint(1) DEFAULT '0',
   PRIMARY KEY (id),
   KEY idx_creditea_deleted_at (deleted_at)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
@@ -178,8 +178,7 @@ insert into sources (sou_id, sou_description, sou_idcrm) values (58,'CREDITEA HM
 insert into sources (sou_id, sou_description, sou_idcrm) values (59,'SANITAS EMISION',68);
 insert into sources (sou_id, sou_description, sou_idcrm) values (60,'ABANCA EMISIÓN',69);
 insert into sources (sou_id, sou_description, sou_idcrm) values (61,'CREDITEA BBDD ADSALSA',70);
-
-
+insert into sources (sou_id, sou_description, sou_idcrm) values (62,'CREDITEA MINIPROVI',71);
 
 insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (1,'C2C',2);
 insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (2,'FORM',3);
