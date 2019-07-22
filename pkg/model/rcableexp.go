@@ -9,7 +9,7 @@ type RcableExp struct {
 	LeadID     uint    `sql:"column:lea_id"`
 	Location   *string `json:"location,omitempty"`
 	Answer     *string `json:"answer,omitempty"`
-	Respvalues *string `json:"values,omitempty"`
+	RespValues *string `json:"values,omitempty"`
 	Coverture  *string `json:"coverture,omitempty"`
 }
 

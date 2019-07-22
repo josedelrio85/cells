@@ -6,35 +6,35 @@ import "github.com/jinzhu/gorm"
 type Microsoft struct {
 	gorm.Model
 
-	LeadID        uint    `sql:"column:lea_id"`
-	Tipoordenador *string `json:"tipoordenador"`
-	Sector        *string `json:"sector"`
-	Presupuesto   *string `json:"presupuesto"`
-	Rendimiento   *string `json:"rendimiento"`
-	Movilidad     *string `json:"movilidad"`
-	Office365     *string `json:"office365"`
-	Tipouso       *string `json:"tipouso"`
-	Observaciones *string `json:"observaciones"`
+	LeadID       uint    `sql:"column:lea_id"`
+	ComputerType *string `json:"computer_type"`
+	Sector       *string `json:"sector"`
+	Budget       *string `json:"budget"`
+	Performance  *string `json:"performance"`
+	Movility     *string `json:"movility"`
+	Office365    *string `json:"office365"`
+	Usecase      *string `json:"usecase"`
+	Comments     *string `json:"comments"`
 
-	Producttype        *string `json:"producttype"`
-	Productname        *string `json:"productname"`
-	ProductID          *string `json:"productid"`
-	Originalprice      *string `json:"originalprice"`
+	ProductType        *string `json:"product_type"`
+	ProductName        *string `json:"product_name"`
+	ProductID          *string `json:"product_id"`
+	OriginalPrice      *string `json:"original_price"`
 	Price              *string `json:"price"`
 	Brand              *string `json:"brand"`
-	Discountpercentage *string `json:"discountPercentage"`
-	Discountcode       *string `json:"discountCode"`
-	Typeofprocessor    *string `json:"typeofprocessor"`
-	Harddiskcapacity   *string `json:"harddiskcapacity"`
+	DiscountPercentage *string `json:"discount_percentage"`
+	DiscountCode       *string `json:"discount_code"`
+	ProcessorType      *string `json:"processor_type"`
+	DiskCapacity       *string `json:"disk_capacity"`
 	Graphics           *string `json:"graphics"`
-	Wirelessinterface  *string `json:"wirelessinterface"`
+	WirelessInterface  *string `json:"wireless_interface"`
 
-	Anosordenadoresmedia        *string `json:"anos_ordenadores_media"`
-	SistemaOperativoInstalado   *string `json:"sistema_operativo_instalado"`
-	FrecuenciaBloqueOrdenadores *string `json:"frecuencia_bloqueo_ordenadores"`
-	NumeroDispositivosEmpresa   *string `json:"num_dispositivos_empresa"`
-	ReparacionesUltimoAno       *string `json:"reparaciones_ultimo_ano"`
-	TiempoArrancarDispositivos  *string `json:"tiempo_arrancar_dispositivos"`
+	DevicesAverageAge      *string `json:"devices_average_age"`
+	DevicesOperatingSystem *string `json:"devices_operating_system"`
+	DevicesHangFrequency   *string `json:"devices_hang_frequency"`
+	DevicesNumber          *string `json:"devices_number"`
+	DevicesLastYearRepairs *string `json:"devices_last_year_repairs"`
+	DevicesStartupTime     *string `json:"devices_startup_time"`
 
 	Pageindex bool  `json:"index"`
 	Oldsouid  int64 `json:"oldsouid"`

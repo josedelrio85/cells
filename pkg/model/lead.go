@@ -106,7 +106,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		// leontel observaciones => (DNI: $dninie Cantidad solicitada: $cantidadSolicitada)
 		args := []*string{
 			lead.LeaDNI,
-			lead.Creditea.Cantidadsolicitada,
+			lead.Creditea.RequestedAmount,
 		}
 		observations := concatPointerStrs(args...)
 		leontel.Observaciones = &observations
@@ -120,9 +120,9 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		// lea_aux4 (dni) => dninie
 		args := []*string{
 			lead.LeaDNI,
-			lead.Creditea.Ingresosnetos,
-			lead.Creditea.Tipocontrato,
-			lead.Creditea.Cantidadsolicitada,
+			lead.Creditea.NetIncome,
+			lead.Creditea.ContractType,
+			lead.Creditea.RequestedAmount,
 		}
 		observations := concatPointerStrs(args...)
 		leontel.Observaciones = &observations
@@ -145,13 +145,13 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		// Microsoft Mundo R
 	case 46, 49:
 		// Microsoft Hazelcambio + Recomendador
-		leontel.Tipoordenador = lead.Microsoft.Tipoordenador
+		leontel.Tipoordenador = lead.Microsoft.ComputerType
 		leontel.Sector = lead.Microsoft.Sector
-		leontel.Tipouso = lead.Microsoft.Tipouso
+		leontel.Tipouso = lead.Microsoft.Usecase
 
-		leontel.Presupuesto = lead.Microsoft.Presupuesto
-		leontel.Rendimiento = lead.Microsoft.Rendimiento
-		leontel.Movilidad = lead.Microsoft.Movilidad
+		leontel.Presupuesto = lead.Microsoft.Budget
+		leontel.Rendimiento = lead.Microsoft.Performance
+		leontel.Movilidad = lead.Microsoft.Movility
 		leontel.Office365 = lead.Microsoft.Office365
 		leontel.Observaciones2 = lead.Observations
 
@@ -171,12 +171,12 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		// tiempo_arrancar_dispositivos: {$tiempo_arrancar_dispositivos}
 
 		args := []*string{
-			lead.Microsoft.Anosordenadoresmedia,
-			lead.Microsoft.SistemaOperativoInstalado,
-			lead.Microsoft.FrecuenciaBloqueOrdenadores,
-			lead.Microsoft.NumeroDispositivosEmpresa,
-			lead.Microsoft.ReparacionesUltimoAno,
-			lead.Microsoft.TiempoArrancarDispositivos,
+			lead.Microsoft.DevicesAverageAge,
+			lead.Microsoft.DevicesOperatingSystem,
+			lead.Microsoft.DevicesHangFrequency,
+			lead.Microsoft.DevicesNumber,
+			lead.Microsoft.DevicesLastYearRepairs,
+			lead.Microsoft.DevicesStartupTime,
 		}
 		observations := concatPointerStrs(args...)
 		leontel.Observaciones2 = &observations
@@ -211,18 +211,18 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		// Wireless: {$wirelessInterface}
 
 		args := []*string{
-			lead.Microsoft.Producttype,
-			lead.Microsoft.Productname,
+			lead.Microsoft.ProductType,
+			lead.Microsoft.ProductName,
 			lead.Microsoft.ProductID,
-			lead.Microsoft.Originalprice,
+			lead.Microsoft.OriginalPrice,
 			lead.Microsoft.Price,
 			lead.Microsoft.Brand,
-			lead.Microsoft.Discountpercentage,
-			lead.Microsoft.Discountcode,
-			lead.Microsoft.Typeofprocessor,
-			lead.Microsoft.Harddiskcapacity,
+			lead.Microsoft.DiscountPercentage,
+			lead.Microsoft.DiscountCode,
+			lead.Microsoft.ProcessorType,
+			lead.Microsoft.DiskCapacity,
 			lead.Microsoft.Graphics,
-			lead.Microsoft.Wirelessinterface,
+			lead.Microsoft.WirelessInterface,
 		}
 		observations := concatPointerStrs(args...)
 		leontel.Observaciones2 = &observations
@@ -240,7 +240,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		// "observations" => $observations
 	case 54:
 		// R Cable Expansion
-		args := []*string{lead.LeaName, lead.RcableExp.Respvalues, lead.RcableExp.Location, lead.RcableExp.Answer}
+		args := []*string{lead.LeaName, lead.RcableExp.RespValues, lead.RcableExp.Location, lead.RcableExp.Answer}
 		observations := concatPointerStrs(args...)
 		lead.Observations = &observations
 		leontel.Observaciones = &observations

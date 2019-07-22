@@ -58,7 +58,7 @@ func (a Asnef) Active(lead model.Lead) bool {
 // Returns a HookReponse with the asnef check result.
 func (a Asnef) Perform(db *gorm.DB, lead *model.Lead) HookResponse {
 
-	if lead.Creditea.Asnef || lead.Creditea.Yacliente {
+	if lead.Creditea.ASNEF || lead.Creditea.AlreadyClient {
 		lead.IsSmartCenter = false
 		return HookResponse{
 			StatusCode: http.StatusOK,
@@ -77,8 +77,8 @@ func (a Asnef) Perform(db *gorm.DB, lead *model.Lead) HookResponse {
 
 	if preresult {
 		lead.IsSmartCenter = false
-		lead.Creditea.Asnef = true
-		lead.Creditea.Yacliente = true
+		lead.Creditea.ASNEF = true
+		lead.Creditea.AlreadyClient = true
 		return HookResponse{
 			StatusCode: http.StatusOK,
 			Err:        nil,
@@ -123,8 +123,9 @@ func (a Asnef) Perform(db *gorm.DB, lead *model.Lead) HookResponse {
 
 	if a.Result {
 		lead.IsSmartCenter = false
-		lead.Creditea.Asnef = true
-		lead.Creditea.Yacliente = true
+		// TODO how to difference if yacliente OR asnef ?
+		lead.Creditea.ASNEF = true
+		lead.Creditea.AlreadyClient = true
 	}
 
 	return HookResponse{
