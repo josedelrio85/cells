@@ -2,6 +2,7 @@ package leads
 
 import (
 	model "github.com/bysidecar/leads/pkg/model"
+	"github.com/jinzhu/gorm"
 )
 
 // HookResponse defines the information available for a Hook to return data to
@@ -10,7 +11,6 @@ import (
 type HookResponse struct {
 	Err        error
 	StatusCode int
-	Result     bool
 }
 
 // Hookable defines the interface to perform Hook actions on leads. A Hook is a
@@ -21,6 +21,5 @@ type HookResponse struct {
 // should be triggered for the given Lead.
 type Hookable interface {
 	Active(model.Lead) bool
-	Perform(*model.Lead) HookResponse
-	Test(interface{})
+	Perform(*gorm.DB, *model.Lead) HookResponse
 }
