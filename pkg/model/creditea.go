@@ -8,11 +8,11 @@ type Creditea struct {
 
 	LeadID             uint    `sql:"column:lea_id"`
 	Cantidadsolicitada *string `json:"cantidadsolicitada,omitempty"`
-	Motivo             *string `json:"motivo"`
 	Tipocontrato       *string `json:"tipocontrato,omitempty"`
 	Ingresosnetos      *string `json:"ingresosnetos,omitempty"`
-	Validacionlp       *string `json:"validacionlp,omitempty"`
 	Fuerahorario       *string `json:"fuerahorario,omitempty"`
+	Asnef              bool    `json:"asnef"`
+	Yacliente          bool    `json:"yacliente"`
 }
 
 // TableName sets the default table name
