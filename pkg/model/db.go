@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	model "github.com/bysidecar/leads/pkg/model"
 	_ "github.com/go-sql-driver/mysql" // go mysql driver
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql" // mysql import driver for gorm
@@ -65,19 +64,19 @@ func (d *Database) Close() {
 // AutoMigrate automatically migrate your schema, to keep your schema update to date.
 // and create the table if not exists
 func (d *Database) AutoMigrate() error {
-	if err := d.DB.AutoMigrate(model.Lead{}).Error; err != nil {
+	if err := d.DB.AutoMigrate(Lead{}).Error; err != nil {
 		return err
 	}
 
-	if err := d.DB.AutoMigrate(model.RcableExp{}).Error; err != nil {
+	if err := d.DB.AutoMigrate(RcableExp{}).Error; err != nil {
 		return err
 	}
 
-	if err := d.DB.AutoMigrate(model.Microsoft{}).Error; err != nil {
+	if err := d.DB.AutoMigrate(Microsoft{}).Error; err != nil {
 		return err
 	}
 
-	if err := d.DB.AutoMigrate(model.Creditea{}).Error; err != nil {
+	if err := d.DB.AutoMigrate(Creditea{}).Error; err != nil {
 		return err
 	}
 
