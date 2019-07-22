@@ -18,7 +18,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var dbInstance Database
+var dbInstance model.Database
 
 func TestMain(m *testing.M) {
 	dbInstance = helperDb()
@@ -40,7 +40,7 @@ func TestHandlerFunction(t *testing.T) {
 
 	tests := []struct {
 		Description    string
-		Storer         Storer
+		Storer         model.Storer
 		TypeRequest    string
 		StatusCode     int
 		Lead           model.Lead
@@ -403,7 +403,7 @@ func TestSendLeadToLeontel(t *testing.T) {
 		Description    string
 		Lead           model.Lead
 		ExpectedResult LeontelRespTest
-		Storer         Storer
+		Storer         model.Storer
 	}{
 		{
 			Description: "When send a valid lead to Leontel",
@@ -459,7 +459,7 @@ func TestOpenDb(t *testing.T) {
 	assert.NoError(err)
 }
 
-func helperDb() Database {
+func helperDb() model.Database {
 
 	port := getSetting("DB_PORT")
 	portInt, err := strconv.ParseInt(port, 10, 64)
@@ -467,7 +467,7 @@ func helperDb() Database {
 		log.Fatalf("Error parsing to string the Redshift's port %s, Err: %s", port, err)
 	}
 
-	database := Database{
+	database := model.Database{
 		Host:      getSetting("DB_HOST"),
 		Port:      portInt,
 		User:      getSetting("DB_USER"),
