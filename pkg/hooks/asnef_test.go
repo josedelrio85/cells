@@ -81,6 +81,10 @@ func TestPerform(t *testing.T) {
 	dni := "21528205K"
 	cantidad := "1000"
 
+	database := helperDb()
+	database.Open()
+	defer database.Close()
+
 	lead := model.Lead{
 		SouID: 9,
 	}
@@ -159,9 +163,27 @@ func TestPerform(t *testing.T) {
 		},
 	}
 
-	database := helperDb()
-	database.Open()
-	defer database.Close()
+	candidatespre := GetCandidatesPreasnef(database.DB)
+	if len(candidatespre) > 0 {
+		newtest := struct {
+			Description string
+			Lead        model.Lead
+			Response    HookResponse
+		}{
+			Description: "when Asnef pre validation is not passed",
+			Lead: model.Lead{
+				SouID:         9,
+				LeaPhone:      candidatespre[0].LeaPhone,
+				LeaDNI:        candidatespre[0].LeaDNI,
+				IsSmartCenter: false,
+			},
+			Response: HookResponse{
+				Err:        nil,
+				StatusCode: http.StatusOK,
+			},
+		}
+		tests = append(tests, newtest)
+	}
 
 	for _, test := range tests {
 		t.Run(test.Description, func(t *testing.T) {

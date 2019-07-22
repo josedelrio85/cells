@@ -189,10 +189,10 @@ func helper(db *gorm.DB, lead *model.Lead) (bool, error) {
 	}
 
 	dni := fmt.Sprintf("%s%s%s", "%", *lead.LeaDNI, "%")
-	twoHoursLess := time.Now().AddDate(0, -1, 0)
-	datecontrol := twoHoursLess.Format("2006-01-02")
+	oneMonthLess := time.Now().AddDate(0, -1, 0)
+	datecontrol := oneMonthLess.Format("2006-01-02")
 
-	query := db.Table("leadnew").Select("leadnew.ID")
+	query := db.Debug().Table("leadnew").Select("leadnew.ID")
 	query = query.Joins("JOIN creditea on leadnew.id = creditea.lea_id")
 	query = query.Where("leadnew.lea_ts > ?", datecontrol)
 	query = query.Where("leadnew.sou_id IN (?)", stringsources)
@@ -209,4 +209,31 @@ func helper(db *gorm.DB, lead *model.Lead) (bool, error) {
 		return false, nil
 	}
 	return true, nil
+}
+
+// GetCandidatesPreasnef retrieves a list of candidates to match a positive asnef prevalidation.
+// Used in test method only.
+func GetCandidatesPreasnef(db *gorm.DB) []model.Lead {
+	candidates := []model.Lead{}
+
+	sources := []model.Source{}
+	db.Where("sou_description like ?", "%CREDI%").Find(&sources)
+
+	stringsources := make([]string, 0)
+	for _, s := range sources {
+		stringsources = append(stringsources, fmt.Sprintf("%d", s.SouID))
+	}
+
+	oneMonthLess := time.Now().AddDate(0, -1, 0)
+	datecontrol := oneMonthLess.Format("2006-01-02")
+
+	query := db.Debug().Table("leadnew").Select("leadnew.lea_phone, leadnew.lea_dni")
+	query = query.Joins("JOIN creditea on leadnew.id = creditea.lea_id")
+	query = query.Where("leadnew.lea_ts > ?", datecontrol)
+	query = query.Where("leadnew.sou_id IN (?)", stringsources)
+	query = query.Where("leadnew.is_smart_center = ?", 0)
+	query = query.Where("creditea.asnef = ? or creditea.yacliente = ?", 1, 1)
+	query = query.Find(&candidates).Group("lea_dni")
+
+	return candidates
 }
