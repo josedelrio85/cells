@@ -187,8 +187,7 @@ func TestPerform(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.Description, func(t *testing.T) {
-			log.Println(test.Description)
-			log.Println("-----------------")
+
 			response := asnef.Perform(database.DB, &test.Lead)
 
 			assert.Equal(test.Response, response)

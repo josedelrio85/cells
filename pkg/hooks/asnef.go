@@ -227,7 +227,7 @@ func GetCandidatesPreasnef(db *gorm.DB) []model.Lead {
 	oneMonthLess := time.Now().AddDate(0, -1, 0)
 	datecontrol := oneMonthLess.Format("2006-01-02")
 
-	query := db.Debug().Table("leadnew").Select("leadnew.lea_phone, leadnew.lea_dni")
+	query := db.Table("leadnew").Select("leadnew.lea_phone, leadnew.lea_dni")
 	query = query.Joins("JOIN creditea on leadnew.id = creditea.lea_id")
 	query = query.Where("leadnew.lea_ts > ?", datecontrol)
 	query = query.Where("leadnew.sou_id IN (?)", stringsources)
