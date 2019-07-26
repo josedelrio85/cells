@@ -38,7 +38,7 @@ CREATE TABLE creditea (
   netincome varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   outofschedule varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   asnef tinyint(1) DEFAULT '0',
-  alreadyclient tinyint(1) DEFAULT '0',
+  already_client tinyint(1) DEFAULT '0',
   PRIMARY KEY (id),
   KEY idx_creditea_deleted_at (deleted_at)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
