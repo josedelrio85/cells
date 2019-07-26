@@ -6,13 +6,13 @@ import "github.com/jinzhu/gorm"
 type Creditea struct {
 	gorm.Model
 
-	LeadID             uint    `sql:"column:lea_id"`
-	Cantidadsolicitada *string `json:"cantidadsolicitada,omitempty"`
-	Tipocontrato       *string `json:"tipocontrato,omitempty"`
-	Ingresosnetos      *string `json:"ingresosnetos,omitempty"`
-	Fuerahorario       *string `json:"fuerahorario,omitempty"`
-	Asnef              bool    `json:"asnef"`
-	Yacliente          bool    `json:"yacliente"`
+	LeadID          uint    `sql:"column:lea_id"`
+	RequestedAmount *string `json:"requested_amount,omitempty"`
+	ContractType    *string `json:"contract_type,omitempty"`
+	NetIncome       *string `json:"net_income,omitempty"`
+	OutOfSchedule   *string `json:"out_of_schedule,omitempty"`
+	ASNEF           bool    `json:"asnef"`
+	AlreadyClient   bool    `json:"already_client"`
 }
 
 // TableName sets the default table name

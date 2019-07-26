@@ -23,7 +23,7 @@ func TestActive(t *testing.T) {
 		Active      bool
 	}{
 		{
-			Description: "when Asnef successfully is activated",
+			Description: "when ASNEF successfully is activated",
 			Lead: model.Lead{
 				SouID:         9,
 				IsSmartCenter: true,
@@ -31,7 +31,7 @@ func TestActive(t *testing.T) {
 			Active: true,
 		},
 		{
-			Description: "when Asnef successfully is activated",
+			Description: "when ASNEF successfully is activated",
 			Lead: model.Lead{
 				SouID:         58,
 				IsSmartCenter: true,
@@ -39,7 +39,7 @@ func TestActive(t *testing.T) {
 			Active: true,
 		},
 		{
-			Description: "when Asnef is not activated",
+			Description: "when ASNEF is not activated",
 			Lead: model.Lead{
 				SouID:         99,
 				IsSmartCenter: true,
@@ -47,7 +47,7 @@ func TestActive(t *testing.T) {
 			Active: false,
 		},
 		{
-			Description: "when Asnef is not activated",
+			Description: "when ASNEF is not activated",
 			Lead: model.Lead{
 				SouID:         0,
 				IsSmartCenter: true,
@@ -96,15 +96,15 @@ func TestPerform(t *testing.T) {
 		Response    HookResponse
 	}{
 		{
-			Description: "when Asnef successfully checks and gives ok to the lead",
+			Description: "when ASNEF successfully checks and gives ok to the lead",
 			Lead: model.Lead{
 				SouID:         9,
 				LeaPhone:      &phone,
 				LeaDNI:        &dni,
 				IsSmartCenter: true,
 				Creditea: model.Creditea{
-					Asnef:     false,
-					Yacliente: false,
+					ASNEF:         false,
+					AlreadyClient: false,
 				},
 			},
 			Response: HookResponse{
@@ -113,16 +113,16 @@ func TestPerform(t *testing.T) {
 			},
 		},
 		{
-			Description: "when Asnef checks is clicked. Client activates the limitation",
+			Description: "when ASNEF checks is clicked. Client activates the limitation",
 			Lead: model.Lead{
 				SouID:         9,
 				LeaPhone:      &phone,
 				LeaDNI:        &dni,
 				IsSmartCenter: true,
 				Creditea: model.Creditea{
-					Cantidadsolicitada: &cantidad,
-					Asnef:              true,
-					Yacliente:          false,
+					RequestedAmount: &cantidad,
+					ASNEF:           true,
+					AlreadyClient:   false,
 				},
 			},
 			Response: HookResponse{
@@ -131,16 +131,16 @@ func TestPerform(t *testing.T) {
 			},
 		},
 		{
-			Description: "when Yacliente check is clicked. Client activates the limitation",
+			Description: "when AlreadyClient checks is clicked. Client activates the limitation",
 			Lead: model.Lead{
 				SouID:         9,
 				LeaPhone:      &phone,
 				LeaDNI:        &dni,
 				IsSmartCenter: true,
 				Creditea: model.Creditea{
-					Cantidadsolicitada: &cantidad,
-					Asnef:              false,
-					Yacliente:          true,
+					RequestedAmount: &cantidad,
+					ASNEF:           false,
+					AlreadyClient:   true,
 				},
 			},
 			Response: HookResponse{
@@ -149,12 +149,16 @@ func TestPerform(t *testing.T) {
 			},
 		},
 		{
-			Description: "when Asnef validations is not passed",
+			Description: "when ASNEF validations is not passed",
 			Lead: model.Lead{
 				SouID:         9,
 				LeaPhone:      &candidates[0].Telefono,
 				LeaDNI:        &candidates[0].DNI,
 				IsSmartCenter: false,
+				Creditea: model.Creditea{
+					ASNEF:         true,
+					AlreadyClient: true,
+				},
 			},
 			Response: HookResponse{
 				Err:        nil,
