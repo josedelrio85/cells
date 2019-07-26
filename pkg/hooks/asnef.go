@@ -193,7 +193,7 @@ func helper(db *gorm.DB, lead *model.Lead) (bool, error) {
 	oneMonthLess := time.Now().AddDate(0, -1, 0)
 	datecontrol := oneMonthLess.Format("2006-01-02")
 
-	query := db.Table(tblname).Select("ID")
+	query := db.Table(tblname).Select(fmt.Sprintf("%s.ID", tblname))
 	query = query.Joins(fmt.Sprintf("JOIN creditea on %s.id = creditea.lea_id", tblname))
 	query = query.Where(fmt.Sprintf("%s.lea_ts > ?", tblname), datecontrol)
 	query = query.Where(fmt.Sprintf("%s.sou_id IN (?)", tblname), stringsources)
