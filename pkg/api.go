@@ -62,6 +62,7 @@ func (ch *Handler) HandleFunction() http.Handler {
 
 			if hookResponse.Err != nil {
 				responseError(w, hookResponse.Err.Error(), hookResponse.Err)
+				return
 			}
 		}
 
