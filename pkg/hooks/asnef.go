@@ -199,7 +199,7 @@ func helper(db *gorm.DB, lead *model.Lead) (bool, error) {
 	query = query.Where("leadnew.sou_id IN (?)", stringsources)
 	query = query.Where("leadnew.is_smart_center = ?", 0)
 	query = query.Where("leadnew.lea_dni like ? or leadnew.lea_phone = ?", dni, lead.LeaPhone)
-	query = query.Where("creditea.asnef = ? or creditea.yacliente = ?", 1, 1)
+	query = query.Where("creditea.asnef = ? or creditea.already_client = ?", 1, 1)
 	err := query.First(&leadalt).Error
 
 	if err != nil && !gorm.IsRecordNotFoundError(err) {
@@ -233,7 +233,7 @@ func GetCandidatesPreasnef(db *gorm.DB) []model.Lead {
 	query = query.Where("leadnew.lea_ts > ?", datecontrol)
 	query = query.Where("leadnew.sou_id IN (?)", stringsources)
 	query = query.Where("leadnew.is_smart_center = ?", 0)
-	query = query.Where("creditea.asnef = ? or creditea.yacliente = ?", 1, 1)
+	query = query.Where("creditea.asnef = ? or creditea.already_client = ?", 1, 1)
 	query = query.Find(&candidates).Group("lea_dni")
 
 	return candidates
