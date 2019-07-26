@@ -172,8 +172,8 @@ func GetCandidates(lead model.Lead) []Candidate {
 // helper makes a prevalidation in leads BD to check for any match in the las month.
 // If the conditions are matched, returns true.
 func helper(db *gorm.DB, lead *model.Lead) (bool, error) {
-	// si hay resultados => asnef positivo  || si no => sigue comprobando otra validación
 	leadalt := model.Lead{}
+	tblname := leadalt.TableName()
 
 	source := model.Source{}
 	if result := db.Where("sou_id = ?", lead.SouID).First(&source); result.Error != nil {
@@ -193,12 +193,12 @@ func helper(db *gorm.DB, lead *model.Lead) (bool, error) {
 	oneMonthLess := time.Now().AddDate(0, -1, 0)
 	datecontrol := oneMonthLess.Format("2006-01-02")
 
-	query := db.Debug().Table("leadnew").Select("leadnew.ID")
-	query = query.Joins("JOIN creditea on leadnew.id = creditea.lea_id")
-	query = query.Where("leadnew.lea_ts > ?", datecontrol)
-	query = query.Where("leadnew.sou_id IN (?)", stringsources)
-	query = query.Where("leadnew.is_smart_center = ?", 0)
-	query = query.Where("leadnew.lea_dni like ? or leadnew.lea_phone = ?", dni, lead.LeaPhone)
+	query := db.Table(tblname).Select("ID")
+	query = query.Joins(fmt.Sprintf("JOIN creditea on %s.id = creditea.lea_id", tblname))
+	query = query.Where(fmt.Sprintf("%s.lea_ts > ?", tblname), datecontrol)
+	query = query.Where(fmt.Sprintf("%s.sou_id IN (?)", tblname), stringsources)
+	query = query.Where(fmt.Sprintf("%s.is_smart_center = ?", tblname), 0)
+	query = query.Where(fmt.Sprintf("%s.lea_dni like ? or %s.lea_phone = ?", tblname, tblname), dni, lead.LeaPhone)
 	query = query.Where("creditea.asnef = ? or creditea.already_client = ?", 1, 1)
 	err := query.First(&leadalt).Error
 
@@ -217,6 +217,8 @@ func helper(db *gorm.DB, lead *model.Lead) (bool, error) {
 func GetCandidatesPreasnef(db *gorm.DB) []model.Lead {
 	candidates := []model.Lead{}
 
+	tblname := model.Lead{}.TableName()
+
 	sources := []model.Source{}
 	db.Where("sou_description like ?", "%CREDI%").Find(&sources)
 
@@ -228,11 +230,11 @@ func GetCandidatesPreasnef(db *gorm.DB) []model.Lead {
 	oneMonthLess := time.Now().AddDate(0, -1, 0)
 	datecontrol := oneMonthLess.Format("2006-01-02")
 
-	query := db.Table("leadnew").Select("leadnew.lea_phone, leadnew.lea_dni")
-	query = query.Joins("JOIN creditea on leadnew.id = creditea.lea_id")
-	query = query.Where("leadnew.lea_ts > ?", datecontrol)
-	query = query.Where("leadnew.sou_id IN (?)", stringsources)
-	query = query.Where("leadnew.is_smart_center = ?", 0)
+	query := db.Table("leadnew").Select(fmt.Sprintf("%s.lea_phone, %s.lea_dni", tblname, tblname))
+	query = query.Joins(fmt.Sprintf("JOIN creditea on %s.id = creditea.lea_id", tblname))
+	query = query.Where(fmt.Sprintf("%s.lea_ts > ?", tblname), datecontrol)
+	query = query.Where(fmt.Sprintf("%s.sou_id IN (?)", tblname), stringsources)
+	query = query.Where(fmt.Sprintf("%s.is_smart_center = ?", tblname), 0)
 	query = query.Where("creditea.asnef = ? or creditea.already_client = ?", 1, 1)
 	query = query.Find(&candidates).Group("lea_dni")
 
