@@ -13,7 +13,7 @@ import (
 // http.Handler.Neededed to call HandleFunction as param in router Handler function.
 type Handler struct {
 	ch          http.Handler
-	Storer      Storer
+	Storer      model.Storer
 	Lead        model.Lead
 	ActiveHooks []hooks.Hookable
 }
@@ -53,7 +53,7 @@ func (ch *Handler) HandleFunction() http.Handler {
 				continue
 			}
 
-			hookResponse := hook.Perform(&ch.Lead)
+			hookResponse := hook.Perform(ch.Storer.Instance(), &ch.Lead)
 			if hookResponse.StatusCode == http.StatusUnprocessableEntity {
 				message := "An Unprocessable Entity was detected"
 				sendAlarm(message, http.StatusUnprocessableEntity, hookResponse.Err)
@@ -77,7 +77,7 @@ func (ch *Handler) HandleFunction() http.Handler {
 			return
 		}
 
-    // TODO delete this line in production or if you want to send lead to Leontel
+		// TODO delete this line in production or if you want to send lead to Leontel
 		ch.Lead.IsSmartCenter = false
 
 		if ch.Lead.IsSmartCenter {

@@ -8,6 +8,7 @@ import (
 
 	leads "github.com/bysidecar/leads/pkg"
 	hooks "github.com/bysidecar/leads/pkg/hooks"
+	model "github.com/bysidecar/leads/pkg/model"
 
 	"github.com/rs/cors"
 
@@ -21,7 +22,7 @@ func main() {
 		log.Fatalf("Error parsing to string Database's port %s, Err: %s", port, err)
 	}
 
-	database := &leads.Database{
+	database := &model.Database{
 		Host:      GetSetting("DB_HOST"),
 		Port:      portInt,
 		User:      GetSetting("DB_USER"),

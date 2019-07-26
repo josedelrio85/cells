@@ -10,6 +10,7 @@ import (
 	"time"
 
 	model "github.com/bysidecar/leads/pkg/model"
+	"github.com/jinzhu/gorm"
 )
 
 // Ontime represents the struct in which store the result of the validations
@@ -17,6 +18,7 @@ type Ontime struct {
 	Result        bool `json:"result"`
 	ResultOntime  bool
 	ResultHoliday bool
+	Db            *gorm.DB
 }
 
 // InputDataOntime is the data to check asnef/already client validation
@@ -49,7 +51,7 @@ func (a Ontime) Active(lead model.Lead) bool {
 // lead: The lead to check ontime validation on.
 // Returns a HookReponse with the ontime check result.
 // True => ontime | false => holiday || out of time
-func (a Ontime) Perform(lead *model.Lead) HookResponse {
+func (a Ontime) Perform(db *gorm.DB, lead *model.Lead) HookResponse {
 	statuscode := http.StatusOK
 
 	var err error
@@ -80,16 +82,13 @@ func (a Ontime) Perform(lead *model.Lead) HookResponse {
 		statuscode = http.StatusInternalServerError
 	}
 
-	result := true
 	if a.ResultHoliday || !a.ResultOntime {
 		lead.LeatypeID = 8
-		result = false
 	}
 
 	return HookResponse{
 		StatusCode: statuscode,
 		Err:        err,
-		Result:     result,
 	}
 }
 
