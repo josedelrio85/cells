@@ -103,8 +103,7 @@ func sendAlarm(message string, status int, err error) {
 
 	// TODO need to add another param into SendAlarm method ("leads") but first a vendorize process is needed
 	alarm := voalarm.NewClient("")
-	// _, err = alarm.SendAlarm(message, mstype, err)
-	_, err = alarm.SendAlarm(mstype, err)
+	_, err = alarm.SendAlarm(message, mstype, err)
 	if err != nil {
 		fancyHandleError(err)
 	}

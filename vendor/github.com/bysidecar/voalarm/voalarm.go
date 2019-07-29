@@ -62,7 +62,7 @@ func NewClient(apikey string) *Client {
 // SendAlarm is the main method to generate an alarm.
 // Needs a MessageType parameter and the error that we need to log.
 // Returns the response of VictorOps plattform and nil if success
-func (a *Client) SendAlarm(ms MessageType, err error) (*Response, error) {
+func (a *Client) SendAlarm(entity string, ms MessageType, err error) (*Response, error) {
 	if len(a.APIkey) == 0 || len(a.Endpoint) == 0 {
 		a = NewClient("")
 	}
@@ -70,8 +70,8 @@ func (a *Client) SendAlarm(ms MessageType, err error) (*Response, error) {
 	alarm := Alarm{
 		MessageType:       ms,
 		EntityState:       ms,
-		EntityID:          "go! exception",
-		EntityDisplayName: "go! exception",
+		EntityID:          entity,
+		EntityDisplayName: entity,
 		StateMessage:      err.Error(),
 		StateStartTime:    time.Now().Format("2006-01-02 15:04:05"),
 	}
