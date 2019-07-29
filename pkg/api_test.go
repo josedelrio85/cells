@@ -60,9 +60,10 @@ func TestHandlerFunction(t *testing.T) {
 			StatusCode:  http.StatusInternalServerError,
 			Storer:      nil,
 			Lead: model.Lead{
-				LeatypeID: 1,
-				LeaPhone:  &phoneTest,
-				LeaIP:     &ipTest,
+				LeatypeID:     1,
+				LeaPhone:      &phoneTest,
+				LeaIP:         &ipTest,
+				IsSmartCenter: false,
 			},
 			ExpectedResult: false,
 		},
@@ -72,9 +73,10 @@ func TestHandlerFunction(t *testing.T) {
 			StatusCode:  http.StatusOK,
 			Storer:      &database,
 			Lead: model.Lead{
-				SouID:    15,
-				LeaPhone: &phoneTest,
-				LeaIP:    &ipTest,
+				SouID:         15,
+				LeaPhone:      &phoneTest,
+				LeaIP:         &ipTest,
+				IsSmartCenter: false,
 			},
 			ExpectedResult: true,
 		},
@@ -167,6 +169,7 @@ func TestLeadToLeontel(t *testing.T) {
 				Creditea: model.Creditea{
 					RequestedAmount: &t2,
 				},
+				IsSmartCenter: false,
 			},
 			ExpectedResult: model.LeadLeontel{
 				LeaSource:     13,
@@ -188,6 +191,7 @@ func TestLeadToLeontel(t *testing.T) {
 					NetIncome:       &t3,
 					ContractType:    &t4,
 				},
+				IsSmartCenter: false,
 			},
 			ExpectedResult: model.LeadLeontel{
 				LeaSource:     15,
@@ -213,6 +217,7 @@ func TestLeadToLeontel(t *testing.T) {
 					Movility:     &t6,
 					Office365:    &t7,
 				},
+				IsSmartCenter: false,
 			},
 			ExpectedResult: model.LeadLeontel{
 				LeaSource:      61,
@@ -243,6 +248,7 @@ func TestLeadToLeontel(t *testing.T) {
 					DevicesLastYearRepairs: &t5,
 					DevicesStartupTime:     &t6,
 				},
+				IsSmartCenter: false,
 			},
 			ExpectedResult: model.LeadLeontel{
 				LeaSource:      61,
@@ -255,8 +261,9 @@ func TestLeadToLeontel(t *testing.T) {
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusInternalServerError,
 			Lead: model.Lead{
-				SouID:     50,
-				LeatypeID: 1,
+				SouID:         50,
+				LeatypeID:     1,
+				IsSmartCenter: false,
 			},
 			ExpectedResult: model.LeadLeontel{
 				LeaSource: 61,
@@ -285,6 +292,7 @@ func TestLeadToLeontel(t *testing.T) {
 					Graphics:           &t4,
 					WirelessInterface:  &t5,
 				},
+				IsSmartCenter: false,
 			},
 			ExpectedResult: model.LeadLeontel{
 				LeaSource:      61,
@@ -304,6 +312,7 @@ func TestLeadToLeontel(t *testing.T) {
 					Location:   &t2,
 					Answer:     &t3,
 				},
+				IsSmartCenter: false,
 			},
 			ExpectedResult: model.LeadLeontel{
 				LeaSource:     63,
