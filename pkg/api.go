@@ -97,6 +97,6 @@ func (ch *Handler) HandleFunction() http.Handler {
 		}
 
 		id := fmt.Sprintf("%d", ch.Lead.ID)
-		responseOk(w, id)
+		responseOk(w, id, ch.Lead.IsSmartCenter)
 	})
 }
