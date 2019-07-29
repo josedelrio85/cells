@@ -49,8 +49,7 @@ type Lead struct {
 
 // TableName sets the default table name
 func (Lead) TableName() string {
-	// TODO change this name for lead or leads
-	return "leadnew"
+	return "leads"
 }
 
 // Decode reques's body into a Lead struct
