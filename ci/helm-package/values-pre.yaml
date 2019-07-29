@@ -27,7 +27,7 @@ env:
 - name: DB_HOST
   value: "leads-pre.c848y92oajny.eu-west-1.rds.amazonaws.com"
 - name: DB_PORT
-  value: "5439"
+  value: "3306"
 - name: DB_NAME
   value: "leads"
 - name: DB_USER
