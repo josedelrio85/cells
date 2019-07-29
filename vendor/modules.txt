@@ -1,4 +1,4 @@
-# github.com/bysidecar/voalarm v1.0.0
+# github.com/bysidecar/voalarm v1.0.1
 github.com/bysidecar/voalarm
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
@@ -15,7 +15,7 @@ github.com/jinzhu/inflection
 github.com/pmezard/go-difflib/difflib
 # github.com/rs/cors v1.6.0
 github.com/rs/cors
-# github.com/stretchr/testify v1.2.2
+# github.com/stretchr/testify v1.3.0
 github.com/stretchr/testify/assert
 # google.golang.org/appengine v1.4.0
 google.golang.org/appengine/cloudsql
