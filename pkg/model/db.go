@@ -84,6 +84,10 @@ func (d *Database) AutoMigrate() error {
 		return err
 	}
 
+	if err := d.DB.AutoMigrate(Leatype{}).Error; err != nil {
+		return err
+	}
+
 	return nil
 }
 
