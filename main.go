@@ -54,7 +54,7 @@ func main() {
 	router := mux.NewRouter()
 
 	router.PathPrefix("/lead/store/").Handler(ch.HandleFunction()).Methods(http.MethodPost)
-	log.Fatal(http.ListenAndServe(":5000", cors.Default().Handler(router)))
+	log.Fatal(http.ListenAndServe(":4000", cors.Default().Handler(router)))
 }
 
 // GetSetting reads an ENV VAR setting, it does crash the service if with an
