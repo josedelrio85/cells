@@ -53,7 +53,7 @@ func main() {
 
 	router := mux.NewRouter()
 
-	router.PathPrefix("/lead/store/").Handler(ch.HandleFunction())
+	router.PathPrefix("/lead/store/").Handler(ch.HandleFunction()).Methods(http.MethodPost)
 	log.Fatal(http.ListenAndServe(":4000", cors.Default().Handler(router)))
 }
 
