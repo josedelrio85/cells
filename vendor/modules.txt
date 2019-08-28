@@ -17,5 +17,7 @@ github.com/pmezard/go-difflib/difflib
 github.com/rs/cors
 # github.com/stretchr/testify v1.3.0
 github.com/stretchr/testify/assert
+# github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
+github.com/tomasen/realip
 # google.golang.org/appengine v1.4.0
 google.golang.org/appengine/cloudsql
