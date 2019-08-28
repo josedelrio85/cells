@@ -48,7 +48,6 @@ func (ch *Handler) HandleFunction() http.Handler {
 		}
 
 		for _, hook := range ch.ActiveHooks {
-
 			if !hook.Active(ch.Lead) {
 				continue
 			}
