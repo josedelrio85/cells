@@ -10,4 +10,5 @@ require (
 	github.com/rs/cors v1.6.0
 	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/stretchr/testify v1.3.0
+	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
 )

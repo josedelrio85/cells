@@ -7,6 +7,7 @@ import (
 
 	hooks "github.com/bysidecar/leads/pkg/hooks"
 	model "github.com/bysidecar/leads/pkg/model"
+	"github.com/tomasen/realip"
 )
 
 // Handler is a struct created to use its ch property as element that implements
@@ -21,7 +22,6 @@ type Handler struct {
 // HandleFunction is a function used to manage all received requests.
 func (ch *Handler) HandleFunction() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 		ch.Lead = model.Lead{}
 
 		if err := ch.Lead.Decode(r.Body); err != nil {
@@ -36,6 +36,9 @@ func (ch *Handler) HandleFunction() http.Handler {
 			responseError(w, message, err)
 			return
 		}
+
+		requestIP := realip.FromRequest(r)
+		ch.Lead.LeaIP = &requestIP
 
 		if ch.Lead.LeatypeID == 0 {
 			ch.Lead.LeatypeID = 1
