@@ -39,6 +39,8 @@ func response(w http.ResponseWriter, ra ResponseAPI) {
 
 // responseError generates log, alarm and response when an error occurs
 func responseError(w http.ResponseWriter, message string, err error) {
+	log.Println(message)
+
 	sendAlarm(message, http.StatusInternalServerError, err)
 
 	ra := ResponseAPI{
