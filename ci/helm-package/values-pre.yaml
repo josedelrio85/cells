@@ -14,7 +14,9 @@ service:
 
 ingress:
   enabled: true
-  annotations:
+  annotations: {
+    ingress.kubernetes.io/enable-cors: "true"
+  }
   paths:
     - /
   hosts:
@@ -24,6 +26,8 @@ ingress:
       hosts:
         - leads-pre.bysidecar.me
 env:
+- name: LEAD_LEONTEL_ENDPOINT
+  value: "https://ws.bysidecar.es/lead/smartcenter/store"
 - name: DB_HOST
   value: "leads-pre.c848y92oajny.eu-west-1.rds.amazonaws.com"
 - name: DB_PORT
