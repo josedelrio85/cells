@@ -250,6 +250,8 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 	case 57:
 		// Sanitas
 		// lea_destiny =  GSS => we must have IsLeontel = true
+	case 64, 65, 66:
+		leontel.Observaciones = lead.Observations
 	default:
 	}
 	return leontel
