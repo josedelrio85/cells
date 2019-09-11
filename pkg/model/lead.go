@@ -42,9 +42,9 @@ type Lead struct {
 	Gclid              *string    `json:"gclid,omitempty"`
 	Domain             *string    `json:"domain,omitempty"`
 	Observations       *string    `sql:"type:text" json:"observations,omitempty"`
-	RcableExp          RcableExp  `json:"rcableexp,omitempty"`
-	Microsoft          Microsoft  `json:"microsoft,omitempty"`
-	Creditea           Creditea   `json:"creditea,omitempty"`
+	RcableExp          *RcableExp `json:"rcableexp"`
+	Microsoft          *Microsoft `json:"microsoft"`
+	Creditea           *Creditea  `json:"creditea"`
 }
 
 // TableName sets the default table name

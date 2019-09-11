@@ -166,7 +166,7 @@ func TestLeadToLeontel(t *testing.T) {
 				SouID:     9,
 				LeatypeID: 1,
 				LeaDNI:    &t1,
-				Creditea: model.Creditea{
+				Creditea: &model.Creditea{
 					RequestedAmount: &t2,
 				},
 				IsSmartCenter: false,
@@ -186,7 +186,7 @@ func TestLeadToLeontel(t *testing.T) {
 				SouID:     11,
 				LeatypeID: 1,
 				LeaDNI:    &t1,
-				Creditea: model.Creditea{
+				Creditea: &model.Creditea{
 					RequestedAmount: &t2,
 					NetIncome:       &t3,
 					ContractType:    &t4,
@@ -208,7 +208,7 @@ func TestLeadToLeontel(t *testing.T) {
 				SouID:        46,
 				LeatypeID:    1,
 				Observations: &observations,
-				Microsoft: model.Microsoft{
+				Microsoft: &model.Microsoft{
 					ComputerType: &t1,
 					Sector:       &t2,
 					Usecase:      &t3,
@@ -240,7 +240,7 @@ func TestLeadToLeontel(t *testing.T) {
 				SouID:        48,
 				LeatypeID:    1,
 				Observations: &observations,
-				Microsoft: model.Microsoft{
+				Microsoft: &model.Microsoft{
 					DevicesAverageAge:      &t1,
 					DevicesOperatingSystem: &t2,
 					DevicesHangFrequency:   &t3,
@@ -264,6 +264,7 @@ func TestLeadToLeontel(t *testing.T) {
 				SouID:         50,
 				LeatypeID:     1,
 				IsSmartCenter: false,
+				Microsoft:     &model.Microsoft{},
 			},
 			ExpectedResult: model.LeadLeontel{
 				LeaSource: 61,
@@ -278,7 +279,7 @@ func TestLeadToLeontel(t *testing.T) {
 				SouID:        51,
 				LeatypeID:    1,
 				Observations: &observations,
-				Microsoft: model.Microsoft{
+				Microsoft: &model.Microsoft{
 					ProductType:        &t1,
 					ProductName:        &t2,
 					ProductID:          &t3,
@@ -307,7 +308,7 @@ func TestLeadToLeontel(t *testing.T) {
 			Lead: model.Lead{
 				SouID:     54,
 				LeatypeID: 1,
-				RcableExp: model.RcableExp{
+				RcableExp: &model.RcableExp{
 					RespValues: &t1,
 					Location:   &t2,
 					Answer:     &t3,

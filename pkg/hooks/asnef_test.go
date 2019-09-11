@@ -102,7 +102,7 @@ func TestPerform(t *testing.T) {
 				LeaPhone:      &phone,
 				LeaDNI:        &dni,
 				IsSmartCenter: true,
-				Creditea: model.Creditea{
+				Creditea: &model.Creditea{
 					ASNEF:         false,
 					AlreadyClient: false,
 				},
@@ -119,7 +119,7 @@ func TestPerform(t *testing.T) {
 				LeaPhone:      &phone,
 				LeaDNI:        &dni,
 				IsSmartCenter: true,
-				Creditea: model.Creditea{
+				Creditea: &model.Creditea{
 					RequestedAmount: &cantidad,
 					ASNEF:           true,
 					AlreadyClient:   false,
@@ -137,7 +137,7 @@ func TestPerform(t *testing.T) {
 				LeaPhone:      &phone,
 				LeaDNI:        &dni,
 				IsSmartCenter: true,
-				Creditea: model.Creditea{
+				Creditea: &model.Creditea{
 					RequestedAmount: &cantidad,
 					ASNEF:           false,
 					AlreadyClient:   true,
@@ -155,7 +155,7 @@ func TestPerform(t *testing.T) {
 				LeaPhone:      &candidates[0].Telefono,
 				LeaDNI:        &candidates[0].DNI,
 				IsSmartCenter: false,
-				Creditea: model.Creditea{
+				Creditea: &model.Creditea{
 					ASNEF:         true,
 					AlreadyClient: true,
 				},
