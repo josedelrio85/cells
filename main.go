@@ -5,10 +5,12 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	leads "github.com/bysidecar/leads/pkg"
 	hooks "github.com/bysidecar/leads/pkg/hooks"
 	model "github.com/bysidecar/leads/pkg/model"
+	"github.com/gomodule/redigo/redis"
 
 	"github.com/rs/cors"
 
@@ -39,6 +41,20 @@ func main() {
 			hooks.Asnef{},
 			hooks.Ontime{},
 			hooks.Hibernated{},
+			hooks.Allowed{},
+		},
+		Redis: model.Redis{
+			Pool: &redis.Pool{
+				MaxIdle:     5,
+				IdleTimeout: 60 * time.Second,
+				Dial: func() (redis.Conn, error) {
+					return redis.Dial("tcp", GetSetting("CHECK_LEAD_REDIS")+":6379")
+				},
+				TestOnBorrow: func(c redis.Conn, t time.Time) error {
+					_, err := c.Do("PING")
+					return err
+				},
+			},
 		},
 	}
 

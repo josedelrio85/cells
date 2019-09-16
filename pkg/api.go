@@ -17,6 +17,7 @@ type Handler struct {
 	Storer      model.Storer
 	Lead        model.Lead
 	ActiveHooks []hooks.Hookable
+	Redis       model.Redis
 }
 
 // HandleFunction is a function used to manage all received requests.
@@ -66,6 +67,15 @@ func (ch *Handler) HandleFunction() http.Handler {
 				responseError(w, hookResponse.Err.Error(), hookResponse.Err)
 				return
 			}
+		}
+
+		phone := *ch.Lead.LeaPhone
+		key := fmt.Sprintf("%s-%d-%d", phone, ch.Lead.SouID, ch.Lead.LeatypeID)
+		_, err := ch.Redis.Get(key)
+		if err != nil {
+			message := fmt.Sprintf("Max attempts reached, Err: %v", err)
+			responseUnprocessable(w, message, err)
+			return
 		}
 
 		if err := ch.Lead.GetPassport(); err != nil {
