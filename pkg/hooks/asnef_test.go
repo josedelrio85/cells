@@ -9,6 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	container "github.com/bysidecar/leads/pkg/container"
 	model "github.com/bysidecar/leads/pkg/model"
 )
 
@@ -192,7 +193,11 @@ func TestPerform(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.Description, func(t *testing.T) {
 
-			response := asnef.Perform(database.DB, &test.Lead)
+			cont := container.Container{
+				Storer: &database,
+				Lead:   test.Lead,
+			}
+			response := asnef.Perform(cont)
 
 			assert.Equal(test.Response, response)
 			assert.Equal(test.Response.StatusCode, response.StatusCode)

@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"time"
 
+	container "github.com/bysidecar/leads/pkg/container"
 	model "github.com/bysidecar/leads/pkg/model"
 	"github.com/jinzhu/gorm"
 )
@@ -51,7 +52,8 @@ func (a Ontime) Active(lead model.Lead) bool {
 // lead: The lead to check ontime validation on.
 // Returns a HookReponse with the ontime check result.
 // True => ontime | false => holiday || out of time
-func (a Ontime) Perform(db *gorm.DB, lead *model.Lead) HookResponse {
+func (a Ontime) Perform(cont container.Container) HookResponse {
+	lead := cont.Lead
 	statuscode := http.StatusOK
 
 	var err error

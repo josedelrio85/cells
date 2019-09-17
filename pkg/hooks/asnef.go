@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	container "github.com/bysidecar/leads/pkg/container"
 	model "github.com/bysidecar/leads/pkg/model"
 	"github.com/jinzhu/gorm"
 )
@@ -56,7 +57,9 @@ func (a Asnef) Active(lead model.Lead) bool {
 // Perform returns the result of asnef/already client validation
 // lead: The lead to check Asnef on.
 // Returns a HookReponse with the asnef check result.
-func (a Asnef) Perform(db *gorm.DB, lead *model.Lead) HookResponse {
+func (a Asnef) Perform(cont container.Container) HookResponse {
+	lead := &cont.Lead
+	db := cont.Storer.Instance()
 
 	if lead.Creditea.ASNEF || lead.Creditea.AlreadyClient {
 		lead.IsSmartCenter = false

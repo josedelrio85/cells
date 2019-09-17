@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	container "github.com/bysidecar/leads/pkg/container"
 	model "github.com/bysidecar/leads/pkg/model"
 	"github.com/jinzhu/gorm"
 )
@@ -64,8 +65,8 @@ func (h Hibernated) Active(lead model.Lead) bool {
 // Perform returns the result of hibernated campaign validation
 // lead: The lead to check the hibernated campaign.
 // Returns a HookReponse with the hibernated campaign check result
-func (h Hibernated) Perform(db *gorm.DB, lead *model.Lead) HookResponse {
-	err := fmt.Errorf("An hibernated campaign was detected! => %d", lead.SouID)
+func (h Hibernated) Perform(cont container.Container) HookResponse {
+	err := fmt.Errorf("An hibernated campaign was detected! => %d", cont.Lead.SouID)
 
 	return HookResponse{
 		StatusCode: http.StatusUnprocessableEntity,
