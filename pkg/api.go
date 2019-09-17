@@ -2,11 +2,14 @@ package leads
 
 import (
 	"fmt"
+
 	"net/http"
 	"strconv"
 
+	container "github.com/bysidecar/leads/pkg/container"
 	hooks "github.com/bysidecar/leads/pkg/hooks"
 	model "github.com/bysidecar/leads/pkg/model"
+
 	"github.com/tomasen/realip"
 )
 
@@ -51,12 +54,18 @@ func (ch *Handler) HandleFunction() http.Handler {
 			return
 		}
 
+		container := container.Container{
+			Storer: ch.Storer,
+			Lead:   ch.Lead,
+			Redis:  ch.Redis,
+		}
+
 		for _, hook := range ch.ActiveHooks {
 			if !hook.Active(ch.Lead) {
 				continue
 			}
 
-			hookResponse := hook.Perform(ch.Storer.Instance(), &ch.Lead)
+			hookResponse := hook.Perform(container)
 			if hookResponse.StatusCode == http.StatusUnprocessableEntity {
 				message := "An Unprocessable Entity was detected"
 				sendAlarm(message, http.StatusUnprocessableEntity, hookResponse.Err)
@@ -67,15 +76,6 @@ func (ch *Handler) HandleFunction() http.Handler {
 				responseError(w, hookResponse.Err.Error(), hookResponse.Err)
 				return
 			}
-		}
-
-		phone := *ch.Lead.LeaPhone
-		key := fmt.Sprintf("%s-%d-%d", phone, ch.Lead.SouID, ch.Lead.LeatypeID)
-		_, err := ch.Redis.Get(key)
-		if err != nil {
-			message := fmt.Sprintf("Max attempts reached, Err: %v", err)
-			responseUnprocessable(w, message, err)
-			return
 		}
 
 		if err := ch.Lead.GetPassport(); err != nil {
