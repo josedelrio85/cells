@@ -21,7 +21,7 @@ func (r *Redis) Set(key, value string) error {
 	redis := r.Pool.Get()
 	defer redis.Close()
 
-	if _, err := redis.Do("SET", key, value, "EX", 300); err != nil {
+	if _, err := redis.Do("SET", key, value, "EX", 60); err != nil {
 		return errors.Wrap(err, "error storing phone validation code")
 	}
 
@@ -38,9 +38,11 @@ func (r *Redis) Get(key string) (*string, error) {
 	defer redisConn.Close()
 
 	value, err := redis.String(redisConn.Do("GET", key))
-	if err != nil {
-		return nil, errors.Wrap(err, "error retrieving phone validation code")
+	if err == redis.ErrNil {
+		return &value, nil
+	} else if err != nil {
+		return nil, errors.Wrap(err, "error retrieving key to check the lead")
+	} else {
+		return &value, nil
 	}
-
-	return &value, nil
 }
