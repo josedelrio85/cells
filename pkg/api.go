@@ -68,6 +68,7 @@ func (ch *Handler) HandleFunction() http.Handler {
 			hookResponse := hook.Perform(container)
 			if hookResponse.StatusCode == http.StatusUnprocessableEntity {
 				message := "An Unprocessable Entity was detected"
+				// TODO | when Allowed hook response is returned, if the state is not StatusOk the lead won't be sended to Leontel
 				sendAlarm(message, http.StatusUnprocessableEntity, hookResponse.Err)
 				continue
 			}
