@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -69,4 +70,13 @@ func main() {
 
 	router.PathPrefix("/lead/store/").Handler(ch.HandleFunction()).Methods(http.MethodPost)
 	log.Fatal(http.ListenAndServe(":4000", cors.Default().Handler(router)))
+}
+
+func getSetting(setting string) string {
+	value, ok := os.LookupEnv(setting)
+	if !ok {
+		log.Fatalf("Init error, %s ENV var not found", setting)
+	}
+
+	return value
 }
