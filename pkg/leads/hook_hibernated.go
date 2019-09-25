@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	container "github.com/bysidecar/leads/pkg/container"
-	model "github.com/bysidecar/leads/pkg/model"
 	"github.com/jinzhu/gorm"
 )
 
@@ -20,7 +18,7 @@ type Hibernated struct {
 // lead: The lead to check Asneff on.
 //
 // Returns true if the hibernated campaign Hook gets activated.
-func (h Hibernated) Active(lead model.Lead) bool {
+func (h Hibernated) Active(lead Lead) bool {
 	hibernated := Hibernated{
 		List: map[int64]bool{
 			2:  true,
@@ -65,7 +63,7 @@ func (h Hibernated) Active(lead model.Lead) bool {
 // Perform returns the result of hibernated campaign validation
 // lead: The lead to check the hibernated campaign.
 // Returns a HookReponse with the hibernated campaign check result
-func (h Hibernated) Perform(cont container.Container) HookResponse {
+func (h Hibernated) Perform(cont *Handler) HookResponse {
 	err := fmt.Errorf("An hibernated campaign was detected! => %d", cont.Lead.SouID)
 
 	return HookResponse{

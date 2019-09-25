@@ -3,7 +3,6 @@ package leads
 import (
 	"testing"
 
-	model "github.com/bysidecar/leads/pkg/model"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,12 +13,12 @@ func TestActiveHibernated(t *testing.T) {
 
 	tests := []struct {
 		Description    string
-		Lead           model.Lead
+		Lead           Lead
 		ExpectedResult bool
 	}{
 		{
 			Description: "When an active campaign is used",
-			Lead: model.Lead{
+			Lead: Lead{
 				SouID:        5,
 				SouIDLeontel: 6,
 			},
@@ -27,7 +26,7 @@ func TestActiveHibernated(t *testing.T) {
 		},
 		{
 			Description: "When an hibernated campaign is used",
-			Lead: model.Lead{
+			Lead: Lead{
 				SouID:        31,
 				SouIDLeontel: 39,
 			},
@@ -35,7 +34,7 @@ func TestActiveHibernated(t *testing.T) {
 		},
 		{
 			Description: "When a non existing campaign is used",
-			Lead: model.Lead{
+			Lead: Lead{
 				SouID:        999,
 				SouIDLeontel: 0,
 			},

@@ -8,8 +8,6 @@ import (
 	"net/http"
 	"time"
 
-	container "github.com/bysidecar/leads/pkg/container"
-	model "github.com/bysidecar/leads/pkg/model"
 	"github.com/jinzhu/gorm"
 )
 
@@ -40,7 +38,7 @@ type InputData struct {
 // lead: The lead to check Asneff on.
 //
 // Returns true if the Asnef Hook gets activated.
-func (a Asnef) Active(lead model.Lead) bool {
+func (a Asnef) Active(lead Lead) bool {
 	if lead.IsSmartCenter {
 		switch lead.SouID {
 		case 9:
@@ -57,7 +55,7 @@ func (a Asnef) Active(lead model.Lead) bool {
 // Perform returns the result of asnef/already client validation
 // lead: The lead to check Asnef on.
 // Returns a HookReponse with the asnef check result.
-func (a Asnef) Perform(cont container.Container) HookResponse {
+func (a Asnef) Perform(cont *Handler) HookResponse {
 	lead := &cont.Lead
 	db := cont.Storer.Instance()
 
@@ -138,7 +136,7 @@ func (a Asnef) Perform(cont container.Container) HookResponse {
 }
 
 // GetCandidates retrives a list of asnef candidates
-func GetCandidates(lead model.Lead) []Candidate {
+func GetCandidates(lead Lead) []Candidate {
 
 	url := "https://ws.bysidecar.es/lead/asnef/getcandidates"
 
@@ -174,17 +172,17 @@ func GetCandidates(lead model.Lead) []Candidate {
 
 // helper makes a prevalidation in leads BD to check for any match in the las month.
 // If the conditions are matched, returns true.
-func helper(db *gorm.DB, lead *model.Lead) (bool, error) {
-	leadalt := model.Lead{}
+func helper(db *gorm.DB, lead *Lead) (bool, error) {
+	leadalt := Lead{}
 	tblname := leadalt.TableName()
 
-	source := model.Source{}
+	source := Source{}
 	if result := db.Where("sou_id = ?", lead.SouID).First(&source); result.Error != nil {
 		log.Fatalf("Error retrieving SouIDLeontel value: %v", result.Error)
 	}
 	soudesc := fmt.Sprintf("%s%s%s", "%", source.SouDescription[:5], "%")
 
-	sources := []model.Source{}
+	sources := []Source{}
 	db.Where("sou_description like ?", soudesc).Find(&sources)
 
 	stringsources := make([]string, 0)
@@ -217,12 +215,12 @@ func helper(db *gorm.DB, lead *model.Lead) (bool, error) {
 
 // GetCandidatesPreasnef retrieves a list of candidates to match a positive asnef prevalidation.
 // Used in test method only.
-func GetCandidatesPreasnef(db *gorm.DB) []model.Lead {
-	candidates := []model.Lead{}
+func GetCandidatesPreasnef(db *gorm.DB) []Lead {
+	candidates := []Lead{}
 
-	tblname := model.Lead{}.TableName()
+	tblname := Lead{}.TableName()
 
-	sources := []model.Source{}
+	sources := []Source{}
 	db.Where("sou_description like ?", "%CREDI%").Find(&sources)
 
 	stringsources := make([]string, 0)
@@ -233,7 +231,7 @@ func GetCandidatesPreasnef(db *gorm.DB) []model.Lead {
 	oneMonthLess := time.Now().AddDate(0, -1, 0)
 	datecontrol := oneMonthLess.Format("2006-01-02")
 
-	query := db.Table("leadnew").Select(fmt.Sprintf("%s.lea_phone, %s.lea_dni", tblname, tblname))
+	query := db.Table("leads").Select(fmt.Sprintf("%s.lea_phone, %s.lea_dni", tblname, tblname))
 	query = query.Joins(fmt.Sprintf("JOIN creditea on %s.id = creditea.lea_id", tblname))
 	query = query.Where(fmt.Sprintf("%s.lea_ts > ?", tblname), datecontrol)
 	query = query.Where(fmt.Sprintf("%s.sou_id IN (?)", tblname), stringsources)

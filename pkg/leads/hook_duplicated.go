@@ -4,16 +4,11 @@ import (
 	"fmt"
 	"net/http"
 
-	container "github.com/bysidecar/leads/pkg/container"
-	model "github.com/bysidecar/leads/pkg/model"
-
 	"github.com/pkg/errors"
 )
 
-// Allowed is a is a struct that represents a Redis entity
-type Allowed struct {
-	Redis model.Redis
-}
+// Duplicated is a is a struct that represents a Redis entity
+type Duplicated struct{}
 
 // Active implents the Hooable interface, so when checking
 // for active hooks will trigger the hook
@@ -22,7 +17,7 @@ type Allowed struct {
 // lead: The lead to check on.
 //
 // Returns true if the hook gets activated.
-func (a Allowed) Active(lead model.Lead) bool {
+func (a Duplicated) Active(lead Lead) bool {
 	switch lead.SouID {
 	case 64:
 		return true
@@ -35,12 +30,12 @@ func (a Allowed) Active(lead model.Lead) bool {
 	}
 }
 
-// Perform returns the result of allowed validation
+// Perform returns the result of duplicated validation
 // lead: The lead to check on.
 // db: not used in this implementation
-// Returns a HookReponse with the allowed check result.
-func (a Allowed) Perform(cont container.Container) HookResponse {
-	lead := cont.Lead
+// Returns a HookReponse with the duplicated check result.
+func (a Duplicated) Perform(cont *Handler) HookResponse {
+	lead := &cont.Lead
 	phone := *lead.LeaPhone
 	key := fmt.Sprintf("%s-%d-%d", phone, lead.SouID, lead.LeatypeID)
 

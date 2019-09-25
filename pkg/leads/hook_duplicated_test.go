@@ -1,39 +1,37 @@
 package leads
 
 import (
-	"log"
 	"net/http"
-	"os"
 	"testing"
 	"time"
 
-	container "github.com/bysidecar/leads/pkg/container"
-	model "github.com/bysidecar/leads/pkg/model"
+	redisclient "github.com/bysidecar/leads/pkg/leads/redis"
+
 	"github.com/gomodule/redigo/redis"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestActiveAllowed(t *testing.T) {
+func TestActiveDuplicated(t *testing.T) {
 	assert := assert.New(t)
 
-	var allowed Allowed
+	var duplicated Duplicated
 
 	tests := []struct {
 		Description string
-		Lead        model.Lead
+		Lead        Lead
 		Active      bool
 	}{
 		{
-			Description: "when Allowed hook is successfully activated",
-			Lead: model.Lead{
+			Description: "when Duplicated hook is successfully activated",
+			Lead: Lead{
 				SouID: 64,
 			},
 			Active: true,
 		},
 		{
-			Description: "when Allowed hook is not activated",
-			Lead: model.Lead{
+			Description: "when Duplicated hook is not activated",
+			Lead: Lead{
 				SouID: 1,
 			},
 			Active: false,
@@ -42,23 +40,23 @@ func TestActiveAllowed(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.Description, func(t *testing.T) {
-			active := allowed.Active(test.Lead)
+			active := duplicated.Active(test.Lead)
 
 			assert.Equal(test.Active, active)
 		})
 	}
 }
 
-func TestPerformAllowed(t *testing.T) {
+func TestPerformDuplicated(t *testing.T) {
 	assert := assert.New(t)
 
-	var allowed Allowed
-	redis := model.Redis{
+	var duplicated Duplicated
+	redis := redisclient.Redis{
 		Pool: &redis.Pool{
 			MaxIdle:     5,
 			IdleTimeout: 60 * time.Second,
 			Dial: func() (redis.Conn, error) {
-				return redis.Dial("tcp", getSettingAllowed("CHECK_LEAD_REDIS")+":6379")
+				return redis.Dial("tcp", GetSetting("CHECK_LEAD_REDIS")+":6379")
 			},
 			TestOnBorrow: func(c redis.Conn, t time.Time) error {
 				_, err := c.Do("PING")
@@ -67,18 +65,18 @@ func TestPerformAllowed(t *testing.T) {
 		},
 	}
 
-	phone1 := "666666666"
-	phone2 := "666666667"
+	phone1 := HelperRandstring(9)
+	phone2 := HelperRandstring(9)
 
 	tests := []struct {
 		Description    string
-		Lead           model.Lead
+		Lead           Lead
 		Response       HookResponse
 		ExpectedResult bool
 	}{
 		{
-			Description: "When a lead is allowed",
-			Lead: model.Lead{
+			Description: "When a lead is not duplicated",
+			Lead: Lead{
 				LeaPhone:  &phone1,
 				SouID:     64,
 				LeatypeID: 1,
@@ -90,8 +88,8 @@ func TestPerformAllowed(t *testing.T) {
 			ExpectedResult: true,
 		},
 		{
-			Description: "When a lead is not allowed because reached the limit",
-			Lead: model.Lead{
+			Description: "When a lead is duplicated because reached the limit",
+			Lead: Lead{
 				LeaPhone:  &phone1,
 				SouID:     64,
 				LeatypeID: 1,
@@ -103,8 +101,8 @@ func TestPerformAllowed(t *testing.T) {
 			ExpectedResult: false,
 		},
 		{
-			Description: "When another lead is allowed",
-			Lead: model.Lead{
+			Description: "When another lead is not duplicated",
+			Lead: Lead{
 				LeaPhone:  &phone2,
 				SouID:     66,
 				LeatypeID: 8,
@@ -120,11 +118,11 @@ func TestPerformAllowed(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.Description, func(t *testing.T) {
 
-			cont := container.Container{
+			cont := Handler{
 				Lead:  test.Lead,
 				Redis: redis,
 			}
-			response := allowed.Perform(cont)
+			response := duplicated.Perform(&cont)
 
 			assert.Equal(test.Response.StatusCode, response.StatusCode)
 			if test.ExpectedResult {
@@ -134,13 +132,4 @@ func TestPerformAllowed(t *testing.T) {
 			}
 		})
 	}
-}
-
-func getSettingAllowed(setting string) string {
-	value, ok := os.LookupEnv(setting)
-	if !ok {
-		log.Fatalf("Init error, %s ENV var not found", setting)
-	}
-
-	return value
 }
