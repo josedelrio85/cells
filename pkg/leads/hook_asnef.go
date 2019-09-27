@@ -173,8 +173,7 @@ func GetCandidates(lead Lead) []Candidate {
 // helper makes a prevalidation in leads BD to check for any match in the las month.
 // If the conditions are matched, returns true.
 func helper(db *gorm.DB, lead *Lead) (bool, error) {
-	leadalt := Lead{}
-	tblname := leadalt.TableName()
+	tblname := lead.TableName()
 
 	source := Source{}
 	if result := db.Where("sou_id = ?", lead.SouID).First(&source); result.Error != nil {
@@ -201,7 +200,7 @@ func helper(db *gorm.DB, lead *Lead) (bool, error) {
 	query = query.Where(fmt.Sprintf("%s.is_smart_center = ?", tblname), 0)
 	query = query.Where(fmt.Sprintf("%s.lea_dni like ? or %s.lea_phone = ?", tblname, tblname), dni, lead.LeaPhone)
 	query = query.Where("creditea.asnef = ? or creditea.already_client = ?", 1, 1)
-	err := query.First(&leadalt).Error
+	err := query.First(&lead).Error
 
 	if err != nil && !gorm.IsRecordNotFoundError(err) {
 		return false, err
