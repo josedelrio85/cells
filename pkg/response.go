@@ -105,7 +105,7 @@ func sendAlarm(message string, status int, err error) {
 	mstype := voalarm.Acknowledgement
 	switch status {
 	case http.StatusInternalServerError:
-		mstype = voalarm.Critical
+		mstype = voalarm.Warning
 	case http.StatusUnprocessableEntity:
 		mstype = voalarm.Info
 	}
