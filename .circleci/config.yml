@@ -9,6 +9,7 @@ jobs:
           MYSQL_DATABASE: test_db
           MYSQL_USER: user
           MYSQL_PASSWORD: passw0rd
+      - image: redis
     steps:
       - checkout
       - run:
@@ -20,7 +21,7 @@ jobs:
             echo 'export DB_PASS="passw0rd"' >> $BASH_ENV
             echo 'export DB_NAME="test_db"' >> $BASH_ENV
             echo 'export LEAD_LEONTEL_ENDPOINT="https://ws.bysidecar.es/lead/smartcenter/store"' >> $BASH_ENV
-            echo 'export CHECK_LEAD_REDIS="1.1.1.1:6379"' >> $BASH_ENV 
+            echo 'export CHECK_LEAD_REDIS="127.0.0.1"' >> $BASH_ENV
       - run:
       # Our primary container isn't MYSQL so run a sleep command until it's ready.
           name: Waiting for MySQL to be ready
