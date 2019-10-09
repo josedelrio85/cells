@@ -179,6 +179,12 @@ insert into sources (sou_id, sou_description, sou_idcrm) values (59,'SANITAS EMI
 insert into sources (sou_id, sou_description, sou_idcrm) values (60,'ABANCA EMISIÓN',69);
 insert into sources (sou_id, sou_description, sou_idcrm) values (61,'CREDITEA BBDD ADSALSA',70);
 insert into sources (sou_id, sou_description, sou_idcrm) values (62,'CREDITEA MINIPROVI',71);
+insert into sources (sou_id, sou_description, sou_idcrm) values (63,'ABANCA END TO END',72);
+insert into sources (sou_id, sou_description, sou_idcrm) values (64,'R CABLE END TO END',73);
+insert into sources (sou_id, sou_description, sou_idcrm) values (65,'TELECABLE END TO END',74);
+insert into sources (sou_id, sou_description, sou_idcrm) values (66,'EUSKALTEL END TO END',75);
+insert into sources (sou_id, sou_description, sou_idcrm) values (67,'CREDITEA STAND 4 CAMINOS',76);
+insert into sources (sou_id, sou_description, sou_idcrm) values (68,'R CABLE BBDD SALIENTE',77);
 
 insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (1,'C2C',2);
 insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (2,'FORM',3);
@@ -204,3 +210,6 @@ insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (21
 insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (22,'CHAT',24);
 insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (23,'CREDITEA E2E (ENTRANTE-KELISTO)',25);
 insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (24,'FORM - CONSULTA COBERTURA OK',26);
+insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (25,'SEM',27);
+insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (26,'PENDIENTE DOCUMENTACION Y FIRMA',28);
+insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (27,'PEDIDO FULL ONLINE',30);

@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"time"
 
-	model "github.com/bysidecar/leads/pkg/model"
 	"github.com/jinzhu/gorm"
 )
 
@@ -31,7 +30,7 @@ type InputDataOntime struct {
 // Active implents the Hookable interface, so when checking for active hooks will trigger the Ontime validation hook when the LeatypeID matches a closed list.
 // lead: The lead to check Ontime validation on.
 // Returns true if the Ontime validation Hook gets activated.
-func (a Ontime) Active(lead model.Lead) bool {
+func (a Ontime) Active(lead Lead) bool {
 	switch lead.LeatypeID {
 	case 1:
 		return true
@@ -51,7 +50,8 @@ func (a Ontime) Active(lead model.Lead) bool {
 // lead: The lead to check ontime validation on.
 // Returns a HookReponse with the ontime check result.
 // True => ontime | false => holiday || out of time
-func (a Ontime) Perform(db *gorm.DB, lead *model.Lead) HookResponse {
+func (a Ontime) Perform(cont *Handler) HookResponse {
+	lead := &cont.Lead
 	statuscode := http.StatusOK
 
 	var err error
@@ -65,10 +65,13 @@ func (a Ontime) Perform(db *gorm.DB, lead *model.Lead) HookResponse {
 		statuscode = http.StatusInternalServerError
 	}
 
-	hour := fmt.Sprintf("%s:%s",
-		strconv.Itoa(time.Now().Hour()),
-		strconv.Itoa(time.Now().Minute()))
+	inthour := time.Now().Hour()
+	strhour := strconv.Itoa(time.Now().Hour())
+	if inthour < 10 {
+		strhour = fmt.Sprintf("0%d", inthour)
+	}
 
+	hour := fmt.Sprintf("%s:%s", strhour, strconv.Itoa(time.Now().Minute()))
 	day := int(time.Now().Weekday())
 
 	inputontime := InputDataOntime{
