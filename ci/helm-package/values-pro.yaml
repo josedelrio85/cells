@@ -44,6 +44,8 @@ env:
     secretKeyRef:
       name: leads-database
       key: pass
+- name: CHECK_LEAD_REDIS
+  value: "leads-redis-master.bysidecar.svc.cluster.local"
 
 resources: {}
 nodeSelector: {}
