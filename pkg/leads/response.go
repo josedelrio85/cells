@@ -7,7 +7,6 @@ import (
 	"runtime"
 	"strconv"
 
-	model "github.com/bysidecar/leads/pkg/model"
 	"github.com/bysidecar/voalarm"
 )
 
@@ -64,7 +63,7 @@ func responseOk(w http.ResponseWriter, message string, smartcenter bool) {
 }
 
 // responseLeontel calls response function passing the data obtained from Leontel proxy
-func responseLeontel(w http.ResponseWriter, resp *model.LeontelResp) {
+func responseLeontel(w http.ResponseWriter, resp *LeontelResp) {
 	ra := ResponseAPI{
 		Code:        http.StatusOK,
 		Message:     strconv.FormatInt(resp.ID, 10),

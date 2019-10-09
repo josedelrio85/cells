@@ -13,12 +13,10 @@ import (
 	"testing"
 	"time"
 
-	model "github.com/bysidecar/leads/pkg/model"
-
 	"github.com/stretchr/testify/assert"
 )
 
-var dbInstance model.Database
+var dbInstance Database
 
 func TestMain(m *testing.M) {
 	dbInstance = helperDb()
@@ -40,10 +38,10 @@ func TestHandlerFunction(t *testing.T) {
 
 	tests := []struct {
 		Description    string
-		Storer         model.Storer
+		Storer         Storer
 		TypeRequest    string
 		StatusCode     int
-		Lead           model.Lead
+		Lead           Lead
 		ExpectedResult bool
 	}{
 		{
@@ -51,7 +49,7 @@ func TestHandlerFunction(t *testing.T) {
 			TypeRequest:    http.MethodPost,
 			StatusCode:     http.StatusInternalServerError,
 			Storer:         nil,
-			Lead:           model.Lead{},
+			Lead:           Lead{},
 			ExpectedResult: false,
 		},
 		{
@@ -59,7 +57,7 @@ func TestHandlerFunction(t *testing.T) {
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusInternalServerError,
 			Storer:      nil,
-			Lead: model.Lead{
+			Lead: Lead{
 				LeatypeID:     1,
 				LeaPhone:      &phoneTest,
 				LeaIP:         &ipTest,
@@ -72,7 +70,7 @@ func TestHandlerFunction(t *testing.T) {
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusOK,
 			Storer:      &database,
-			Lead: model.Lead{
+			Lead: Lead{
 				SouID:         15,
 				LeaPhone:      &phoneTest,
 				LeaIP:         &ipTest,
@@ -155,23 +153,23 @@ func TestLeadToLeontel(t *testing.T) {
 		Description    string
 		TypeRequest    string
 		StatusCode     int
-		Lead           model.Lead
-		ExpectedResult model.LeadLeontel
+		Lead           Lead
+		ExpectedResult LeadLeontel
 	}{
 		{
 			Description: "check data returned for sou_id 9 Creditea EndToEnd",
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusInternalServerError,
-			Lead: model.Lead{
+			Lead: Lead{
 				SouID:     9,
 				LeatypeID: 1,
 				LeaDNI:    &t1,
-				Creditea: &model.Creditea{
+				Creditea: &Creditea{
 					RequestedAmount: &t2,
 				},
 				IsSmartCenter: false,
 			},
-			ExpectedResult: model.LeadLeontel{
+			ExpectedResult: LeadLeontel{
 				LeaSource:     13,
 				LeaType:       2,
 				Dninie:        &t1,
@@ -182,18 +180,18 @@ func TestLeadToLeontel(t *testing.T) {
 			Description: "check data returned for sou_id 11 Creditea Rastreator",
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusInternalServerError,
-			Lead: model.Lead{
+			Lead: Lead{
 				SouID:     11,
 				LeatypeID: 1,
 				LeaDNI:    &t1,
-				Creditea: &model.Creditea{
+				Creditea: &Creditea{
 					RequestedAmount: &t2,
 					NetIncome:       &t3,
 					ContractType:    &t4,
 				},
 				IsSmartCenter: false,
 			},
-			ExpectedResult: model.LeadLeontel{
+			ExpectedResult: LeadLeontel{
 				LeaSource:     15,
 				LeaType:       2,
 				Dninie:        &t1,
@@ -204,11 +202,11 @@ func TestLeadToLeontel(t *testing.T) {
 			Description: "check data returned for sou_id 46-49 Microsoft Hazelcambio + Recomendador",
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusInternalServerError,
-			Lead: model.Lead{
+			Lead: Lead{
 				SouID:        46,
 				LeatypeID:    1,
 				Observations: &observations,
-				Microsoft: &model.Microsoft{
+				Microsoft: &Microsoft{
 					ComputerType: &t1,
 					Sector:       &t2,
 					Usecase:      &t3,
@@ -219,7 +217,7 @@ func TestLeadToLeontel(t *testing.T) {
 				},
 				IsSmartCenter: false,
 			},
-			ExpectedResult: model.LeadLeontel{
+			ExpectedResult: LeadLeontel{
 				LeaSource:      61,
 				LeaType:        2,
 				Tipoordenador:  &t1,
@@ -236,11 +234,11 @@ func TestLeadToLeontel(t *testing.T) {
 			Description: "check data returned for sou_id 48 Microsoft Calculadora",
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusInternalServerError,
-			Lead: model.Lead{
+			Lead: Lead{
 				SouID:        48,
 				LeatypeID:    1,
 				Observations: &observations,
-				Microsoft: &model.Microsoft{
+				Microsoft: &Microsoft{
 					DevicesAverageAge:      &t1,
 					DevicesOperatingSystem: &t2,
 					DevicesHangFrequency:   &t3,
@@ -250,7 +248,7 @@ func TestLeadToLeontel(t *testing.T) {
 				},
 				IsSmartCenter: false,
 			},
-			ExpectedResult: model.LeadLeontel{
+			ExpectedResult: LeadLeontel{
 				LeaSource:      61,
 				LeaType:        2,
 				Observaciones2: &obsTest3,
@@ -260,13 +258,13 @@ func TestLeadToLeontel(t *testing.T) {
 			Description: "check data returned for sou_id 50 Microsoft Ofertas",
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusInternalServerError,
-			Lead: model.Lead{
+			Lead: Lead{
 				SouID:         50,
 				LeatypeID:     1,
 				IsSmartCenter: false,
-				Microsoft:     &model.Microsoft{},
+				Microsoft:     &Microsoft{},
 			},
-			ExpectedResult: model.LeadLeontel{
+			ExpectedResult: LeadLeontel{
 				LeaSource: 61,
 				LeaType:   2,
 			},
@@ -275,11 +273,11 @@ func TestLeadToLeontel(t *testing.T) {
 			Description: "check data returned for sou_id 51 Microsoft Ficha Producto",
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusInternalServerError,
-			Lead: model.Lead{
+			Lead: Lead{
 				SouID:        51,
 				LeatypeID:    1,
 				Observations: &observations,
-				Microsoft: &model.Microsoft{
+				Microsoft: &Microsoft{
 					ProductType:        &t1,
 					ProductName:        &t2,
 					ProductID:          &t3,
@@ -295,7 +293,7 @@ func TestLeadToLeontel(t *testing.T) {
 				},
 				IsSmartCenter: false,
 			},
-			ExpectedResult: model.LeadLeontel{
+			ExpectedResult: LeadLeontel{
 				LeaSource:      61,
 				LeaType:        2,
 				Observaciones2: &obsTest4,
@@ -305,17 +303,17 @@ func TestLeadToLeontel(t *testing.T) {
 			Description: "check data returned for sou_id 54 R Cable Expansion",
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusInternalServerError,
-			Lead: model.Lead{
+			Lead: Lead{
 				SouID:     54,
 				LeatypeID: 1,
-				RcableExp: &model.RcableExp{
+				RcableExp: &RcableExp{
 					RespValues: &t1,
 					Location:   &t2,
 					Answer:     &t3,
 				},
 				IsSmartCenter: false,
 			},
-			ExpectedResult: model.LeadLeontel{
+			ExpectedResult: LeadLeontel{
 				LeaSource:     63,
 				LeaType:       2,
 				Observaciones: &obsTest5,
@@ -347,38 +345,38 @@ func TestGetLeontelValues(t *testing.T) {
 
 	tests := []struct {
 		Description    string
-		Lead           model.Lead
-		ExpectedResult model.Lead
+		Lead           Lead
+		ExpectedResult Lead
 	}{
 		{
 			Description: "CREDITEA END TO END	9 => 13 | C2C 1 => 2",
-			Lead: model.Lead{
+			Lead: Lead{
 				SouID:     9,
 				LeatypeID: 1,
 			},
-			ExpectedResult: model.Lead{
+			ExpectedResult: Lead{
 				SouIDLeontel:     13,
 				LeatypeIDLeontel: 2,
 			},
 		},
 		{
 			Description: "EVO BANCO 3 => 4 | INACTIVIDAD 2 => 3",
-			Lead: model.Lead{
+			Lead: Lead{
 				SouID:     3,
 				LeatypeID: 2,
 			},
-			ExpectedResult: model.Lead{
+			ExpectedResult: Lead{
 				SouIDLeontel:     4,
 				LeatypeIDLeontel: 3,
 			},
 		},
 		{
 			Description: "R CABLE EXPANSION END TO END 54 => 63 | FDH 8 => 12",
-			Lead: model.Lead{
+			Lead: Lead{
 				SouID:     54,
 				LeatypeID: 8,
 			},
-			ExpectedResult: model.Lead{
+			ExpectedResult: Lead{
 				SouIDLeontel:     63,
 				LeatypeIDLeontel: 12,
 			},
@@ -411,13 +409,13 @@ func TestSendLeadToLeontel(t *testing.T) {
 
 	tests := []struct {
 		Description    string
-		Lead           model.Lead
+		Lead           Lead
 		ExpectedResult LeontelRespTest
-		Storer         model.Storer
+		Storer         Storer
 	}{
 		{
 			Description: "When send a valid lead to Leontel",
-			Lead: model.Lead{
+			Lead: Lead{
 				SouID:            15,
 				SouIDLeontel:     23,
 				LeatypeID:        1,
@@ -469,20 +467,20 @@ func TestOpenDb(t *testing.T) {
 	assert.NoError(err)
 }
 
-func helperDb() model.Database {
+func helperDb() Database {
 
-	port := getSetting("DB_PORT")
+	port := GetSetting("DB_PORT")
 	portInt, err := strconv.ParseInt(port, 10, 64)
 	if err != nil {
 		log.Fatalf("Error parsing to string the Redshift's port %s, Err: %s", port, err)
 	}
 
-	database := model.Database{
-		Host:      getSetting("DB_HOST"),
+	database := Database{
+		Host:      GetSetting("DB_HOST"),
 		Port:      portInt,
-		User:      getSetting("DB_USER"),
-		Pass:      getSetting("DB_PASS"),
-		Dbname:    getSetting("DB_NAME"),
+		User:      GetSetting("DB_USER"),
+		Pass:      GetSetting("DB_PASS"),
+		Dbname:    GetSetting("DB_NAME"),
 		Charset:   "utf8",
 		ParseTime: "True",
 		Loc:       "Local",
@@ -498,7 +496,13 @@ func setDownDb() {
 	defer dbInstance.DB.Close()
 }
 
-func getSetting(setting string) string {
+// GetSetting reads an ENV VAR setting, it does crash the service if with an
+// error message if any setting is not found.
+//
+// - setting: The setting (ENV VAR) to read.
+//
+// Returns the setting value.
+func GetSetting(setting string) string {
 	value, ok := os.LookupEnv(setting)
 	if !ok {
 		log.Fatalf("Init error, %s ENV var not found", setting)
@@ -507,7 +511,8 @@ func getSetting(setting string) string {
 	return value
 }
 
-func helperRandstring(length int) string {
+// HelperRandstring is a helper function to generate random strings
+func HelperRandstring(length int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyz" +
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 

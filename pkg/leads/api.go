@@ -2,11 +2,12 @@ package leads
 
 import (
 	"fmt"
+
 	"net/http"
 	"strconv"
 
-	hooks "github.com/bysidecar/leads/pkg/hooks"
-	model "github.com/bysidecar/leads/pkg/model"
+	redis "github.com/bysidecar/leads/pkg/leads/redis"
+
 	"github.com/tomasen/realip"
 )
 
@@ -14,15 +15,16 @@ import (
 // http.Handler.Neededed to call HandleFunction as param in router Handler function.
 type Handler struct {
 	ch          http.Handler
-	Storer      model.Storer
-	Lead        model.Lead
-	ActiveHooks []hooks.Hookable
+	Storer      Storer
+	Lead        Lead
+	ActiveHooks []Hookable
+	Redis       redis.Redis
 }
 
 // HandleFunction is a function used to manage all received requests.
 func (ch *Handler) HandleFunction() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ch.Lead = model.Lead{}
+		ch.Lead = Lead{}
 
 		if err := ch.Lead.Decode(r.Body); err != nil {
 			message := fmt.Sprintf("Error decoding lead, Err: %v", err)
@@ -55,11 +57,11 @@ func (ch *Handler) HandleFunction() http.Handler {
 				continue
 			}
 
-			hookResponse := hook.Perform(ch.Storer.Instance(), &ch.Lead)
+			hookResponse := hook.Perform(ch)
 			if hookResponse.StatusCode == http.StatusUnprocessableEntity {
 				message := "An Unprocessable Entity was detected"
 				sendAlarm(message, http.StatusUnprocessableEntity, hookResponse.Err)
-				continue
+				return
 			}
 
 			if hookResponse.Err != nil {

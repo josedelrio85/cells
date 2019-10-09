@@ -3,7 +3,6 @@ package leads
 import (
 	"testing"
 
-	model "github.com/bysidecar/leads/pkg/model"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,40 +13,40 @@ func TestActiveOntime(t *testing.T) {
 
 	tests := []struct {
 		Description string
-		Lead        model.Lead
+		Lead        Lead
 		Active      bool
 	}{
 		{
 			Description: "When LeatypeID is a type susceptible of being checked",
-			Lead: model.Lead{
+			Lead: Lead{
 				LeatypeID: 1,
 			},
 			Active: true,
 		},
 		{
 			Description: "When LeatypeID is a type susceptible of being checked",
-			Lead: model.Lead{
+			Lead: Lead{
 				LeatypeID: 3,
 			},
 			Active: true,
 		},
 		{
 			Description: "When LeatypeID is a type susceptible of being checked",
-			Lead: model.Lead{
+			Lead: Lead{
 				LeatypeID: 4,
 			},
 			Active: true,
 		},
 		{
 			Description: "When LeatypeID is a type susceptible of being checked",
-			Lead: model.Lead{
+			Lead: Lead{
 				LeatypeID: 9,
 			},
 			Active: true,
 		},
 		{
 			Description: "When LeatypeID is not susceptible of being checked",
-			Lead: model.Lead{
+			Lead: Lead{
 				LeatypeID: 99,
 			},
 			Active: false,
@@ -119,6 +118,7 @@ func TestOntime(t *testing.T) {
 		Description    string
 		Input          InputDataOntime
 		ExpectedResult bool
+		RealResult     bool
 	}{
 		{
 			Description: "When we are on time",
@@ -128,6 +128,17 @@ func TestOntime(t *testing.T) {
 				Hour:  "12:00",
 			},
 			ExpectedResult: true,
+			RealResult:     true,
+		},
+		{
+			Description: "When an hour lower than 10 has one character instead 2 and the ontime validation should be true",
+			Input: InputDataOntime{
+				SouID: 6,
+				Day:   "3",
+				Hour:  "9:30",
+			},
+			ExpectedResult: true,
+			RealResult:     false,
 		},
 		{
 			Description: "When are in a working day but off time",
@@ -137,6 +148,7 @@ func TestOntime(t *testing.T) {
 				Hour:  "08:30",
 			},
 			ExpectedResult: false,
+			RealResult:     false,
 		},
 		{
 			Description: "When are in a non-working day",
@@ -146,6 +158,7 @@ func TestOntime(t *testing.T) {
 				Hour:  "10:15",
 			},
 			ExpectedResult: false,
+			RealResult:     false,
 		},
 		{
 			Description: "When are in a campaign without a registered timetable",
@@ -155,6 +168,7 @@ func TestOntime(t *testing.T) {
 				Hour:  "16:15",
 			},
 			ExpectedResult: false,
+			RealResult:     false,
 		},
 	}
 
@@ -163,7 +177,11 @@ func TestOntime(t *testing.T) {
 			err := ontime.checkOntime(test.Input)
 
 			assert.NoError(err)
-			assert.Equal(test.ExpectedResult, ontime.ResultOntime)
+			if test.ExpectedResult != test.RealResult {
+				assert.Equal(test.RealResult, ontime.ResultOntime)
+			} else {
+				assert.Equal(test.ExpectedResult, ontime.ResultOntime)
+			}
 		})
 	}
 }

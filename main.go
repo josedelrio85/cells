@@ -5,10 +5,11 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
-	leads "github.com/bysidecar/leads/pkg"
-	hooks "github.com/bysidecar/leads/pkg/hooks"
-	model "github.com/bysidecar/leads/pkg/model"
+	lead "github.com/bysidecar/leads/pkg/leads"
+	redisclient "github.com/bysidecar/leads/pkg/leads/redis"
+	"github.com/gomodule/redigo/redis"
 
 	"github.com/rs/cors"
 
@@ -16,29 +17,43 @@ import (
 )
 
 func main() {
-	port := GetSetting("DB_PORT")
+	port := getSetting("DB_PORT")
 	portInt, err := strconv.ParseInt(port, 10, 64)
 	if err != nil {
 		log.Fatalf("Error parsing to string Database's port %s, Err: %s", port, err)
 	}
 
-	database := &model.Database{
-		Host:      GetSetting("DB_HOST"),
+	database := &lead.Database{
+		Host:      getSetting("DB_HOST"),
 		Port:      portInt,
-		User:      GetSetting("DB_USER"),
-		Pass:      GetSetting("DB_PASS"),
-		Dbname:    GetSetting("DB_NAME"),
+		User:      getSetting("DB_USER"),
+		Pass:      getSetting("DB_PASS"),
+		Dbname:    getSetting("DB_NAME"),
 		Charset:   "utf8",
 		ParseTime: "True",
 		Loc:       "Local",
 	}
 
-	ch := leads.Handler{
+	ch := lead.Handler{
 		Storer: database,
-		ActiveHooks: []hooks.Hookable{
-			hooks.Asnef{},
-			hooks.Ontime{},
-			hooks.Hibernated{},
+		ActiveHooks: []lead.Hookable{
+			lead.Asnef{},
+			lead.Ontime{},
+			lead.Hibernated{},
+			lead.Duplicated{},
+		},
+		Redis: redisclient.Redis{
+			Pool: &redis.Pool{
+				MaxIdle:     5,
+				IdleTimeout: 60 * time.Second,
+				Dial: func() (redis.Conn, error) {
+					return redis.Dial("tcp", getSetting("CHECK_LEAD_REDIS")+":6379")
+				},
+				TestOnBorrow: func(c redis.Conn, t time.Time) error {
+					_, err := c.Do("PING")
+					return err
+				},
+			},
 		},
 	}
 
@@ -57,13 +72,7 @@ func main() {
 	log.Fatal(http.ListenAndServe(":4000", cors.Default().Handler(router)))
 }
 
-// GetSetting reads an ENV VAR setting, it does crash the service if with an
-// error message if any setting is not found.
-//
-// - setting: The setting (ENV VAR) to read.
-//
-// Returns the setting value.
-func GetSetting(setting string) string {
+func getSetting(setting string) string {
 	value, ok := os.LookupEnv(setting)
 	if !ok {
 		log.Fatalf("Init error, %s ENV var not found", setting)
