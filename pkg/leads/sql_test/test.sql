@@ -124,7 +124,7 @@ CREATE TABLE kinkon (
   phone varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
   PRIMARY KEY (id),
   KEY idx_kinkon_deleted_at (deleted_at)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 CREATE TABLE sources (
   sou_id int(3) NOT NULL AUTO_INCREMENT,
