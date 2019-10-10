@@ -37,10 +37,10 @@ func main() {
 	ch := lead.Handler{
 		Storer: database,
 		ActiveHooks: []lead.Hookable{
-			lead.Asnef{},
-			lead.Ontime{},
 			lead.Hibernated{},
 			lead.Duplicated{},
+			lead.Ontime{},
+			lead.Asnef{},
 		},
 		Redis: redisclient.Redis{
 			Pool: &redis.Pool{

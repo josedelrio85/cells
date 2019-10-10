@@ -96,7 +96,35 @@ CREATE TABLE microsoft (
   KEY idx_microsoft_deleted_at (deleted_at)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-
+CREATE TABLE kinkon (
+  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  created_at timestamp NULL DEFAULT NULL,
+  updated_at timestamp NULL DEFAULT NULL,
+  deleted_at timestamp NULL DEFAULT NULL,
+  lea_id int(10) unsigned DEFAULT NULL,
+  coverture varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  state varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  town varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  street varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  number varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  floor varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  cov_phone varchar(255) CHARACTER SET utf8 COLLATE utf8_spanish_ci DEFAULT NULL,
+  phone_provider varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  mobile_phone varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  mobile_phone_provider varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  mobile_phone2 varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  mobile_phone_provider2 varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  name varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  surname varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  idnumber varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  mail varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  contact_phone varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  account_holder varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  account_number varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  phone varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  PRIMARY KEY (id),
+  KEY idx_kinkon_deleted_at (deleted_at)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 CREATE TABLE sources (
   sou_id int(3) NOT NULL AUTO_INCREMENT,
