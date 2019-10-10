@@ -88,6 +88,9 @@ func (d *Database) AutoMigrate() error {
 		return err
 	}
 
+	if err := d.DB.Debug().AutoMigrate(Kinkon{}).Error; err != nil {
+		return err
+	}
 	return nil
 }
 

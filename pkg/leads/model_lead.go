@@ -44,6 +44,7 @@ type Lead struct {
 	RcableExp          *RcableExp `json:"rcableexp"`
 	Microsoft          *Microsoft `json:"microsoft"`
 	Creditea           *Creditea  `json:"creditea"`
+	Kinkon             *Kinkon    `json:"kinkon"`
 }
 
 // TableName sets the default table name
@@ -250,7 +251,41 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		// Sanitas
 		// lea_destiny =  GSS => we must have IsLeontel = true
 	case 64, 65, 66:
-		leontel.Observaciones = lead.Observations
+		args := []*string{}
+
+		if *lead.Kinkon.CovData != (CovData{}) {
+			args = append(args, lead.Kinkon.CovData.State)
+			args = append(args, lead.Kinkon.CovData.Town)
+			args = append(args, lead.Kinkon.CovData.Street)
+			args = append(args, lead.Kinkon.CovData.Number)
+			args = append(args, lead.Kinkon.CovData.Floor)
+			args = append(args, lead.Kinkon.CovData.CovPhone)
+		}
+
+		if *lead.Kinkon.Portability != (Portability{}) {
+			args = append(args, lead.Kinkon.Portability.Phone)
+			args = append(args, lead.Kinkon.Portability.PhoneProvider)
+			args = append(args, lead.Kinkon.Portability.MobilePhone)
+			args = append(args, lead.Kinkon.Portability.MobilePhoneProvider)
+			args = append(args, lead.Kinkon.Portability.MobilePhone2)
+			args = append(args, lead.Kinkon.Portability.MobilePhoneProvider2)
+		}
+
+		if *lead.Kinkon.HolderData != (HolderData{}) {
+			args = append(args, lead.Kinkon.HolderData.Name)
+			args = append(args, lead.Kinkon.HolderData.Surname)
+			args = append(args, lead.Kinkon.HolderData.Idnumber)
+			args = append(args, lead.Kinkon.HolderData.Mail)
+			args = append(args, lead.Kinkon.HolderData.ContactPhone)
+		}
+
+		if *lead.Kinkon.BillingInfo != (BillingInfo{}) {
+			args = append(args, lead.Kinkon.BillingInfo.AccountHolder)
+			args = append(args, lead.Kinkon.BillingInfo.AccountNumber)
+		}
+
+		observations := concatPointerStrs(args...)
+		leontel.Observaciones = &observations
 	default:
 	}
 	return leontel
@@ -259,7 +294,6 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 // SendLeadToLeontel sends the lead to Leontel endpoint
 // Returns the response sended by the endpoint
 func (lead *Lead) SendLeadToLeontel() (*LeontelResp, error) {
-
 	leadLeontel := lead.LeadToLeontel()
 	bytevalues, err := json.Marshal(leadLeontel)
 	if err != nil {
@@ -271,6 +305,7 @@ func (lead *Lead) SendLeadToLeontel() (*LeontelResp, error) {
 		err := errors.New("unable to load Lead Leontel URL endpoint")
 		return nil, err
 	}
+
 	resp, err := http.Post(endpoint, "application/json", bytes.NewBuffer(bytevalues))
 	if err != nil {
 		return nil, err

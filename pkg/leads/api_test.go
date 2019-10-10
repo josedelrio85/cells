@@ -135,6 +135,7 @@ func TestLeadToLeontel(t *testing.T) {
 	t5 := "E"
 	t6 := "F"
 	t7 := "G"
+	t8 := ""
 	observations := "H"
 
 	obsTest := "A -- B"
@@ -142,6 +143,10 @@ func TestLeadToLeontel(t *testing.T) {
 	obsTest3 := "A -- B -- C -- D -- E -- F"
 	obsTest4 := "A -- B -- C -- D -- E -- F -- G -- A -- B -- C -- D -- E"
 	obsTest5 := "A -- B -- C"
+	obsTest6 := "B -- C -- D -- E -- F -- G"
+	obsTest7 := "B -- C -- D -- E -- F"
+
+	obsTest8 := fmt.Sprintf("%s -- %s -- %s -- %s", obsTest6, obsTest6, obsTest7, obsTest)
 
 	database := helperDb()
 	err := database.Open()
@@ -150,6 +155,7 @@ func TestLeadToLeontel(t *testing.T) {
 	assert.NoError(err)
 
 	tests := []struct {
+		Index          int
 		Description    string
 		TypeRequest    string
 		StatusCode     int
@@ -157,6 +163,7 @@ func TestLeadToLeontel(t *testing.T) {
 		ExpectedResult LeadLeontel
 	}{
 		{
+			Index:       1,
 			Description: "check data returned for sou_id 9 Creditea EndToEnd",
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusInternalServerError,
@@ -177,6 +184,7 @@ func TestLeadToLeontel(t *testing.T) {
 			},
 		},
 		{
+			Index:       2,
 			Description: "check data returned for sou_id 11 Creditea Rastreator",
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusInternalServerError,
@@ -199,6 +207,7 @@ func TestLeadToLeontel(t *testing.T) {
 			},
 		},
 		{
+			Index:       3,
 			Description: "check data returned for sou_id 46-49 Microsoft Hazelcambio + Recomendador",
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusInternalServerError,
@@ -231,6 +240,7 @@ func TestLeadToLeontel(t *testing.T) {
 			},
 		},
 		{
+			Index:       4,
 			Description: "check data returned for sou_id 48 Microsoft Calculadora",
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusInternalServerError,
@@ -255,6 +265,7 @@ func TestLeadToLeontel(t *testing.T) {
 			},
 		},
 		{
+			Index:       5,
 			Description: "check data returned for sou_id 50 Microsoft Ofertas",
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusInternalServerError,
@@ -270,6 +281,7 @@ func TestLeadToLeontel(t *testing.T) {
 			},
 		},
 		{
+			Index:       6,
 			Description: "check data returned for sou_id 51 Microsoft Ficha Producto",
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusInternalServerError,
@@ -300,6 +312,7 @@ func TestLeadToLeontel(t *testing.T) {
 			},
 		},
 		{
+			Index:       7,
 			Description: "check data returned for sou_id 54 R Cable Expansion",
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusInternalServerError,
@@ -319,6 +332,106 @@ func TestLeadToLeontel(t *testing.T) {
 				Observaciones: &obsTest5,
 			},
 		},
+		{
+			Index:       8,
+			Description: "check data returned for sou_id 64 R Cable End To End (Kinkon) C2C",
+			TypeRequest: http.MethodPost,
+			StatusCode:  http.StatusInternalServerError,
+			Lead: Lead{
+				SouID:         64,
+				LeatypeID:     1,
+				LeaPhone:      &t1,
+				IsSmartCenter: false,
+				Kinkon: &Kinkon{
+					CovData:     &CovData{},
+					Portability: &Portability{},
+					HolderData:  &HolderData{},
+					BillingInfo: &BillingInfo{},
+				},
+			},
+			ExpectedResult: LeadLeontel{
+				LeaSource:     73,
+				LeaType:       2,
+				Telefono:      &t1,
+				Observaciones: &t8,
+			},
+		},
+		{
+			Index:       9,
+			Description: "check data returned for sou_id 64 R Cable End To End (Kinkon) Coverture check",
+			TypeRequest: http.MethodPost,
+			StatusCode:  http.StatusInternalServerError,
+			Lead: Lead{
+				SouID:     64,
+				LeatypeID: 24,
+				Kinkon: &Kinkon{
+					Coverture: &t1,
+					CovData: &CovData{
+						State:    &t2,
+						Town:     &t3,
+						Street:   &t4,
+						Number:   &t5,
+						Floor:    &t6,
+						CovPhone: &t7,
+					},
+					Portability: &Portability{},
+					HolderData:  &HolderData{},
+					BillingInfo: &BillingInfo{},
+				},
+				IsSmartCenter: false,
+			},
+			ExpectedResult: LeadLeontel{
+				LeaSource:     73,
+				LeaType:       26,
+				Observaciones: &obsTest6,
+			},
+		},
+		{
+			Index:       10,
+			Description: "check data returned for sou_id 66 Euskaltel End To End (Kinkon) Hiring process",
+			TypeRequest: http.MethodPost,
+			StatusCode:  http.StatusInternalServerError,
+			Lead: Lead{
+				SouID:     66,
+				LeatypeID: 27,
+				Kinkon: &Kinkon{
+					Coverture: &t1,
+					CovData: &CovData{
+						State:    &t2,
+						Town:     &t3,
+						Street:   &t4,
+						Number:   &t5,
+						Floor:    &t6,
+						CovPhone: &t7,
+					},
+					Portability: &Portability{
+						Phone:                &t2,
+						PhoneProvider:        &t3,
+						MobilePhone:          &t4,
+						MobilePhoneProvider:  &t5,
+						MobilePhone2:         &t6,
+						MobilePhoneProvider2: &t7,
+					},
+					HolderData: &HolderData{
+						Name:         &t2,
+						Surname:      &t3,
+						Idnumber:     &t4,
+						Mail:         &t5,
+						ContactPhone: &t6,
+					},
+					BillingInfo: &BillingInfo{
+						AccountHolder: &t1,
+						AccountNumber: &t2,
+					},
+				},
+				IsSmartCenter: false,
+			},
+			ExpectedResult: LeadLeontel{
+				LeaSource:     75,
+				LeaType:       30,
+				Observaciones: &obsTest8,
+			},
+		},
 	}
 
 	for _, test := range tests {
@@ -330,7 +443,6 @@ func TestLeadToLeontel(t *testing.T) {
 		assert.NoError(err)
 
 		leontel := ch.Lead.LeadToLeontel()
-
 		assert.Equal(test.ExpectedResult, leontel)
 	}
 }
