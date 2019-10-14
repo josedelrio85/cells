@@ -30,6 +30,13 @@ func TestActiveDuplicated(t *testing.T) {
 			Active: true,
 		},
 		{
+			Description: "when Duplicated hook is successfully activated",
+			Lead: Lead{
+				SouID: 15,
+			},
+			Active: true,
+		},
+		{
 			Description: "when Duplicated hook is not activated",
 			Lead: Lead{
 				SouID: 1,
@@ -72,6 +79,7 @@ func TestPerformDuplicated(t *testing.T) {
 		Description    string
 		Lead           Lead
 		Response       HookResponse
+		Sleep          bool
 		ExpectedResult bool
 	}{
 		{
@@ -85,6 +93,7 @@ func TestPerformDuplicated(t *testing.T) {
 				StatusCode: http.StatusOK,
 				Err:        nil,
 			},
+			Sleep:          false,
 			ExpectedResult: true,
 		},
 		{
@@ -98,15 +107,45 @@ func TestPerformDuplicated(t *testing.T) {
 				StatusCode: http.StatusUnprocessableEntity,
 				Err:        errors.New("Error"),
 			},
+			Sleep:          false,
 			ExpectedResult: false,
 		},
 		{
 			Description: "When another lead is not duplicated",
 			Lead: Lead{
 				LeaPhone:  &phone2,
-				SouID:     66,
-				LeatypeID: 8,
+				SouID:     15,
+				LeatypeID: 24,
 			},
+			Response: HookResponse{
+				StatusCode: http.StatusOK,
+				Err:        nil,
+			},
+			Sleep:          false,
+			ExpectedResult: true,
+		},
+		{
+			Description: "When a lead of the same class arrives at a period of time minor than the expiration time",
+			Lead: Lead{
+				LeaPhone:  &phone2,
+				SouID:     15,
+				LeatypeID: 24,
+			},
+			Sleep: false,
+			Response: HookResponse{
+				StatusCode: http.StatusUnprocessableEntity,
+				Err:        errors.New("Error"),
+			},
+			ExpectedResult: false,
+		},
+		{
+			Description: "When a lead of the same class arrives at a period of time greater than the expiration time",
+			Lead: Lead{
+				LeaPhone:  &phone2,
+				SouID:     15,
+				LeatypeID: 24,
+			},
+			Sleep: true,
 			Response: HookResponse{
 				StatusCode: http.StatusOK,
 				Err:        nil,
@@ -117,10 +156,14 @@ func TestPerformDuplicated(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.Description, func(t *testing.T) {
-
 			cont := Handler{
 				Lead:  test.Lead,
 				Redis: redis,
+			}
+
+			if test.Sleep {
+				exptime := time.Duration(duplicated.getExpirationTime(test.Lead.SouID)) * time.Second
+				time.Sleep(exptime)
 			}
 			response := duplicated.Perform(&cont)
 

@@ -15,13 +15,14 @@ type Redis struct {
 //
 // key: the key to store.
 // value: the value to store on the given key.
+// expiretime: time to expire the key, 60 seconds as minimun
 //
 // Returns an error if any.
-func (r *Redis) Set(key, value string) error {
+func (r *Redis) Set(key, value string, expiretime int) error {
 	redis := r.Pool.Get()
 	defer redis.Close()
 
-	if _, err := redis.Do("SET", key, value, "EX", 60); err != nil {
+	if _, err := redis.Do("SET", key, value, "EX", expiretime); err != nil {
 		return errors.Wrap(err, "error storing phone validation code")
 	}
 
