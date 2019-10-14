@@ -15,7 +15,7 @@ import (
 func TestActiveDuplicated(t *testing.T) {
 	assert := assert.New(t)
 
-	var duplicated Duplicated
+	var duplicated DuplicatedTime
 
 	tests := []struct {
 		Description string
@@ -23,21 +23,21 @@ func TestActiveDuplicated(t *testing.T) {
 		Active      bool
 	}{
 		{
-			Description: "when Duplicated hook is successfully activated",
+			Description: "when DuplicatedTime hook is successfully activated",
 			Lead: Lead{
 				SouID: 64,
 			},
 			Active: true,
 		},
 		{
-			Description: "when Duplicated hook is successfully activated",
+			Description: "when DuplicatedTime hook is successfully activated",
 			Lead: Lead{
 				SouID: 15,
 			},
 			Active: true,
 		},
 		{
-			Description: "when Duplicated hook is not activated",
+			Description: "when DuplicatedTime hook is not activated",
 			Lead: Lead{
 				SouID: 1,
 			},
@@ -57,7 +57,7 @@ func TestActiveDuplicated(t *testing.T) {
 func TestPerformDuplicated(t *testing.T) {
 	assert := assert.New(t)
 
-	var duplicated Duplicated
+	var duplicated DuplicatedTime
 	redis := redisclient.Redis{
 		Pool: &redis.Pool{
 			MaxIdle:     5,

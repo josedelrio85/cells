@@ -38,7 +38,7 @@ func main() {
 		Storer: database,
 		ActiveHooks: []lead.Hookable{
 			lead.Hibernated{},
-			lead.Duplicated{},
+			lead.DuplicatedTime{},
 			lead.Ontime{},
 			lead.Asnef{},
 		},
