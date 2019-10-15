@@ -163,7 +163,7 @@ func TestPerformDuplicated(t *testing.T) {
 			var response HookResponse
 			if test.Sleep {
 				// exptime := time.Duration(duplicated.getExpirationTime(test.Lead.SouID)) * time.Second
-				exptime := time.Duration(60) * time.Second
+				exptime := time.Duration((duplicated.getExpirationTime(test.Lead.SouID) + 1)) * time.Second
 				time.Sleep(exptime)
 				response = duplicated.Perform(&cont)
 			} else {
