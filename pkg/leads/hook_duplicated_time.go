@@ -7,12 +7,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-// DuplicatedTime is a is a struct that represents a Redis entity
+// DuplicatedTime is a is a struct that represents a DuplicatedTime entity
 type DuplicatedTime struct {
 	ExpirationTime int
 }
 
-// Active implents the Hooable interface, so when checking
+// Active implents the Hookable interface, so when checking
 // for active hooks will trigger the hook
 // when the SouID matches a closed list.
 //
@@ -32,9 +32,8 @@ func (d DuplicatedTime) Active(lead Lead) bool {
 }
 
 // Perform returns the result of duplicated validation
-// lead: The lead to check on.
-// db: not used in this implementation
-// Returns a HookReponse with the duplicated check result.
+// cont: pointer to Handler struct
+// Returns a HookReponse with the duplicated time check result.
 func (d DuplicatedTime) Perform(cont *Handler) HookResponse {
 	lead := &cont.Lead
 	phone := *lead.LeaPhone
