@@ -39,6 +39,7 @@ func main() {
 		ActiveHooks: []lead.Hookable{
 			lead.Hibernated{},
 			lead.DuplicatedTime{},
+			lead.DuplicatedSmartCenter{},
 			lead.Ontime{},
 			lead.Asnef{},
 		},
