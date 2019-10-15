@@ -115,7 +115,7 @@ func TestPerformDuplicated(t *testing.T) {
 			Lead: Lead{
 				LeaPhone:  &phone2,
 				SouID:     15,
-				LeatypeID: 24,
+				LeatypeID: 8,
 			},
 			Response: HookResponse{
 				StatusCode: http.StatusOK,
@@ -129,7 +129,7 @@ func TestPerformDuplicated(t *testing.T) {
 			Lead: Lead{
 				LeaPhone:  &phone2,
 				SouID:     15,
-				LeatypeID: 24,
+				LeatypeID: 8,
 			},
 			Sleep: false,
 			Response: HookResponse{
@@ -143,7 +143,7 @@ func TestPerformDuplicated(t *testing.T) {
 			Lead: Lead{
 				LeaPhone:  &phone2,
 				SouID:     15,
-				LeatypeID: 24,
+				LeatypeID: 8,
 			},
 			Sleep: true,
 			Response: HookResponse{
@@ -160,12 +160,14 @@ func TestPerformDuplicated(t *testing.T) {
 				Lead:  test.Lead,
 				Redis: redis,
 			}
-
+			var response HookResponse
 			if test.Sleep {
 				exptime := time.Duration(duplicated.getExpirationTime(test.Lead.SouID)) * time.Second
 				time.Sleep(exptime)
+				response = duplicated.Perform(&cont)
+			} else {
+				response = duplicated.Perform(&cont)
 			}
-			response := duplicated.Perform(&cont)
 
 			assert.Equal(test.Response.StatusCode, response.StatusCode)
 			if test.ExpectedResult {
