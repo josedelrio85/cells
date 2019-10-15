@@ -253,39 +253,41 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 	case 64, 65, 66:
 		args := []*string{}
 
-		if *lead.Kinkon.CovData != (CovData{}) {
-			args = append(args, lead.Kinkon.CovData.State)
-			args = append(args, lead.Kinkon.CovData.Town)
-			args = append(args, lead.Kinkon.CovData.Street)
-			args = append(args, lead.Kinkon.CovData.Number)
-			args = append(args, lead.Kinkon.CovData.Floor)
-			args = append(args, lead.Kinkon.CovData.CovPhone)
-		}
+		if lead.Kinkon != nil {
+			if *lead.Kinkon.CovData != (CovData{}) {
+				args = append(args, lead.Kinkon.CovData.State)
+				args = append(args, lead.Kinkon.CovData.Town)
+				args = append(args, lead.Kinkon.CovData.Street)
+				args = append(args, lead.Kinkon.CovData.Number)
+				args = append(args, lead.Kinkon.CovData.Floor)
+				args = append(args, lead.Kinkon.CovData.CovPhone)
+			}
 
-		if *lead.Kinkon.Portability != (Portability{}) {
-			args = append(args, lead.Kinkon.Portability.Phone)
-			args = append(args, lead.Kinkon.Portability.PhoneProvider)
-			args = append(args, lead.Kinkon.Portability.MobilePhone)
-			args = append(args, lead.Kinkon.Portability.MobilePhoneProvider)
-			args = append(args, lead.Kinkon.Portability.MobilePhone2)
-			args = append(args, lead.Kinkon.Portability.MobilePhoneProvider2)
-		}
+			if *lead.Kinkon.Portability != (Portability{}) {
+				args = append(args, lead.Kinkon.Portability.Phone)
+				args = append(args, lead.Kinkon.Portability.PhoneProvider)
+				args = append(args, lead.Kinkon.Portability.MobilePhone)
+				args = append(args, lead.Kinkon.Portability.MobilePhoneProvider)
+				args = append(args, lead.Kinkon.Portability.MobilePhone2)
+				args = append(args, lead.Kinkon.Portability.MobilePhoneProvider2)
+			}
 
-		if *lead.Kinkon.HolderData != (HolderData{}) {
-			args = append(args, lead.Kinkon.HolderData.Name)
-			args = append(args, lead.Kinkon.HolderData.Surname)
-			args = append(args, lead.Kinkon.HolderData.Idnumber)
-			args = append(args, lead.Kinkon.HolderData.Mail)
-			args = append(args, lead.Kinkon.HolderData.ContactPhone)
-		}
+			if *lead.Kinkon.HolderData != (HolderData{}) {
+				args = append(args, lead.Kinkon.HolderData.Name)
+				args = append(args, lead.Kinkon.HolderData.Surname)
+				args = append(args, lead.Kinkon.HolderData.Idnumber)
+				args = append(args, lead.Kinkon.HolderData.Mail)
+				args = append(args, lead.Kinkon.HolderData.ContactPhone)
+			}
 
-		if *lead.Kinkon.BillingInfo != (BillingInfo{}) {
-			args = append(args, lead.Kinkon.BillingInfo.AccountHolder)
-			args = append(args, lead.Kinkon.BillingInfo.AccountNumber)
-		}
+			if *lead.Kinkon.BillingInfo != (BillingInfo{}) {
+				args = append(args, lead.Kinkon.BillingInfo.AccountHolder)
+				args = append(args, lead.Kinkon.BillingInfo.AccountNumber)
+			}
 
-		observations := concatPointerStrs(args...)
-		leontel.Observaciones = &observations
+			observations := concatPointerStrs(args...)
+			leontel.Observaciones = &observations
+		}
 	default:
 	}
 	return leontel
@@ -314,8 +316,9 @@ func (lead *Lead) SendLeadToLeontel() (*LeontelResp, error) {
 
 	data, _ := ioutil.ReadAll(resp.Body)
 	leontelresp := []LeontelResp{}
-	json.Unmarshal(data, &leontelresp)
-
+	if err := json.Unmarshal(data, &leontelresp); err != nil {
+		return nil, err
+	}
 	return &leontelresp[0], nil
 }
 
