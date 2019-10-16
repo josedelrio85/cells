@@ -41,6 +41,7 @@ func main() {
 			lead.DuplicatedTime{},
 			lead.DuplicatedSmartCenter{},
 			lead.Ontime{},
+			lead.Gclid{},
 			lead.Asnef{},
 		},
 		Redis: redisclient.Redis{
