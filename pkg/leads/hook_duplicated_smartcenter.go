@@ -14,6 +14,20 @@ import (
 // DuplicatedSmartCenter is a is a struct that represents a DuplicatedSmartCenter entity
 type DuplicatedSmartCenter struct{}
 
+type DataLeontelResp struct {
+	Closed      string `json:"lea_closed"`
+	LeaID       string `json:"lea_id"`
+	LeaTs       string `json:"lea_ts"`
+	Description string `json:"sub_description"`
+	SubID       string `json:"sub_id"`
+}
+
+type RespSC struct {
+	Success bool              `json:"success"`
+	Data    []DataLeontelResp `json:"data"`
+	Error   interface{}       `json:"error"`
+}
+
 // Active implents the Hookable interface, so when checking
 // for active hooks will trigger the hook
 // when the SouID matches a closed list.
@@ -40,9 +54,11 @@ func (t DuplicatedSmartCenter) Perform(cont *Handler) HookResponse {
 
 	endpoint, ok := os.LookupEnv("CHECK_LEAD_LEONTEL_ENDPOINT")
 	if !ok {
+		message := "unable to load Check Lead Leontel URL endpoint"
+		sendAlarm(message, http.StatusInternalServerError, errors.New("unable to load Check Lead Leontel URL endpoint"))
 		return HookResponse{
-			StatusCode: http.StatusInternalServerError,
-			Err:        errors.New("unable to load Check Lead Leontel URL endpoint"),
+			StatusCode: http.StatusOK,
+			Err:        nil,
 		}
 	}
 
@@ -59,40 +75,35 @@ func (t DuplicatedSmartCenter) Perform(cont *Handler) HookResponse {
 
 	bytevalues, err := json.Marshal(data)
 	if err != nil {
+		message := "unable to marshal data"
+		sendAlarm(message, http.StatusInternalServerError, err)
+
 		return HookResponse{
-			StatusCode: http.StatusInternalServerError,
-			Err:        err,
+			StatusCode: http.StatusOK,
+			Err:        nil,
 		}
 	}
 
 	resp, err := http.Post(endpoint, "application/json", bytes.NewBuffer(bytevalues))
 	if err != nil {
+		message := "unable to make POST request"
+		sendAlarm(message, http.StatusInternalServerError, err)
 		return HookResponse{
-			StatusCode: http.StatusInternalServerError,
-			Err:        err,
+			StatusCode: http.StatusOK,
+			Err:        nil,
 		}
 	}
 	defer resp.Body.Close()
 
-	type leontelResp struct {
-		Closed      string `json:"lea_closed"`
-		LeaID       string `json:"lea_id"`
-		LeaTs       string `json:"lea_ts"`
-		Description string `json:"sub_description"`
-		SubID       string `json:"sub_id"`
-	}
-
 	rawdata, _ := ioutil.ReadAll(resp.Body)
-	structdata := struct {
-		Success bool          `json:"success"`
-		Data    []leontelResp `json:"data"`
-		Error   interface{}   `json:"error"`
-	}{}
+	structdata := RespSC{}
 
 	if err := json.Unmarshal(rawdata, &structdata); err != nil {
+		message := "unable to unmarshal lead status response"
+		sendAlarm(message, http.StatusInternalServerError, err)
 		return HookResponse{
-			StatusCode: http.StatusInternalServerError,
-			Err:        err,
+			StatusCode: http.StatusOK,
+			Err:        nil,
 		}
 	}
 
