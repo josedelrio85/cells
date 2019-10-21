@@ -32,13 +32,7 @@ type InputDataOntime struct {
 // Returns true if the Ontime validation Hook gets activated.
 func (a Ontime) Active(lead Lead) bool {
 	switch lead.LeatypeID {
-	case 1:
-		return true
-	case 3:
-		return true
-	case 4:
-		return true
-	case 9:
+	case 1, 3, 4, 9:
 		return true
 	default:
 		return false

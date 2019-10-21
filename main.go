@@ -38,8 +38,10 @@ func main() {
 		Storer: database,
 		ActiveHooks: []lead.Hookable{
 			lead.Hibernated{},
-			lead.Duplicated{},
+			lead.DuplicatedTime{},
+			lead.DuplicatedSmartCenter{},
 			lead.Ontime{},
+			lead.Gclid{},
 			lead.Asnef{},
 		},
 		Redis: redisclient.Redis{
