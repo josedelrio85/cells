@@ -3,11 +3,8 @@ package leads
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
-	"strconv"
-	"time"
 
 	"github.com/jinzhu/gorm"
 )
@@ -22,9 +19,7 @@ type Ontime struct {
 
 // InputDataOntime is the data to check asnef/already client validation
 type InputDataOntime struct {
-	SouID int64  `json:"sou_id"`
-	Day   string `json:"day"`
-	Hour  string `json:"hour"`
+	SouID int64 `json:"sou_id"`
 }
 
 // Active implents the Hookable interface, so when checking for active hooks will trigger the Ontime validation hook when the LeatypeID matches a closed list.
@@ -57,7 +52,6 @@ func (a Ontime) Perform(cont *Handler) HookResponse {
 	var err error
 	inputholiday := InputDataOntime{
 		SouID: lead.SouIDLeontel,
-		Day:   time.Now().Format("2006-01-02"),
 	}
 
 	if err = a.checkHoliday(inputholiday); err != nil {
@@ -65,19 +59,8 @@ func (a Ontime) Perform(cont *Handler) HookResponse {
 		statuscode = http.StatusInternalServerError
 	}
 
-	inthour := time.Now().Hour()
-	strhour := strconv.Itoa(time.Now().Hour())
-	if inthour < 10 {
-		strhour = fmt.Sprintf("0%d", inthour)
-	}
-
-	hour := fmt.Sprintf("%s:%s", strhour, strconv.Itoa(time.Now().Minute()))
-	day := int(time.Now().Weekday())
-
 	inputontime := InputDataOntime{
 		SouID: lead.SouIDLeontel,
-		Day:   strconv.Itoa(day),
-		Hour:  hour,
 	}
 
 	if err = a.checkOntime(inputontime); err != nil {
@@ -98,6 +81,7 @@ func (a Ontime) Perform(cont *Handler) HookResponse {
 // checkHoliday gets the result of holiday validation
 func (a *Ontime) checkHoliday(input InputDataOntime) error {
 	url := "https://ws.bysidecar.es/smartcenter/timetable/isHoliday"
+	// url := "http://localhost:8888/timetable/isHoliday"
 
 	data := new(bytes.Buffer)
 	if err := json.NewEncoder(data).Encode(input); err != nil {

@@ -1,10 +1,12 @@
 package leads
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 	"time"
 
+	"github.com/alicebob/miniredis"
 	redisclient "github.com/bysidecar/leads/pkg/leads/redis"
 
 	"github.com/gomodule/redigo/redis"
@@ -53,17 +55,23 @@ func TestActiveDuplicated(t *testing.T) {
 		})
 	}
 }
-
 func TestPerformDuplicated(t *testing.T) {
 	assert := assert.New(t)
 
 	var duplicated DuplicatedTime
+
+	s, err := miniredis.Run()
+	if err != nil {
+		panic(err)
+	}
+	defer s.Close()
+
 	redis := redisclient.Redis{
 		Pool: &redis.Pool{
 			MaxIdle:     5,
 			IdleTimeout: 60 * time.Second,
 			Dial: func() (redis.Conn, error) {
-				return redis.Dial("tcp", GetSetting("CHECK_LEAD_REDIS")+":6379")
+				return redis.Dial("tcp", s.Addr())
 			},
 			TestOnBorrow: func(c redis.Conn, t time.Time) error {
 				_, err := c.Do("PING")
@@ -160,10 +168,24 @@ func TestPerformDuplicated(t *testing.T) {
 				Lead:  test.Lead,
 				Redis: redis,
 			}
+
+			if !test.ExpectedResult {
+				expirationtime := duplicated.getExpirationTime(test.Lead.SouID)
+				phone := *test.Lead.LeaPhone
+				key := fmt.Sprintf("%s-%d-%d", phone, test.Lead.SouID, test.Lead.LeatypeID)
+				cont.Redis.Set(key, phone, expirationtime)
+			}
+
 			var response HookResponse
 			if test.Sleep {
-				exptime := time.Duration((duplicated.getExpirationTime(test.Lead.SouID) + 1)) * time.Second
-				time.Sleep(exptime)
+				keyalt := fmt.Sprintf("%s-%d-%d", *test.Lead.LeaPhone, test.Lead.SouID, test.Lead.LeatypeID)
+
+				exptime := time.Duration((duplicated.getExpirationTime(test.Lead.SouID))) * time.Second
+				exptime2 := time.Duration((duplicated.getExpirationTime(test.Lead.SouID) + 1)) * time.Second
+
+				s.SetTTL(keyalt, exptime)
+				s.FastForward(exptime2 * time.Second)
+
 				response = duplicated.Perform(&cont)
 			} else {
 				response = duplicated.Perform(&cont)
