@@ -81,7 +81,6 @@ func (a Ontime) Perform(cont *Handler) HookResponse {
 // checkHoliday gets the result of holiday validation
 func (a *Ontime) checkHoliday(input InputDataOntime) error {
 	url := "https://ws.bysidecar.es/smartcenter/timetable/isHoliday"
-	// url := "http://localhost:8888/timetable/isHoliday"
 
 	data := new(bytes.Buffer)
 	if err := json.NewEncoder(data).Encode(input); err != nil {

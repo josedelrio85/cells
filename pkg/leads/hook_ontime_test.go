@@ -3,9 +3,11 @@ package leads
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 	"time"
 
@@ -238,15 +240,15 @@ func TestPerformOntime(t *testing.T) {
 
 func getExpectedResultHoliday() bool {
 	today := time.Now().Format("2006-01-02")
+	thisyear := strconv.Itoa(time.Now().Year())
 	holdays := map[string]bool{
-		"2019-01-01": true,
-		"2019-01-06": true,
-		"2019-04-10": true,
-		"2019-05-01": true,
-		"2019-08-15": true,
-		"2019-10-12": true,
-		"2019-12-08": true,
-		"2019-12-25": true,
+		fmt.Sprintf("%s-01-01", thisyear): true,
+		fmt.Sprintf("%s-01-06", thisyear): true,
+		fmt.Sprintf("%s-05-01", thisyear): true,
+		fmt.Sprintf("%s-08-15", thisyear): true,
+		fmt.Sprintf("%s-10-12", thisyear): true,
+		fmt.Sprintf("%s-12-08", thisyear): true,
+		fmt.Sprintf("%s-12-25", thisyear): true,
 	}
 	if holdays[today] {
 		return true
@@ -260,7 +262,7 @@ func getExpectedResultOnTime() bool {
 	inthour := time.Now().In(loc).Hour()
 
 	if intday > 0 && intday < 6 {
-		if inthour > 9 && inthour < 21 {
+		if inthour >= 9 && inthour < 21 {
 			return true
 		}
 	}
