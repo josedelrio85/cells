@@ -1,3 +1,8 @@
+# github.com/alicebob/gopher-json v0.0.0-20180125190556-5a6b3ba71ee6
+github.com/alicebob/gopher-json
+# github.com/alicebob/miniredis v2.5.0+incompatible
+github.com/alicebob/miniredis
+github.com/alicebob/miniredis/server
 # github.com/bysidecar/voalarm v1.0.1
 github.com/bysidecar/voalarm
 # github.com/davecgh/go-spew v1.1.1
@@ -24,5 +29,10 @@ github.com/rs/cors
 github.com/stretchr/testify/assert
 # github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
 github.com/tomasen/realip
+# github.com/yuin/gopher-lua v0.0.0-20190514113301-1cd887cd7036
+github.com/yuin/gopher-lua
+github.com/yuin/gopher-lua/parse
+github.com/yuin/gopher-lua/ast
+github.com/yuin/gopher-lua/pm
 # google.golang.org/appengine v1.4.0
 google.golang.org/appengine/cloudsql
