@@ -257,7 +257,7 @@ func getExpectedResultHoliday() bool {
 }
 
 func getExpectedResultOnTime() bool {
-	loc, _ := time.LoadLocation("UTC")
+	loc, _ := time.LoadLocation("Europe/Brussels")
 	intday := time.Now().In(loc).Weekday()
 	inthour := time.Now().In(loc).Hour()
 
