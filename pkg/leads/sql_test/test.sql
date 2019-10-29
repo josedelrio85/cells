@@ -126,6 +126,21 @@ CREATE TABLE kinkon (
   KEY idx_kinkon_deleted_at (deleted_at)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
+CREATE TABLE alterna (
+  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  created_at timestamp NULL DEFAULT NULL,
+  updated_at timestamp NULL DEFAULT NULL,
+  deleted_at timestamp NULL DEFAULT NULL,
+  lea_id int(10) unsigned DEFAULT NULL,
+  install_type varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  cpu_s varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  street varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  number varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  postal_code varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
+  PRIMARY KEY (id),
+  KEY idx_kinkon_deleted_at (deleted_at)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
 CREATE TABLE sources (
   sou_id int(3) NOT NULL AUTO_INCREMENT,
   sou_description varchar(50) CHARACTER SET utf8 COLLATE utf8_spanish_ci DEFAULT NULL,
@@ -213,6 +228,7 @@ insert into sources (sou_id, sou_description, sou_idcrm) values (65,'TELECABLE E
 insert into sources (sou_id, sou_description, sou_idcrm) values (66,'EUSKALTEL END TO END',75);
 insert into sources (sou_id, sou_description, sou_idcrm) values (67,'CREDITEA STAND 4 CAMINOS',76);
 insert into sources (sou_id, sou_description, sou_idcrm) values (68,'R CABLE BBDD SALIENTE',77);
+insert into sources (sou_id, sou_description, sou_idcrm) values (69,'ALTERNA',78);
 
 insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (1,'C2C',2);
 insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (2,'FORM',3);
@@ -241,3 +257,5 @@ insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (24
 insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (25,'SEM',27);
 insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (26,'PENDIENTE DOCUMENTACION Y FIRMA',28);
 insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (27,'PEDIDO FULL ONLINE',30);
+insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (28,'PENDIENTE DOCUMENTACION Y FIRMA',31);
+insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (29,'ALTERNA AUTO-CONSUMO',32);

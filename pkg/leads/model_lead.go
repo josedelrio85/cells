@@ -45,6 +45,7 @@ type Lead struct {
 	Microsoft          *Microsoft `json:"microsoft"`
 	Creditea           *Creditea  `json:"creditea"`
 	Kinkon             *Kinkon    `json:"kinkon"`
+	Alterna            *Alterna   `json:"alterna"`
 }
 
 // TableName sets the default table name
@@ -288,7 +289,21 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 			observations := concatPointerStrs(args...)
 			leontel.Observaciones = &observations
 		}
+
+	case 69:
+		if lead.Alterna != nil {
+			leontel.CP = lead.Alterna.PostalCode
+			leontel.Calle = lead.Alterna.Street
+			leontel.Numero = lead.Alterna.Number
+			leontel.Tiposolicitud = lead.Alterna.InstallType
+			leontel.Observaciones = lead.Observations
+			if lead.Alterna.CPUS != nil {
+				*leontel.Observaciones += "CPUS: " + *lead.Alterna.CPUS
+			}
+		}
+
 	default:
+
 	}
 	return leontel
 }
