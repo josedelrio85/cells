@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -67,7 +68,7 @@ func (a Asnef) Perform(cont *Handler) HookResponse {
 		}
 	}
 
-	preresult, err := helper(db, lead)
+	preresult, err := a.Prevalidation(db, lead)
 	if err != nil {
 		lead.IsSmartCenter = false
 		return HookResponse{
@@ -124,7 +125,6 @@ func (a Asnef) Perform(cont *Handler) HookResponse {
 
 	if a.Result {
 		lead.IsSmartCenter = false
-		// TODO how to difference if yacliente OR asnef ?
 		lead.Creditea.ASNEF = true
 		lead.Creditea.AlreadyClient = true
 	}
@@ -135,7 +135,88 @@ func (a Asnef) Perform(cont *Handler) HookResponse {
 	}
 }
 
-// GetCandidates retrives a list of asnef candidates
+// GetSourceDescription returns a short description of the source provided as param
+func (a Asnef) GetSourceDescription(db *gorm.DB, lead *Lead) (string, error) {
+	source := Source{}
+	if result := db.Where("sou_id = ?", lead.SouID).First(&source); result.Error != nil {
+		log.Fatalf("Error retrieving SouIDLeontel value: %v", result.Error)
+		return "", result.Error
+	}
+	soudesc := fmt.Sprintf("%s%s%s", "%", source.SouDescription[:5], "%")
+	return soudesc, nil
+}
+
+// GetSourcesFromDescription retrieves a list of id's that matchs the description provided
+func (a Asnef) GetSourcesFromDescription(soudesc string, db *gorm.DB) ([]string, error) {
+	sources := []Source{}
+	if result := db.Where("sou_description like ?", soudesc).Find(&sources); result.Error != nil {
+		log.Fatalf("Error retrieving sources for description %s value: %v", soudesc, result.Error)
+		return nil, result.Error
+	}
+
+	stringsources := make([]string, 0)
+	for _, s := range sources {
+		stringsources = append(stringsources, fmt.Sprintf("%d", s.SouID))
+	}
+	return stringsources, nil
+}
+
+// HasAsnef checks in leads table for any match for the values supplied
+// Returns true if there are results
+func (a Asnef) HasAsnef(stringsources string, db *gorm.DB, lead *Lead) (bool, error) {
+	dni := fmt.Sprintf("%s%s%s", "%", *lead.LeaDNI, "%")
+	oneMonthLess := time.Now().AddDate(0, -1, 0)
+	datecontrol := oneMonthLess.Format("2006-01-02")
+
+	tblname := lead.TableName()
+
+	query := db.Table(tblname).Select(fmt.Sprintf("%s.ID", tblname))
+	query = query.Joins(fmt.Sprintf("JOIN creditea on %s.id = creditea.lea_id", tblname))
+	query = query.Where(fmt.Sprintf("%s.lea_ts > ?", tblname), datecontrol)
+	query = query.Where(fmt.Sprintf("%s.sou_id IN (?)", tblname), stringsources)
+	query = query.Where(fmt.Sprintf("%s.is_smart_center = ?", tblname), 0)
+	query = query.Where(fmt.Sprintf("%s.lea_dni like ? or %s.lea_phone = ?", tblname, tblname), dni, lead.LeaPhone)
+	query = query.Where("creditea.asnef = ? or creditea.already_client = ?", 1, 1)
+	err := query.First(&lead).Error
+
+	if err != nil && !gorm.IsRecordNotFoundError(err) {
+		return false, err
+	}
+
+	if gorm.IsRecordNotFoundError(err) {
+		return false, nil
+	}
+	return true, nil
+}
+
+// Prevalidation makes a prevalidation in leads BD to check for any match in the last month.
+// If the conditions are matched, returns true.
+func (a Asnef) Prevalidation(db *gorm.DB, lead *Lead) (bool, error) {
+
+	souDesc, err := a.GetSourceDescription(db, lead)
+	if err != nil {
+		log.Printf("Asnef GetSourceDescription error: %v", err)
+		return false, err
+	}
+
+	souIds, err := a.GetSourcesFromDescription(souDesc, db)
+	if err != nil {
+		log.Printf("Asnef GetSourcesFromDescription error: %v", err)
+		return false, err
+	}
+
+	soulist := fmt.Sprintf("%s", strings.Join(souIds[:], "','"))
+
+	result, err := a.HasAsnef(soulist, db, lead)
+	if err != nil {
+		log.Printf("Asnef HasAsnef error: %v", err)
+		return false, err
+	}
+
+	return result, nil
+}
+
+// GetCandidates retrives a list of asnef candidates. NOT USED
 func GetCandidates(lead Lead) []Candidate {
 
 	url := "https://ws.bysidecar.es/lead/asnef/getcandidates"
@@ -170,50 +251,8 @@ func GetCandidates(lead Lead) []Candidate {
 	return candidate
 }
 
-// helper makes a prevalidation in leads BD to check for any match in the las month.
-// If the conditions are matched, returns true.
-func helper(db *gorm.DB, lead *Lead) (bool, error) {
-	tblname := lead.TableName()
-
-	source := Source{}
-	if result := db.Where("sou_id = ?", lead.SouID).First(&source); result.Error != nil {
-		log.Fatalf("Error retrieving SouIDLeontel value: %v", result.Error)
-	}
-	soudesc := fmt.Sprintf("%s%s%s", "%", source.SouDescription[:5], "%")
-
-	sources := []Source{}
-	db.Where("sou_description like ?", soudesc).Find(&sources)
-
-	stringsources := make([]string, 0)
-	for _, s := range sources {
-		stringsources = append(stringsources, fmt.Sprintf("%d", s.SouID))
-	}
-
-	dni := fmt.Sprintf("%s%s%s", "%", *lead.LeaDNI, "%")
-	oneMonthLess := time.Now().AddDate(0, -1, 0)
-	datecontrol := oneMonthLess.Format("2006-01-02")
-
-	query := db.Table(tblname).Select(fmt.Sprintf("%s.ID", tblname))
-	query = query.Joins(fmt.Sprintf("JOIN creditea on %s.id = creditea.lea_id", tblname))
-	query = query.Where(fmt.Sprintf("%s.lea_ts > ?", tblname), datecontrol)
-	query = query.Where(fmt.Sprintf("%s.sou_id IN (?)", tblname), stringsources)
-	query = query.Where(fmt.Sprintf("%s.is_smart_center = ?", tblname), 0)
-	query = query.Where(fmt.Sprintf("%s.lea_dni like ? or %s.lea_phone = ?", tblname, tblname), dni, lead.LeaPhone)
-	query = query.Where("creditea.asnef = ? or creditea.already_client = ?", 1, 1)
-	err := query.First(&lead).Error
-
-	if err != nil && !gorm.IsRecordNotFoundError(err) {
-		return false, err
-	}
-
-	if gorm.IsRecordNotFoundError(err) {
-		return false, nil
-	}
-	return true, nil
-}
-
-// GetCandidatesPreasnef retrieves a list of candidates to match a positive asnef prevalidation.
-// Used in test method only.
+// GetCandidatesPreasnef retrieves a list of candidates to match a positive asnef prevalidation
+// NOT USED. Useful to dev purposes
 func GetCandidatesPreasnef(db *gorm.DB) []Lead {
 	candidates := []Lead{}
 
