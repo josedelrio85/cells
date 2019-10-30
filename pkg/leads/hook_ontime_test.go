@@ -74,22 +74,6 @@ func TestOnholiday(t *testing.T) {
 		ExpectedResult bool
 	}{
 		{
-			Description: "when the day is not a holiday day",
-			Input: InputDataOntime{
-				SouID: 6,
-				Day:   "2019-04-08",
-			},
-			ExpectedResult: false,
-		},
-		{
-			Description: "when the day is a holiday day",
-			Input: InputDataOntime{
-				SouID: 6,
-				Day:   "2019-01-01",
-			},
-			ExpectedResult: true,
-		},
-		{
 			Description: "when we use a campaign without a registered timetable",
 			Input: InputDataOntime{
 				SouID: 5,
@@ -121,46 +105,6 @@ func TestOntime(t *testing.T) {
 		RealResult     bool
 	}{
 		{
-			Description: "When we are on time",
-			Input: InputDataOntime{
-				SouID: 6,
-				Day:   "1",
-				Hour:  "12:00",
-			},
-			ExpectedResult: true,
-			RealResult:     true,
-		},
-		{
-			Description: "When an hour lower than 10 has one character instead 2 and the ontime validation should be true",
-			Input: InputDataOntime{
-				SouID: 6,
-				Day:   "3",
-				Hour:  "9:30",
-			},
-			ExpectedResult: true,
-			RealResult:     false,
-		},
-		{
-			Description: "When are in a working day but off time",
-			Input: InputDataOntime{
-				SouID: 6,
-				Day:   "2",
-				Hour:  "08:30",
-			},
-			ExpectedResult: false,
-			RealResult:     false,
-		},
-		{
-			Description: "When are in a non-working day",
-			Input: InputDataOntime{
-				SouID: 6,
-				Day:   "0",
-				Hour:  "10:15",
-			},
-			ExpectedResult: false,
-			RealResult:     false,
-		},
-		{
 			Description: "When are in a campaign without a registered timetable",
 			Input: InputDataOntime{
 				SouID: 99,
@@ -183,100 +127,5 @@ func TestOntime(t *testing.T) {
 				assert.Equal(test.ExpectedResult, ontime.ResultOntime)
 			}
 		})
-	}
-}
-
-type ExpectedResult struct {
-	ResultHoliday bool
-	ResultOntime  bool
-}
-
-func TestPerformOntime(t *testing.T) {
-	assert := assert.New(t)
-	var ontime Ontime
-
-	tests := []struct {
-		Description    string
-		Input          InputDataOntime
-		Input2         InputDataOntime
-		ExpectedResult ExpectedResult
-	}{
-		{
-			Description: "When is not holiday and we are on time",
-			Input: InputDataOntime{
-				SouID: 6,
-				Day:   "2019-06-15",
-			},
-			Input2: InputDataOntime{
-				SouID: 6,
-				Day:   "2",
-				Hour:  "12:00",
-			},
-			ExpectedResult: ExpectedResult{
-				ResultHoliday: false,
-				ResultOntime:  true,
-			},
-		},
-		{
-			Description: "When is holiday",
-			Input: InputDataOntime{
-				SouID: 6,
-				Day:   "2019-08-15",
-			},
-			Input2: InputDataOntime{
-				SouID: 6,
-				Day:   "2",
-				Hour:  "12:00",
-			},
-			ExpectedResult: ExpectedResult{
-				ResultHoliday: true,
-				ResultOntime:  true,
-			},
-		},
-		{
-			Description: "When is not holiday and we are not on time",
-			Input: InputDataOntime{
-				SouID: 6,
-				Day:   "2019-06-15",
-			},
-			Input2: InputDataOntime{
-				SouID: 6,
-				Day:   "0",
-				Hour:  "12:00",
-			},
-			ExpectedResult: ExpectedResult{
-				ResultHoliday: false,
-				ResultOntime:  false,
-			},
-		},
-		{
-			Description: "When is not holiday and we are not on time v2",
-			Input: InputDataOntime{
-				SouID: 6,
-				Day:   "2019-06-15",
-			},
-			Input2: InputDataOntime{
-				SouID: 6,
-				Day:   "3",
-				Hour:  "01:00",
-			},
-			ExpectedResult: ExpectedResult{
-				ResultHoliday: false,
-				ResultOntime:  false,
-			},
-		},
-	}
-
-	for _, test := range tests {
-		err := ontime.checkHoliday(test.Input)
-
-		assert.NoError(err)
-
-		err = ontime.checkOntime(test.Input2)
-
-		assert.NoError(err)
-
-		assert.Equal(ontime.ResultHoliday, test.ExpectedResult.ResultHoliday)
-		assert.Equal(ontime.ResultOntime, test.ExpectedResult.ResultOntime)
 	}
 }
