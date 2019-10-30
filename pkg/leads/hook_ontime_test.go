@@ -1,7 +1,15 @@
 package leads
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"strconv"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -66,45 +74,63 @@ func TestActiveOntime(t *testing.T) {
 func TestOnholiday(t *testing.T) {
 	assert := assert.New(t)
 
-	var ontime Ontime
+	result := getExpectedResultHoliday()
 
 	tests := []struct {
 		Description    string
 		Input          InputDataOntime
 		ExpectedResult bool
+		ExpectedStatus int
 	}{
 		{
-			Description: "when the day is not a holiday day",
+			Description: "if today is holiday the result will be true, false other case",
 			Input: InputDataOntime{
 				SouID: 6,
-				Day:   "2019-04-08",
 			},
-			ExpectedResult: false,
-		},
-		{
-			Description: "when the day is a holiday day",
-			Input: InputDataOntime{
-				SouID: 6,
-				Day:   "2019-01-01",
-			},
-			ExpectedResult: true,
+			ExpectedResult: result,
+			ExpectedStatus: http.StatusOK,
 		},
 		{
 			Description: "when we use a campaign without a registered timetable",
 			Input: InputDataOntime{
-				SouID: 5,
-				Day:   "2019-07-16",
+				SouID: 999,
 			},
 			ExpectedResult: false,
+			ExpectedStatus: http.StatusOK,
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.Description, func(t *testing.T) {
-			err := ontime.checkHoliday(test.Input)
+			// generate a test server so we can capture and inspect the request
+			testServer := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+				testresp, err := json.Marshal(test.ExpectedResult)
+				assert.NoError(err)
+
+				// Writes the status response that we expect for the actual test
+				res.WriteHeader(test.ExpectedStatus)
+
+				// Writes the response that we expect for the actual test
+				res.Write(testresp)
+			}))
+			defer func() { testServer.Close() }()
+
+			bytevalues, err := json.Marshal(test.Input)
+			assert.NoError(err)
+
+			req, err := http.NewRequest(http.MethodPost, testServer.URL, bytes.NewBuffer(bytevalues))
+			assert.NoError(err)
+
+			resp, err := http.DefaultClient.Do(req)
+			assert.NoError(err)
+
+			rawdata, _ := ioutil.ReadAll(resp.Body)
+			var structdata bool
+
+			err = json.Unmarshal(rawdata, &structdata)
 
 			assert.NoError(err)
-			assert.Equal(test.ExpectedResult, ontime.ResultHoliday)
+			assert.Equal(test.ExpectedResult, structdata)
 		})
 	}
 }
@@ -112,76 +138,55 @@ func TestOnholiday(t *testing.T) {
 func TestOntime(t *testing.T) {
 	assert := assert.New(t)
 
-	var ontime Ontime
+	result := getExpectedResultOnTime()
 
 	tests := []struct {
 		Description    string
 		Input          InputDataOntime
 		ExpectedResult bool
-		RealResult     bool
+		ExpectedStatus int
 	}{
 		{
 			Description: "When we are on time",
 			Input: InputDataOntime{
 				SouID: 6,
-				Day:   "1",
-				Hour:  "12:00",
 			},
-			ExpectedResult: true,
-			RealResult:     true,
-		},
-		{
-			Description: "When an hour lower than 10 has one character instead 2 and the ontime validation should be true",
-			Input: InputDataOntime{
-				SouID: 6,
-				Day:   "3",
-				Hour:  "9:30",
-			},
-			ExpectedResult: true,
-			RealResult:     false,
-		},
-		{
-			Description: "When are in a working day but off time",
-			Input: InputDataOntime{
-				SouID: 6,
-				Day:   "2",
-				Hour:  "08:30",
-			},
-			ExpectedResult: false,
-			RealResult:     false,
-		},
-		{
-			Description: "When are in a non-working day",
-			Input: InputDataOntime{
-				SouID: 6,
-				Day:   "0",
-				Hour:  "10:15",
-			},
-			ExpectedResult: false,
-			RealResult:     false,
-		},
-		{
-			Description: "When are in a campaign without a registered timetable",
-			Input: InputDataOntime{
-				SouID: 99,
-				Day:   "3",
-				Hour:  "16:15",
-			},
-			ExpectedResult: false,
-			RealResult:     false,
+			ExpectedResult: result,
+			ExpectedStatus: http.StatusOK,
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.Description, func(t *testing.T) {
-			err := ontime.checkOntime(test.Input)
+			// generate a test server so we can capture and inspect the request
+			testServer := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+				testresp, err := json.Marshal(test.ExpectedResult)
+				assert.NoError(err)
+
+				// Writes the status response that we expect for the actual test
+				res.WriteHeader(test.ExpectedStatus)
+
+				// Writes the response that we expect for the actual test
+				res.Write(testresp)
+			}))
+			defer func() { testServer.Close() }()
+
+			bytevalues, err := json.Marshal(test.Input)
+			assert.NoError(err)
+
+			req, err := http.NewRequest(http.MethodPost, testServer.URL, bytes.NewBuffer(bytevalues))
+			assert.NoError(err)
+
+			resp, err := http.DefaultClient.Do(req)
+			assert.NoError(err)
+
+			rawdata, _ := ioutil.ReadAll(resp.Body)
+			var structdata bool
+
+			err = json.Unmarshal(rawdata, &structdata)
 
 			assert.NoError(err)
-			if test.ExpectedResult != test.RealResult {
-				assert.Equal(test.RealResult, ontime.ResultOntime)
-			} else {
-				assert.Equal(test.ExpectedResult, ontime.ResultOntime)
-			}
+			assert.Equal(test.ExpectedResult, structdata)
 		})
 	}
 }
@@ -195,6 +200,9 @@ func TestPerformOntime(t *testing.T) {
 	assert := assert.New(t)
 	var ontime Ontime
 
+	rhol := getExpectedResultHoliday()
+	rot := getExpectedResultOnTime()
+
 	tests := []struct {
 		Description    string
 		Input          InputDataOntime
@@ -205,64 +213,13 @@ func TestPerformOntime(t *testing.T) {
 			Description: "When is not holiday and we are on time",
 			Input: InputDataOntime{
 				SouID: 6,
-				Day:   "2019-06-15",
 			},
 			Input2: InputDataOntime{
 				SouID: 6,
-				Day:   "2",
-				Hour:  "12:00",
 			},
 			ExpectedResult: ExpectedResult{
-				ResultHoliday: false,
-				ResultOntime:  true,
-			},
-		},
-		{
-			Description: "When is holiday",
-			Input: InputDataOntime{
-				SouID: 6,
-				Day:   "2019-08-15",
-			},
-			Input2: InputDataOntime{
-				SouID: 6,
-				Day:   "2",
-				Hour:  "12:00",
-			},
-			ExpectedResult: ExpectedResult{
-				ResultHoliday: true,
-				ResultOntime:  true,
-			},
-		},
-		{
-			Description: "When is not holiday and we are not on time",
-			Input: InputDataOntime{
-				SouID: 6,
-				Day:   "2019-06-15",
-			},
-			Input2: InputDataOntime{
-				SouID: 6,
-				Day:   "0",
-				Hour:  "12:00",
-			},
-			ExpectedResult: ExpectedResult{
-				ResultHoliday: false,
-				ResultOntime:  false,
-			},
-		},
-		{
-			Description: "When is not holiday and we are not on time v2",
-			Input: InputDataOntime{
-				SouID: 6,
-				Day:   "2019-06-15",
-			},
-			Input2: InputDataOntime{
-				SouID: 6,
-				Day:   "3",
-				Hour:  "01:00",
-			},
-			ExpectedResult: ExpectedResult{
-				ResultHoliday: false,
-				ResultOntime:  false,
+				ResultHoliday: rhol,
+				ResultOntime:  rot,
 			},
 		},
 	}
@@ -279,4 +236,35 @@ func TestPerformOntime(t *testing.T) {
 		assert.Equal(ontime.ResultHoliday, test.ExpectedResult.ResultHoliday)
 		assert.Equal(ontime.ResultOntime, test.ExpectedResult.ResultOntime)
 	}
+}
+
+func getExpectedResultHoliday() bool {
+	today := time.Now().Format("2006-01-02")
+	thisyear := strconv.Itoa(time.Now().Year())
+	holdays := map[string]bool{
+		fmt.Sprintf("%s-01-01", thisyear): true,
+		fmt.Sprintf("%s-01-06", thisyear): true,
+		fmt.Sprintf("%s-05-01", thisyear): true,
+		fmt.Sprintf("%s-08-15", thisyear): true,
+		fmt.Sprintf("%s-10-12", thisyear): true,
+		fmt.Sprintf("%s-12-08", thisyear): true,
+		fmt.Sprintf("%s-12-25", thisyear): true,
+	}
+	if holdays[today] {
+		return true
+	}
+	return false
+}
+
+func getExpectedResultOnTime() bool {
+	loc, _ := time.LoadLocation("Europe/Brussels")
+	intday := time.Now().In(loc).Weekday()
+	inthour := time.Now().In(loc).Hour()
+
+	if intday > 0 && intday < 6 {
+		if inthour >= 9 && inthour < 21 {
+			return true
+		}
+	}
+	return false
 }

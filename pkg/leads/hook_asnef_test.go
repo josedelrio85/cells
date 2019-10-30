@@ -1,11 +1,18 @@
 package leads
 
 import (
-	"log"
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"net/http"
-	"strconv"
+	"net/http/httptest"
 	"testing"
+	"time"
 
+	"github.com/DATA-DOG/go-sqlmock"
+
+	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -70,155 +77,298 @@ func TestActive(t *testing.T) {
 	}
 }
 
-func TestPerform(t *testing.T) {
+func TestAsnefValues(t *testing.T) {
 	assert := assert.New(t)
 
 	var asnef Asnef
-	phone := "665932356"
-	dni := "21528205K"
-	cantidad := "1000"
-
-	database := helperDbAsnef()
-	database.Open()
-	defer database.Close()
-
-	lead := Lead{
-		SouID: 9,
+	fakedb := FakeDb{
+		OpenFunc:     func() error { return nil },
+		CloseFunc:    func() error { return nil },
+		UpdateFunc:   func(a interface{}, wCond string, wFields []string) error { return nil },
+		InsertFunc:   func(lead interface{}) error { return nil },
+		InstanceFunc: func() *gorm.DB { return nil },
 	}
-	candidates := GetCandidates(lead)
+
+	type ExpectedResponse struct {
+		SCState  bool
+		Response HookResponse
+	}
 
 	tests := []struct {
-		Description string
-		Lead        Lead
-		Response    HookResponse
+		Description      string
+		Lead             Lead
+		ExpectedResponse ExpectedResponse
 	}{
 		{
-			Description: "when ASNEF successfully checks and gives ok to the lead",
+			Description: "when ASNEF check is selected. Client activates the limitation",
 			Lead: Lead{
-				SouID:         9,
-				LeaPhone:      &phone,
-				LeaDNI:        &dni,
-				IsSmartCenter: true,
 				Creditea: &Creditea{
-					ASNEF:         false,
+					ASNEF:         true,
 					AlreadyClient: false,
 				},
 			},
-			Response: HookResponse{
-				Err:        nil,
-				StatusCode: http.StatusOK,
-			},
-		},
-		{
-			Description: "when ASNEF checks is clicked. Client activates the limitation",
-			Lead: Lead{
-				SouID:         9,
-				LeaPhone:      &phone,
-				LeaDNI:        &dni,
-				IsSmartCenter: true,
-				Creditea: &Creditea{
-					RequestedAmount: &cantidad,
-					ASNEF:           true,
-					AlreadyClient:   false,
+			ExpectedResponse: ExpectedResponse{
+				SCState: false,
+				Response: HookResponse{
+					StatusCode: http.StatusOK,
+					Err:        nil,
 				},
 			},
-			Response: HookResponse{
-				Err:        nil,
-				StatusCode: http.StatusOK,
-			},
 		},
 		{
-			Description: "when AlreadyClient checks is clicked. Client activates the limitation",
+			Description: "when AlreadyClient check is selected. Client activates the limitation",
 			Lead: Lead{
-				SouID:         9,
-				LeaPhone:      &phone,
-				LeaDNI:        &dni,
-				IsSmartCenter: true,
 				Creditea: &Creditea{
-					RequestedAmount: &cantidad,
-					ASNEF:           false,
-					AlreadyClient:   true,
+					ASNEF:         false,
+					AlreadyClient: true,
 				},
 			},
-			Response: HookResponse{
-				Err:        nil,
-				StatusCode: http.StatusOK,
+			ExpectedResponse: ExpectedResponse{
+				SCState: false,
+				Response: HookResponse{
+					StatusCode: http.StatusOK,
+					Err:        nil,
+				},
 			},
 		},
 		{
-			Description: "when ASNEF validations is not passed",
+			Description: "when AlreadyClient and ASNEF checks are selected. Client activates the limitation",
 			Lead: Lead{
-				SouID:         9,
-				LeaPhone:      &candidates[0].Telefono,
-				LeaDNI:        &candidates[0].DNI,
-				IsSmartCenter: false,
 				Creditea: &Creditea{
 					ASNEF:         true,
 					AlreadyClient: true,
 				},
 			},
-			Response: HookResponse{
-				Err:        nil,
-				StatusCode: http.StatusOK,
+			ExpectedResponse: ExpectedResponse{
+				SCState: false,
+				Response: HookResponse{
+					StatusCode: http.StatusOK,
+					Err:        nil,
+				},
 			},
 		},
-	}
-
-	candidatespre := GetCandidatesPreasnef(database.DB)
-	if len(candidatespre) > 0 {
-		newtest := struct {
-			Description string
-			Lead        Lead
-			Response    HookResponse
-		}{
-			Description: "when Asnef pre validation is not passed",
-			Lead: Lead{
-				SouID:         9,
-				LeaPhone:      candidatespre[0].LeaPhone,
-				LeaDNI:        candidatespre[0].LeaDNI,
-				IsSmartCenter: false,
-			},
-			Response: HookResponse{
-				Err:        nil,
-				StatusCode: http.StatusOK,
-			},
-		}
-		tests = append(tests, newtest)
 	}
 
 	for _, test := range tests {
 		t.Run(test.Description, func(t *testing.T) {
 
 			cont := Handler{
-				Storer: &database,
+				Storer: &fakedb,
 				Lead:   test.Lead,
 			}
 			response := asnef.Perform(&cont)
 
-			assert.Equal(test.Response, response)
-			assert.Equal(test.Response.StatusCode, response.StatusCode)
-			assert.Equal(test.Response.Err, response.Err)
+			assert.Equal(cont.Lead.IsSmartCenter, test.ExpectedResponse.SCState)
+			assert.Equal(response, test.ExpectedResponse.Response)
 		})
 	}
 }
 
-func helperDbAsnef() Database {
+func TestResponseAsnef(t *testing.T) {
+	assert := assert.New(t)
 
-	port := GetSetting("DB_PORT")
-	portInt, err := strconv.ParseInt(port, 10, 64)
-	if err != nil {
-		log.Fatalf("Error parsing to string the Redshift's port %s, Err: %s", port, err)
+	phone := HelperRandstring(9)
+	dni := HelperRandstring(9)
+
+	tests := []struct {
+		Description      string
+		Lead             Lead
+		ExpectedStatus   int
+		ExpectedResponse Asnef
+		ExpectedResult   Lead
+	}{
+		{
+			Description: "when a lead has a positive asnef validation (exists on db)",
+			Lead: Lead{
+				SouID:    999,
+				LeaDNI:   &dni,
+				LeaPhone: &phone,
+			},
+			ExpectedStatus: http.StatusOK,
+			ExpectedResponse: Asnef{
+				Result: true,
+			},
+			ExpectedResult: Lead{
+				Creditea: &Creditea{
+					ASNEF:         true,
+					AlreadyClient: true,
+				},
+			},
+		},
+		{
+			Description: "when a lead has a negative asnef validation (not exists on db)",
+			Lead: Lead{
+				SouID:    999,
+				LeaDNI:   &dni,
+				LeaPhone: &phone,
+			},
+			ExpectedStatus: http.StatusOK,
+			ExpectedResponse: Asnef{
+				Result: false,
+			},
+			ExpectedResult: Lead{
+				Creditea: &Creditea{
+					ASNEF:         false,
+					AlreadyClient: false,
+				},
+			},
+		},
 	}
 
-	database := Database{
-		Host:      GetSetting("DB_HOST"),
-		Port:      portInt,
-		User:      GetSetting("DB_USER"),
-		Pass:      GetSetting("DB_PASS"),
-		Dbname:    GetSetting("DB_NAME"),
-		Charset:   "utf8",
-		ParseTime: "True",
-		Loc:       "Local",
+	for _, test := range tests {
+		t.Run(test.Description, func(t *testing.T) {
+
+			testServer := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+				testresp, err := json.Marshal(test.ExpectedResponse)
+				assert.NoError(err)
+
+				res.WriteHeader(test.ExpectedStatus)
+				res.Write(testresp)
+			}))
+			defer func() { testServer.Close() }()
+
+			asnef := Asnef{}
+
+			data := InputData{
+				SouID: test.Lead.SouID,
+				DNI:   *test.Lead.LeaDNI,
+				Phone: *test.Lead.LeaPhone,
+			}
+
+			bytevalues, err := json.Marshal(data)
+			assert.NoError(err)
+
+			req, err := http.NewRequest(http.MethodPost, testServer.URL, bytes.NewBuffer(bytevalues))
+			assert.NoError(err)
+
+			resp, err := http.DefaultClient.Do(req)
+			assert.NoError(err)
+
+			rawdata, _ := ioutil.ReadAll(resp.Body)
+
+			err = json.Unmarshal(rawdata, &asnef)
+			assert.NoError(err)
+
+			assert.Equal(asnef.Result, test.ExpectedResponse.Result)
+
+			if test.ExpectedResponse.Result {
+				assert.True(test.ExpectedResult.Creditea.ASNEF)
+				assert.True(test.ExpectedResult.Creditea.AlreadyClient)
+			} else {
+				assert.False(test.ExpectedResult.Creditea.ASNEF)
+				assert.False(test.ExpectedResult.Creditea.AlreadyClient)
+			}
+		})
 	}
-	return database
+}
+
+func TestGetSourceDescription(t *testing.T) {
+	assert := assert.New(t)
+
+	lead := Lead{
+		SouID: 99,
+	}
+
+	var db *gorm.DB
+	_, mock, err := sqlmock.NewWithDSN("sqlmock_db_0")
+	assert.NoError(err)
+
+	db, err = gorm.Open("sqlmock", "sqlmock_db_0")
+	defer db.Close()
+
+	rs := mock.NewRows([]string{"sou_id", "sou_description", "sou_idcrm"}).
+		FromCSVString("5,hello world,3")
+
+	mock.ExpectQuery("SELECT (.+)").
+		WithArgs(lead.SouID).
+		WillReturnRows(rs)
+
+	var asnef Asnef
+
+	str, err := asnef.GetSourceDescription(db, &lead)
+	assert.NoError(err)
+	assert.NotNil(str)
+}
+
+func TestGetSourcesFromDescription(t *testing.T) {
+	assert := assert.New(t)
+
+	description := "test"
+
+	var db *gorm.DB
+	_, mock, err := sqlmock.NewWithDSN("sqlmock_db_1")
+	assert.NoError(err)
+
+	db, err = gorm.Open("sqlmock", "sqlmock_db_1")
+	defer db.Close()
+
+	rs := mock.NewRows([]string{"sou_id", "sou_description", "sou_idcrm"}).
+		FromCSVString("5,hello world,3")
+
+	mock.ExpectQuery("SELECT (.+)").
+		WithArgs(description).
+		WillReturnRows(rs)
+
+	var asnef Asnef
+
+	arrstr, err := asnef.GetSourcesFromDescription(description, db)
+	assert.NoError(err)
+	assert.NotNil(arrstr)
+}
+
+func TestHasAsnef(t *testing.T) {
+	assert := assert.New(t)
+
+	var db *gorm.DB
+	_, mock, err := sqlmock.NewWithDSN("sqlmock_db_2")
+	assert.NoError(err)
+
+	db, err = gorm.Open("sqlmock", "sqlmock_db_2")
+	defer db.Close()
+
+	phone := HelperRandstring(9)
+	dni := HelperRandstring(9)
+
+	lead := Lead{
+		LeaPhone: &phone,
+		LeaDNI:   &dni,
+	}
+
+	tests := []struct {
+		Description string
+		Rs          *sqlmock.Rows
+		Expected    bool
+	}{
+		{
+			Description: "When results are returned, return true",
+			Rs: mock.NewRows([]string{"sou_id", "sou_description", "sou_idcrm"}).
+				FromCSVString("5,hello world,3"),
+			Expected: true,
+		},
+		{
+			Description: "When NO results are returned, return false",
+			Rs:          mock.NewRows([]string{"sou_id", "sou_description", "sou_idcrm"}),
+			Expected:    false,
+		},
+	}
+
+	oml := time.Now().AddDate(0, -1, 0).Format("2006-01-02")
+	sources := "'1','2','3'"
+
+	dnival := fmt.Sprintf("%s%s%s", "%", *lead.LeaDNI, "%")
+	var asnef Asnef
+
+	for _, test := range tests {
+		t.Run(test.Description, func(t *testing.T) {
+
+			mock.ExpectQuery("SELECT (.+)").
+				WithArgs(oml, sources, 0, dnival, lead.LeaPhone, 1, 1).
+				WillReturnRows(test.Rs)
+
+			result, err := asnef.HasAsnef(sources, db, &lead)
+
+			assert.NoError(err)
+			assert.Equal(result, test.Expected)
+		})
+	}
 }

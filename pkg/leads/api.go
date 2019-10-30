@@ -90,11 +90,11 @@ func (ch *Handler) HandleFunction() http.Handler {
 				responseUnprocessable(w, message, err)
 			}
 			leontelID := strconv.FormatInt(leonresp.ID, 10)
-			ch.Lead.LeaSmartcenterID = &leontelID
+			ch.Lead.LeaSmartcenterID = leontelID
 
 			cond := fmt.Sprintf("ID=%d", ch.Lead.ID)
-			fields := []string{"LeaSmartcenterID"}
-			ch.Storer.Update(&ch.Lead, cond, fields)
+			fields := []string{"LeaSmartcenterID", leontelID}
+			ch.Storer.Update(Lead{}, cond, fields)
 		}
 
 		id := fmt.Sprintf("%d", ch.Lead.ID)

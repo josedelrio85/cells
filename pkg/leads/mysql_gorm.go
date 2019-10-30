@@ -104,13 +104,12 @@ func (d *Database) Insert(element interface{}) error {
 
 // Update generates a new row
 func (d *Database) Update(element interface{}, wCond string, wFields []string) error {
-	// d.Model(&element).Where("active = ?", true).Update("name", "hello")
 	wFieldsArr := []interface{}{}
 	for _, z := range wFields {
 		wFieldsArr = append(wFieldsArr, z)
 	}
-	d.Model(&element).Where(wCond, true).Update(wFieldsArr...)
 
+	d.Model(element).Where(wCond).Update(wFieldsArr...)
 	//.Model(&user).Where("active = ?", true).Update("name", "hello")
 	// UPDATE users SET name='hello', updated_at='2013-11-17 21:34:10' WHERE id=111 AND active=true;
 	return nil

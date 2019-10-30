@@ -1,6 +1,8 @@
 package leads
 
 import (
+	"log"
+
 	"github.com/gomodule/redigo/redis"
 	"github.com/pkg/errors"
 )
@@ -45,5 +47,19 @@ func (r *Redis) Get(key string) (*string, error) {
 		return nil, errors.Wrap(err, "error retrieving key to check the lead")
 	} else {
 		return &value, nil
+	}
+}
+
+// GetAll print all pair of key and values.
+func (r *Redis) GetAll() {
+	redisConn := r.Pool.Get()
+	defer redisConn.Close()
+
+	keys, err := redis.Strings(redisConn.Do("KEYS", "*"))
+	if err != nil {
+		log.Println("An error retrieving Redis keys has ocurred")
+	}
+	for _, key := range keys {
+		log.Println(key)
 	}
 }
