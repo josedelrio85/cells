@@ -555,7 +555,7 @@ func TestSendLeadToLeontel(t *testing.T) {
 		result, err := test.Lead.SendLeadToLeontel()
 
 		leontelID := strconv.FormatInt(result.ID, 10)
-		test.Lead.LeaSmartcenterID = &leontelID
+		test.Lead.LeaSmartcenterID = leontelID
 
 		test.Storer.Insert(&test.Lead)
 

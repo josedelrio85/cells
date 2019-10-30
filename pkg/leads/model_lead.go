@@ -20,7 +20,7 @@ type Lead struct {
 	gorm.Model
 	LegacyID           int64      `json:"-"`
 	LeaTs              *time.Time `sql:"DEFAULT:current_timestamp" json:"-" `
-	LeaSmartcenterID   *string    `json:"-"`
+	LeaSmartcenterID   string     `json:"-"`
 	PassportID         string     `json:"passport_id"`
 	PassportIDGrp      string     `json:"passport_id_group"`
 	SouID              int64      `json:"sou_id"`
