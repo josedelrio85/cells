@@ -103,8 +103,8 @@ func TestPerformGclid(t *testing.T) {
 			},
 			ExpectedResult: ExpectedResult{
 				Result:       true,
-				SouID:        52,
-				SouIDLeontel: 61,
+				SouID:        9,
+				SouIDLeontel: 13,
 			}},
 	}
 
