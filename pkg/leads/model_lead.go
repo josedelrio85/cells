@@ -298,7 +298,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 			leontel.Tiposolicitud = lead.Alterna.InstallType
 			leontel.Observaciones = lead.Observations
 			if lead.Alterna.CPUS != nil {
-				*leontel.Observaciones += "CPUS: " + *lead.Alterna.CPUS
+				leontel.Observaciones = lead.Alterna.CPUS
 			}
 		}
 
