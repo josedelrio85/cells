@@ -52,7 +52,7 @@ func (a Gclid) getGclidSouID(souid int64) int64 {
 		return 15
 	case 9:
 		// TODO change for the correct value
-		return 52
+		return 9
 	default:
 		return souid
 	}
