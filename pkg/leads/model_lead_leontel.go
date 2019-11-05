@@ -69,6 +69,7 @@ type LeadLeontel struct {
 // LeontelResp represents a structure with the response returned
 // by Leontel endpoint.
 type LeontelResp struct {
-	Success bool  `json:"success"`
-	ID      int64 `json:"id"`
+	Success bool   `json:"success"`
+	ID      int64  `json:"id"`
+	Error   string `json:"error,omitempty"`
 }
