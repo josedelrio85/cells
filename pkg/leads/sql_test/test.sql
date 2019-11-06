@@ -229,6 +229,7 @@ insert into sources (sou_id, sou_description, sou_idcrm) values (66,'EUSKALTEL E
 insert into sources (sou_id, sou_description, sou_idcrm) values (67,'CREDITEA STAND 4 CAMINOS',76);
 insert into sources (sou_id, sou_description, sou_idcrm) values (68,'R CABLE BBDD SALIENTE',77);
 insert into sources (sou_id, sou_description, sou_idcrm) values (69,'ALTERNA',78);
+insert into sources (sou_id, sou_description, sou_idcrm) values (70,'EVO HIPOTECAS',79);
 
 insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (1,'C2C',2);
 insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (2,'FORM',3);
