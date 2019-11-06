@@ -4,124 +4,253 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
-	"math/rand"
 	"net/http"
 	"net/http/httptest"
-	"os"
-	"strconv"
 	"testing"
-	"time"
 
+	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 )
 
-var dbInstance Database
-
-func TestMain(m *testing.M) {
-	dbInstance = helperDb()
-
-	code := m.Run()
-
-	setDownDb()
-
-	os.Exit(code)
-}
-
-func TestHandlerFunction(t *testing.T) {
+func TestDecodeAndDecide(t *testing.T) {
 	assert := assert.New(t)
 
-	phoneTest := "666666666"
-	ipTest := "127.0.0.1"
-
-	database := helperDb()
-
 	tests := []struct {
-		Description    string
-		Storer         Storer
-		TypeRequest    string
-		StatusCode     int
-		Lead           Lead
-		ExpectedResult bool
+		Description      string
+		TypeRequest      string
+		StatusCode       int
+		Lead             Lead
+		ExpectedResult   bool
+		ExpectedResponse ResponseAPI
 	}{
 		{
-			Description:    "when HandleFunction receive a POST request with no data",
-			TypeRequest:    http.MethodPost,
-			StatusCode:     http.StatusInternalServerError,
-			Storer:         nil,
-			Lead:           Lead{},
-			ExpectedResult: false,
+			Description: "when HandleFunction receive a POST request with no data",
+			TypeRequest: http.MethodPost,
+			StatusCode:  http.StatusInternalServerError,
+			Lead:        Lead{},
+			ExpectedResponse: ResponseAPI{
+				Success:     false,
+				SmartCenter: false,
+			},
 		},
 		{
 			Description: "when HandleFunction receive a POST request without sou_id value",
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusInternalServerError,
-			Storer:      nil,
 			Lead: Lead{
-				LeatypeID:     1,
-				LeaPhone:      &phoneTest,
-				LeaIP:         &ipTest,
 				IsSmartCenter: false,
 			},
 			ExpectedResult: false,
+			ExpectedResponse: ResponseAPI{
+				Success:     false,
+				SmartCenter: false,
+			},
 		},
 		{
 			Description: "when HandleFunction receive a POST request without lea_type value",
 			TypeRequest: http.MethodPost,
 			StatusCode:  http.StatusOK,
-			Storer:      &database,
 			Lead: Lead{
 				SouID:         15,
-				LeaPhone:      &phoneTest,
-				LeaIP:         &ipTest,
 				IsSmartCenter: false,
 			},
-			ExpectedResult: true,
+			ExpectedResponse: ResponseAPI{
+				Success:     true,
+				SmartCenter: false,
+			},
 		},
 	}
 
 	for _, test := range tests {
-		ch := Handler{
-			Storer: test.Storer,
-		}
 
-		if test.Storer != nil {
-			err := test.Storer.Open()
-			defer test.Storer.Close()
+		ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+			testresp, err := json.Marshal(test.ExpectedResponse)
 			assert.NoError(err)
-		}
 
-		ts := httptest.NewServer(ch.HandleFunction())
-		defer ts.Close()
+			res.WriteHeader(test.StatusCode)
+			res.Write(testresp)
+		}))
+		defer func() { ts.Close() }()
 
 		body, err := json.Marshal(test.Lead)
-		if err != nil {
-			t.Errorf("error marshalling test json: Err: %v", err)
-			return
-		}
+		assert.NoError(err)
 
 		req, err := http.NewRequest(test.TypeRequest, ts.URL, bytes.NewBuffer(body))
-		if err != nil {
-			t.Errorf("error creating the test Request: err %v", err)
-			return
-		}
+		assert.NoError(err)
 
 		http := &http.Client{}
 		resp, err := http.Do(req)
-		if err != nil {
-			t.Errorf("error sending test request: Err %v", err)
-			return
-		}
+		assert.NoError(err)
 
 		assert.Equal(resp.StatusCode, test.StatusCode)
 
 		response := ResponseAPI{}
-		if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-			t.Errorf("error decoding response. Err %v", err)
-			return
-		}
+		err = json.NewDecoder(resp.Body).Decode(&response)
+		assert.NoError(err)
 
-		assert.Equal(response.Success, test.ExpectedResult)
+		log.Println(response)
+
+		assert.Equal(response.Success, test.ExpectedResponse.Success)
+		assert.Equal(response.SmartCenter, test.ExpectedResponse.SmartCenter)
+	}
+}
+
+func TestGetLeontelValues(t *testing.T) {
+	assert := assert.New(t)
+
+	var db *gorm.DB
+	_, mock, err := sqlmock.NewWithDSN("sqlmock_db_3")
+	assert.NoError(err)
+
+	db, err = gorm.Open("sqlmock", "sqlmock_db_3")
+	defer db.Close()
+
+	tests := []struct {
+		Description    string
+		Lead           Lead
+		ExpectedResult Lead
+	}{
+		{
+			Description: "CREDITEA END TO END	9 => 13 | C2C 1 => 2",
+			Lead: Lead{
+				SouID:     9,
+				LeatypeID: 1,
+			},
+			ExpectedResult: Lead{
+				SouIDLeontel:       13,
+				SouDescLeontel:     "CREDITEA END TO END",
+				LeatypeIDLeontel:   2,
+				LeatypeDescLeontel: "C2C",
+			},
+		},
+		{
+			Description: "EVO BANCO 3 => 4 | INACTIVIDAD 2 => 3",
+			Lead: Lead{
+				SouID:     3,
+				LeatypeID: 2,
+			},
+			ExpectedResult: Lead{
+				SouIDLeontel:       4,
+				SouDescLeontel:     "EVO BANCO",
+				LeatypeIDLeontel:   3,
+				LeatypeDescLeontel: "INACTIVIDAD",
+			},
+		},
+		{
+			Description: "R CABLE EXPANSION END TO END 54 => 63 | FDH 8 => 12",
+			Lead: Lead{
+				SouID:     54,
+				LeatypeID: 8,
+			},
+			ExpectedResult: Lead{
+				SouIDLeontel:       63,
+				SouDescLeontel:     "R CABLE EXPANSION END TO END",
+				LeatypeIDLeontel:   12,
+				LeatypeDescLeontel: "FDH",
+			},
+		},
+		{
+			Description: "R CABLE END TO END 64 => 73 | SEM 25 => 27",
+			Lead: Lead{
+				SouID:     64,
+				LeatypeID: 25,
+			},
+			ExpectedResult: Lead{
+				SouIDLeontel:       73,
+				SouDescLeontel:     "R CABLE END TO END",
+				LeatypeIDLeontel:   27,
+				LeatypeDescLeontel: "SEM",
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.Description, func(t *testing.T) {
+
+			row := fmt.Sprintf("%d,%s,%d", test.Lead.SouID, test.ExpectedResult.SouDescLeontel, test.ExpectedResult.SouIDLeontel)
+			rs := mock.NewRows([]string{"sou_id", "sou_description", "sou_idcrm"}).
+				FromCSVString(row)
+
+			mock.ExpectQuery("SELECT (.+)").
+				WithArgs(test.Lead.SouID).
+				WillReturnRows(rs)
+
+			row2 := fmt.Sprintf("%d,%s,%d", test.Lead.LeatypeID, test.ExpectedResult.LeatypeDescLeontel, test.ExpectedResult.LeatypeIDLeontel)
+			rs2 := mock.NewRows([]string{"leatype_id", "leatype_description", "leatype_idcrm"}).
+				FromCSVString(row2)
+
+			mock.ExpectQuery("SELECT (.+)").
+				WithArgs(test.Lead.LeatypeID).
+				WillReturnRows(rs2)
+
+			err := test.Lead.GetLeontelValues(db)
+			assert.NoError(err)
+
+			assert.Equal(test.ExpectedResult.SouIDLeontel, test.Lead.SouIDLeontel)
+			assert.Equal(test.ExpectedResult.LeatypeIDLeontel, test.Lead.LeatypeIDLeontel)
+		})
+	}
+}
+
+func TestGetPassport(t *testing.T) {
+	assert := assert.New(t)
+
+	ip := HelperRandstring(14)
+
+	tests := []struct {
+		Description    string
+		StatusCode     int
+		Interaction    Interaction
+		ExpectedResult Lead
+	}{
+		{
+			Description: "CREDITEA END TO END	9 => 13 | C2C 1 => 2",
+			StatusCode: http.StatusOK,
+			Interaction: Interaction{
+				Provider:    "CREDITEA END TO END",
+				Application: "C2C",
+				IP:          ip,
+			},
+			ExpectedResult: Lead{
+				PassportID:    HelperRandstring(12),
+				PassportIDGrp: HelperRandstring(12),
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.Description, func(t *testing.T) {
+
+			ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+				testresp, err := json.Marshal(test.ExpectedResult)
+				assert.NoError(err)
+
+				res.WriteHeader(test.StatusCode)
+				res.Write(testresp)
+			}))
+			defer func() { ts.Close() }()
+
+			bytevalues, err := json.Marshal(test.Interaction)
+			assert.NoError(err)
+
+			req, err := http.NewRequest(http.MethodPost, ts.URL, bytes.NewBuffer(bytevalues))
+			assert.NoError(err)
+
+			resp, err := http.DefaultClient.Do(req)
+			assert.NoError(err)
+
+			rawdata, _ := ioutil.ReadAll(resp.Body)
+
+			passport := Passport{}
+			err = json.Unmarshal(rawdata, &passport)
+			assert.NoError(err)
+
+			assert.Equal(test.ExpectedResult.PassportID, passport.PassportID)
+			assert.Equal(test.ExpectedResult.PassportIDGrp, passport.PassportIDGrp)
+		})
 	}
 }
 
@@ -148,29 +277,19 @@ func TestLeadToLeontel(t *testing.T) {
 
 	obsTest8 := fmt.Sprintf("%s -- %s -- %s -- %s", obsTest6, obsTest6, obsTest7, obsTest)
 
-	database := helperDb()
-	err := database.Open()
-	defer database.Close()
-
-	assert.NoError(err)
-
 	tests := []struct {
 		Index          int
 		Description    string
-		TypeRequest    string
-		StatusCode     int
 		Lead           Lead
 		ExpectedResult LeadLeontel
 	}{
 		{
 			Index:       1,
 			Description: "check data returned for sou_id 9 Creditea EndToEnd",
-			TypeRequest: http.MethodPost,
-			StatusCode:  http.StatusInternalServerError,
 			Lead: Lead{
-				SouID:     9,
-				LeatypeID: 1,
-				LeaDNI:    &t1,
+				SouID:        9,
+				SouIDLeontel: 13,
+				LeaDNI:       &t1,
 				Creditea: &Creditea{
 					RequestedAmount: &t2,
 				},
@@ -178,7 +297,6 @@ func TestLeadToLeontel(t *testing.T) {
 			},
 			ExpectedResult: LeadLeontel{
 				LeaSource:     13,
-				LeaType:       2,
 				Dninie:        &t1,
 				Observaciones: &obsTest,
 			},
@@ -186,12 +304,10 @@ func TestLeadToLeontel(t *testing.T) {
 		{
 			Index:       2,
 			Description: "check data returned for sou_id 11 Creditea Rastreator",
-			TypeRequest: http.MethodPost,
-			StatusCode:  http.StatusInternalServerError,
 			Lead: Lead{
-				SouID:     11,
-				LeatypeID: 1,
-				LeaDNI:    &t1,
+				SouID:        11,
+				SouIDLeontel: 15,
+				LeaDNI:       &t1,
 				Creditea: &Creditea{
 					RequestedAmount: &t2,
 					NetIncome:       &t3,
@@ -201,7 +317,6 @@ func TestLeadToLeontel(t *testing.T) {
 			},
 			ExpectedResult: LeadLeontel{
 				LeaSource:     15,
-				LeaType:       2,
 				Dninie:        &t1,
 				Observaciones: &obsTest2,
 			},
@@ -209,11 +324,9 @@ func TestLeadToLeontel(t *testing.T) {
 		{
 			Index:       3,
 			Description: "check data returned for sou_id 46-49 Microsoft Hazelcambio + Recomendador",
-			TypeRequest: http.MethodPost,
-			StatusCode:  http.StatusInternalServerError,
 			Lead: Lead{
 				SouID:        46,
-				LeatypeID:    1,
+				SouIDLeontel: 61,
 				Observations: &observations,
 				Microsoft: &Microsoft{
 					ComputerType: &t1,
@@ -228,7 +341,6 @@ func TestLeadToLeontel(t *testing.T) {
 			},
 			ExpectedResult: LeadLeontel{
 				LeaSource:      61,
-				LeaType:        2,
 				Tipoordenador:  &t1,
 				Sector:         &t2,
 				Tipouso:        &t3,
@@ -242,11 +354,9 @@ func TestLeadToLeontel(t *testing.T) {
 		{
 			Index:       4,
 			Description: "check data returned for sou_id 48 Microsoft Calculadora",
-			TypeRequest: http.MethodPost,
-			StatusCode:  http.StatusInternalServerError,
 			Lead: Lead{
 				SouID:        48,
-				LeatypeID:    1,
+				SouIDLeontel: 61,
 				Observations: &observations,
 				Microsoft: &Microsoft{
 					DevicesAverageAge:      &t1,
@@ -260,34 +370,28 @@ func TestLeadToLeontel(t *testing.T) {
 			},
 			ExpectedResult: LeadLeontel{
 				LeaSource:      61,
-				LeaType:        2,
 				Observaciones2: &obsTest3,
 			},
 		},
 		{
 			Index:       5,
 			Description: "check data returned for sou_id 50 Microsoft Ofertas",
-			TypeRequest: http.MethodPost,
-			StatusCode:  http.StatusInternalServerError,
 			Lead: Lead{
 				SouID:         50,
-				LeatypeID:     1,
+				SouIDLeontel:  61,
 				IsSmartCenter: false,
 				Microsoft:     &Microsoft{},
 			},
 			ExpectedResult: LeadLeontel{
 				LeaSource: 61,
-				LeaType:   2,
 			},
 		},
 		{
 			Index:       6,
 			Description: "check data returned for sou_id 51 Microsoft Ficha Producto",
-			TypeRequest: http.MethodPost,
-			StatusCode:  http.StatusInternalServerError,
 			Lead: Lead{
 				SouID:        51,
-				LeatypeID:    1,
+				SouIDLeontel: 61,
 				Observations: &observations,
 				Microsoft: &Microsoft{
 					ProductType:        &t1,
@@ -307,18 +411,16 @@ func TestLeadToLeontel(t *testing.T) {
 			},
 			ExpectedResult: LeadLeontel{
 				LeaSource:      61,
-				LeaType:        2,
 				Observaciones2: &obsTest4,
 			},
 		},
 		{
 			Index:       7,
 			Description: "check data returned for sou_id 54 R Cable Expansion",
-			TypeRequest: http.MethodPost,
-			StatusCode:  http.StatusInternalServerError,
+
 			Lead: Lead{
-				SouID:     54,
-				LeatypeID: 1,
+				SouID:        54,
+				SouIDLeontel: 63,
 				RcableExp: &RcableExp{
 					RespValues: &t1,
 					Location:   &t2,
@@ -328,18 +430,15 @@ func TestLeadToLeontel(t *testing.T) {
 			},
 			ExpectedResult: LeadLeontel{
 				LeaSource:     63,
-				LeaType:       2,
 				Observaciones: &obsTest5,
 			},
 		},
 		{
 			Index:       8,
 			Description: "check data returned for sou_id 64 R Cable End To End (Kinkon) C2C",
-			TypeRequest: http.MethodPost,
-			StatusCode:  http.StatusInternalServerError,
 			Lead: Lead{
 				SouID:         64,
-				LeatypeID:     1,
+				SouIDLeontel:  73,
 				LeaPhone:      &t1,
 				IsSmartCenter: false,
 				Kinkon: &Kinkon{
@@ -351,7 +450,6 @@ func TestLeadToLeontel(t *testing.T) {
 			},
 			ExpectedResult: LeadLeontel{
 				LeaSource:     73,
-				LeaType:       2,
 				Telefono:      &t1,
 				Observaciones: &t8,
 			},
@@ -359,11 +457,10 @@ func TestLeadToLeontel(t *testing.T) {
 		{
 			Index:       9,
 			Description: "check data returned for sou_id 64 R Cable End To End (Kinkon) Coverture check",
-			TypeRequest: http.MethodPost,
-			StatusCode:  http.StatusInternalServerError,
 			Lead: Lead{
-				SouID:     64,
-				LeatypeID: 24,
+				SouID:            64,
+				SouIDLeontel:     73,
+				LeatypeIDLeontel: 26,
 				Kinkon: &Kinkon{
 					Coverture: &t1,
 					CovData: &CovData{
@@ -389,11 +486,10 @@ func TestLeadToLeontel(t *testing.T) {
 		{
 			Index:       10,
 			Description: "check data returned for sou_id 66 Euskaltel End To End (Kinkon) Hiring process",
-			TypeRequest: http.MethodPost,
-			StatusCode:  http.StatusInternalServerError,
 			Lead: Lead{
-				SouID:     66,
-				LeatypeID: 27,
+				SouID:            66,
+				SouIDLeontel:     75,
+				LeatypeIDLeontel: 30,
 				Kinkon: &Kinkon{
 					Coverture: &t1,
 					CovData: &CovData{
@@ -435,205 +531,82 @@ func TestLeadToLeontel(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		ch := Handler{
-			Lead: test.Lead,
-		}
-
-		err := ch.Lead.GetLeontelValues(database.DB)
-		assert.NoError(err)
-
-		leontel := ch.Lead.LeadToLeontel()
+		leontel := test.Lead.LeadToLeontel()
 		assert.Equal(test.ExpectedResult, leontel)
 	}
 }
 
-func TestGetLeontelValues(t *testing.T) {
-	assert := assert.New(t)
-	database := helperDb()
-	err := database.Open()
-	defer database.Close()
-
-	assert.NoError(err)
-
-	tests := []struct {
-		Description    string
-		Lead           Lead
-		ExpectedResult Lead
-	}{
-		{
-			Description: "CREDITEA END TO END	9 => 13 | C2C 1 => 2",
-			Lead: Lead{
-				SouID:     9,
-				LeatypeID: 1,
-			},
-			ExpectedResult: Lead{
-				SouIDLeontel:     13,
-				LeatypeIDLeontel: 2,
-			},
-		},
-		{
-			Description: "EVO BANCO 3 => 4 | INACTIVIDAD 2 => 3",
-			Lead: Lead{
-				SouID:     3,
-				LeatypeID: 2,
-			},
-			ExpectedResult: Lead{
-				SouIDLeontel:     4,
-				LeatypeIDLeontel: 3,
-			},
-		},
-		{
-			Description: "R CABLE EXPANSION END TO END 54 => 63 | FDH 8 => 12",
-			Lead: Lead{
-				SouID:     54,
-				LeatypeID: 8,
-			},
-			ExpectedResult: Lead{
-				SouIDLeontel:     63,
-				LeatypeIDLeontel: 12,
-			},
-		},
-	}
-
-	for _, test := range tests {
-		err := test.Lead.GetLeontelValues(database.DB)
-		assert.NoError(err)
-
-		assert.Equal(test.ExpectedResult.SouIDLeontel, test.Lead.SouIDLeontel)
-		assert.Equal(test.ExpectedResult.LeatypeIDLeontel, test.Lead.LeatypeIDLeontel)
-	}
-}
-
-type LeontelRespTest struct {
-	Success bool  `json:"success"`
-	ID      int64 `json:"id"`
-}
-
-func TestSendLeadToLeontel(t *testing.T) {
+func TestSenLeadToLeontel(t *testing.T) {
 	assert := assert.New(t)
 
-	t3 := "c"
-	t4 := "D"
-	t5 := "000000000"
-	t6 := "99997896Z"
-
-	database := helperDb()
+	phone := HelperRandstring(9)
 
 	tests := []struct {
-		Description    string
-		Lead           Lead
-		ExpectedResult LeontelRespTest
-		Storer         Storer
+		Description      string
+		TypeRequest      string
+		StatusCode       int
+		LeadLeontel      []LeadLeontel
+		ExpectedResult   bool
+		ExpectedResponse LeontelResp
 	}{
 		{
-			Description: "When send a valid lead to Leontel",
-			Lead: Lead{
-				SouID:            15,
-				SouIDLeontel:     23,
-				LeatypeID:        1,
-				LeatypeIDLeontel: 2,
-				LeaURL:           &t3,
-				LeaIP:            &t4,
-				LeaPhone:         &t5,
-				LeaDNI:           &t6,
+			Description: "when HandleFunction receive a POST request with no data",
+			TypeRequest: http.MethodPost,
+			StatusCode:  http.StatusInternalServerError,
+			LeadLeontel: []LeadLeontel{},
+			ExpectedResponse: LeontelResp{
+				Success: false,
+				Error:   "Origen del lead erroneo use getSources()",
 			},
-			ExpectedResult: LeontelRespTest{
+		},
+		{
+			Description: "when HandleFunction receive a POST request with data",
+			TypeRequest: http.MethodPost,
+			StatusCode:  http.StatusOK,
+			LeadLeontel: []LeadLeontel{
+				{
+					LeaSource: 23,
+					LeaType:   2,
+					Telefono:  &phone,
+				},
+			},
+			ExpectedResponse: LeontelResp{
 				Success: true,
+				ID:      9999,
 			},
-			Storer: &database,
 		},
 	}
 
 	for _, test := range tests {
 
-		if test.Storer != nil {
-			err := test.Storer.Open()
-			defer test.Storer.Close()
+		ts := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+			testresp, err := json.Marshal(test.ExpectedResponse)
 			assert.NoError(err)
-		}
 
-		result, err := test.Lead.SendLeadToLeontel()
+			res.WriteHeader(test.StatusCode)
+			res.Write(testresp)
+		}))
+		defer func() { ts.Close() }()
 
-		leontelID := strconv.FormatInt(result.ID, 10)
-		test.Lead.LeaSmartcenterID = leontelID
-
-		test.Storer.Insert(&test.Lead)
-
-		cond := fmt.Sprintf("ID=%d", test.Lead.ID)
-		fields := []string{"LeaSmartcenterID"}
-		test.Storer.Update(&test.Lead, cond, fields)
-
+		body, err := json.Marshal(test.LeadLeontel)
 		assert.NoError(err)
-		assert.Equal(test.ExpectedResult.Success, result.Success)
-		assert.NotNil(test.Lead.LeaSmartcenterID)
 
-		test.Storer.Instance().Delete(test.Lead)
+		req, err := http.NewRequest(test.TypeRequest, ts.URL, bytes.NewBuffer(body))
+		assert.NoError(err)
+
+		http := &http.Client{}
+		resp, err := http.Do(req)
+		assert.NoError(err)
+
+		assert.Equal(resp.StatusCode, test.StatusCode)
+
+		response := LeontelResp{}
+		err = json.NewDecoder(resp.Body).Decode(&response)
+		assert.NoError(err)
+
+		log.Println(response)
+
+		assert.Equal(response.Success, test.ExpectedResponse.Success)
+		assert.Equal(response.ID, test.ExpectedResponse.ID)
 	}
-}
-
-func TestOpenDb(t *testing.T) {
-	assert := assert.New(t)
-
-	err := dbInstance.Open()
-
-	assert.NoError(err)
-}
-
-func helperDb() Database {
-
-	port := GetSetting("DB_PORT")
-	portInt, err := strconv.ParseInt(port, 10, 64)
-	if err != nil {
-		log.Fatalf("Error parsing to string the Redshift's port %s, Err: %s", port, err)
-	}
-
-	database := Database{
-		Host:      GetSetting("DB_HOST"),
-		Port:      portInt,
-		User:      GetSetting("DB_USER"),
-		Pass:      GetSetting("DB_PASS"),
-		Dbname:    GetSetting("DB_NAME"),
-		Charset:   "utf8",
-		ParseTime: "True",
-		Loc:       "Local",
-	}
-	return database
-}
-
-func setDownDb() {
-
-	if err := dbInstance.Open(); err != nil {
-		log.Printf("error opening database connection. err: %s", err)
-	}
-	defer dbInstance.DB.Close()
-}
-
-// GetSetting reads an ENV VAR setting, it does crash the service if with an
-// error message if any setting is not found.
-//
-// - setting: The setting (ENV VAR) to read.
-//
-// Returns the setting value.
-func GetSetting(setting string) string {
-	value, ok := os.LookupEnv(setting)
-	if !ok {
-		log.Fatalf("Init error, %s ENV var not found", setting)
-	}
-
-	return value
-}
-
-// HelperRandstring is a helper function to generate random strings
-func HelperRandstring(length int) string {
-	const charset = "abcdefghijklmnopqrstuvwxyz" +
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-
-	seededRand := rand.New(
-		rand.NewSource(time.Now().UnixNano()))
-
-	b := make([]byte, length)
-	for i := range b {
-		b[i] = charset[seededRand.Intn(len(charset))]
-	}
-	return string(b)
 }
