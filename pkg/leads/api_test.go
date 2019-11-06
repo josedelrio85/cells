@@ -102,10 +102,10 @@ func TestGetLeontelValues(t *testing.T) {
 	assert := assert.New(t)
 
 	var db *gorm.DB
-	_, mock, err := sqlmock.NewWithDSN("sqlmock_db_0")
+	_, mock, err := sqlmock.NewWithDSN("sqlmock_db_3")
 	assert.NoError(err)
 
-	db, err = gorm.Open("sqlmock", "sqlmock_db_0")
+	db, err = gorm.Open("sqlmock", "sqlmock_db_3")
 	defer db.Close()
 
 	tests := []struct {
