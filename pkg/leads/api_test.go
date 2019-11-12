@@ -114,14 +114,14 @@ func TestGetLeontelValues(t *testing.T) {
 		ExpectedResult Lead
 	}{
 		{
-			Description: "CREDITEA END TO END	9 => 13 | C2C 1 => 2",
+			Description: "RCABLE END TO END	64 => 73 | C2C 1 => 2",
 			Lead: Lead{
-				SouID:     9,
+				SouID:     64,
 				LeatypeID: 1,
 			},
 			ExpectedResult: Lead{
-				SouIDLeontel:       13,
-				SouDescLeontel:     "CREDITEA END TO END",
+				SouIDLeontel:       73,
+				SouDescLeontel:     "RCABLE END TO END",
 				LeatypeIDLeontel:   2,
 				LeatypeDescLeontel: "C2C",
 			},
@@ -207,10 +207,10 @@ func TestGetPassport(t *testing.T) {
 		ExpectedResult Lead
 	}{
 		{
-			Description: "CREDITEA END TO END	9 => 13 | C2C 1 => 2",
+			Description: "RCABLE END TO END	64 => 73 | C2C 1 => 2",
 			StatusCode: http.StatusOK,
 			Interaction: Interaction{
-				Provider:    "CREDITEA END TO END",
+				Provider:    "RCABLE END TO END",
 				Application: "C2C",
 				IP:          ip,
 			},
@@ -526,6 +526,32 @@ func TestLeadToLeontel(t *testing.T) {
 				LeaSource:     75,
 				LeaType:       30,
 				Observaciones: &obsTest8,
+			},
+		},
+		{
+			Index:       11,
+			Description: "check data returned for sou_id 69 Alterna campaign",
+			Lead: Lead{
+				SouID:         69,
+				SouIDLeontel:  78,
+				LeaPhone:      &t7,
+				IsSmartCenter: false,
+				Alterna: &Alterna{
+					PostalCode:  &t1,
+					Street:      &t2,
+					Number:      &t3,
+					InstallType: &t4,
+					CPUS:        &t5,
+				},
+			},
+			ExpectedResult: LeadLeontel{
+				LeaSource:     78,
+				Telefono:      &t7,
+				CP:            &t1,
+				Calle:         &t2,
+				Numero:        &t3,
+				Tiposolicitud: &t4,
+				Observaciones: &t5,
 			},
 		},
 	}

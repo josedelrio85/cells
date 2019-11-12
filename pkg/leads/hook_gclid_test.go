@@ -1,9 +1,12 @@
 package leads
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 
+	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -55,28 +58,44 @@ func TestPerformGclid(t *testing.T) {
 	var gc Gclid
 
 	type ExpectedResult struct {
-		Result       bool
-		SouID        int64
-		SouIDLeontel int64
+		Result             bool
+		SouID              int64
+		SouIDLeontel       int64
+		SouDescLeontel     string
+		LeatypeIDLeontel   int64
+		LeatypeDescLeontel string
 	}
 
-	database := helperDb()
-	database.Open()
-	defer database.Close()
+	var db *gorm.DB
+	_, mock, err := sqlmock.NewWithDSN("sqlmock_db_4")
+	assert.NoError(err)
+
+	db, err = gorm.Open("sqlmock", "sqlmock_db_4")
+	defer db.Close()
+
+	database := Database{}
+	database.DB = db
 
 	gclidvalue := HelperRandstring(19)
 
 	tests := []struct {
 		Description    string
 		Lead           Lead
+		Helper         Lead
 		Response       HookResponse
 		ExpectedResult ExpectedResult
 	}{
 		{
 			Description: "When a lead has not gclid",
 			Lead: Lead{
-				SouID:     9,
+				SouID:     64,
 				LeatypeID: 1,
+			},
+			Helper: Lead{
+				SouIDLeontel:       73,
+				SouDescLeontel:     "R CABLE END TO END",
+				LeatypeIDLeontel:   2,
+				LeatypeDescLeontel: "C2C",
 			},
 			Response: HookResponse{
 				StatusCode: http.StatusOK,
@@ -86,16 +105,22 @@ func TestPerformGclid(t *testing.T) {
 			// and consecuently sou_id Leontel will not change either (in this hook)
 			ExpectedResult: ExpectedResult{
 				Result:       false,
-				SouID:        9,
+				SouID:        64,
 				SouIDLeontel: 0,
 			},
 		},
 		{
 			Description: "When a lead has gclid value",
 			Lead: Lead{
-				SouID:     9,
+				SouID:     15,
 				Gclid:     &gclidvalue,
 				LeatypeID: 1,
+			},
+			Helper: Lead{
+				SouIDLeontel:       23,
+				SouDescLeontel:     "ALTERNA",
+				LeatypeIDLeontel:   2,
+				LeatypeDescLeontel: "C2C",
 			},
 			Response: HookResponse{
 				StatusCode: http.StatusOK,
@@ -103,13 +128,55 @@ func TestPerformGclid(t *testing.T) {
 			},
 			ExpectedResult: ExpectedResult{
 				Result:       true,
-				SouID:        9,
-				SouIDLeontel: 13,
-			}},
+				SouID:        15,
+				SouIDLeontel: 23,
+			},
+		},
+		{
+			Description: "When a lead has gclid value",
+			Lead: Lead{
+				SouID:     64,
+				Gclid:     &gclidvalue,
+				LeatypeID: 1,
+			},
+			Helper: Lead{
+				SouIDLeontel:       73,
+				SouDescLeontel:     "R CABLE END TO END",
+				LeatypeIDLeontel:   2,
+				LeatypeDescLeontel: "C2C",
+			},
+			Response: HookResponse{
+				StatusCode: http.StatusOK,
+				Err:        nil,
+			},
+			ExpectedResult: ExpectedResult{
+				Result:       true,
+				SouID:        64,
+				SouIDLeontel: 73,
+			},
+		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.Description, func(t *testing.T) {
+			if test.Lead.Gclid != nil {
+				row := fmt.Sprintf("%d,%s,%d", test.Lead.SouID, test.Helper.SouDescLeontel, test.Helper.SouIDLeontel)
+				rs := mock.NewRows([]string{"sou_id", "sou_description", "sou_idcrm"}).
+					FromCSVString(row)
+
+				mock.ExpectQuery("SELECT (.+)").
+					WithArgs(test.Lead.SouID).
+					WillReturnRows(rs)
+
+				row2 := fmt.Sprintf("%d,%s,%d", test.Lead.LeatypeID, test.Helper.LeatypeDescLeontel, test.Helper.LeatypeIDLeontel)
+				rs2 := mock.NewRows([]string{"leatype_id", "leatype_description", "leatype_idcrm"}).
+					FromCSVString(row2)
+
+				mock.ExpectQuery("SELECT (.+)").
+					WithArgs(test.Lead.LeatypeID).
+					WillReturnRows(rs2)
+			}
+
 			cont := Handler{
 				Lead:   test.Lead,
 				Storer: &database,
