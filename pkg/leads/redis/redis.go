@@ -44,7 +44,7 @@ func (r *Redis) Get(key string) (*string, error) {
 	if err == redis.ErrNil {
 		return &value, nil
 	} else if err != nil {
-		return nil, errors.Wrap(err, "error retrieving key to check the lead")
+		return nil, errors.Wrap(err, "redis error retrieving key to check the lead")
 	} else {
 		return &value, nil
 	}
