@@ -11,6 +11,7 @@ require (
 	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/gorilla/mux v1.7.2
 	github.com/jinzhu/gorm v1.9.9
+	github.com/nyaruka/phonenumbers v1.0.52
 	github.com/pkg/errors v0.8.0
 	github.com/rs/cors v1.6.0
 	github.com/stretchr/objx v0.2.0 // indirect

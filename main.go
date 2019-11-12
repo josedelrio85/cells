@@ -38,6 +38,7 @@ func main() {
 		Storer: database,
 		ActiveHooks: []lead.Hookable{
 			lead.Hibernated{},
+			lead.Phone{},
 			lead.DuplicatedTime{},
 			lead.DuplicatedSmartCenter{},
 			lead.Ontime{},
