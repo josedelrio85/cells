@@ -37,6 +37,13 @@ func TestActiveDuplicatedSC(t *testing.T) {
 			Active: true,
 		},
 		{
+			Description: "when DuplicatedSmartCenter hook is successfully activated",
+			Lead: Lead{
+				SouID: 63,
+			},
+			Active: true,
+		},
+		{
 			Description: "when DuplicatedSmartCenter hook is not activated",
 			Lead: Lead{
 				SouID: 1,
