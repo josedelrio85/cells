@@ -45,6 +45,13 @@ func TestActiveDuplicated(t *testing.T) {
 			},
 			Active: false,
 		},
+		{
+			Description: "when DuplicatedTime hook is successfully activated",
+			Lead: Lead{
+				SouID: 63,
+			},
+			Active: true,
+		},
 	}
 
 	for _, test := range tests {

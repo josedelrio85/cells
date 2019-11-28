@@ -11,9 +11,10 @@ import (
 	"github.com/pkg/errors"
 )
 
-// DuplicatedSmartCenter is a is a struct that represents a DuplicatedSmartCenter entity
+// DuplicatedSmartCenter is a struct that represents a DuplicatedSmartCenter entity
 type DuplicatedSmartCenter struct{}
 
+// DataLeontelResp represents the data content in the response of Leontel environment
 type DataLeontelResp struct {
 	Closed      string `json:"lea_closed"`
 	LeaID       string `json:"lea_id"`
@@ -22,6 +23,7 @@ type DataLeontelResp struct {
 	SubID       string `json:"sub_id"`
 }
 
+// RespSC is a struct that representes Leontel environment response
 type RespSC struct {
 	Success bool              `json:"success"`
 	Data    []DataLeontelResp `json:"data"`
@@ -40,6 +42,8 @@ func (t DuplicatedSmartCenter) Active(lead Lead) bool {
 	case 15:
 		return true
 	case 64, 65, 66:
+		return true
+	case 63:
 		return true
 	default:
 		return false
