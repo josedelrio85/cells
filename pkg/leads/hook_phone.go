@@ -29,8 +29,12 @@ func (p Phone) Active(lead Lead) bool {
 // Returns a HookReponse
 func (p Phone) Perform(cont *Handler) HookResponse {
 	if cont.Lead.LeaPhone == nil {
+		url := "--"
+		if cont.Lead.LeaURL != nil {
+			url = *cont.Lead.LeaURL
+		}
 		return HookResponse{
-			Err:        errors.New(fmt.Sprintf("Not allowed, phone param needed")),
+			Err:        errors.New(fmt.Sprintf("Not allowed, phone param needed in %s - %d", url, cont.Lead.SouID)),
 			StatusCode: http.StatusUnprocessableEntity,
 		}
 	}
