@@ -31,7 +31,7 @@ type Lead struct {
 	LeaMail            *string    `json:"mail,omitempty"`
 	LeaName            *string    `json:"name,omitempty"`
 	LeaDNI             *string    `json:"dni,omitempty"`
-	LeaURL             *string    `json:"url,omitempty"`
+	LeaURL             *string    `sql:"type:text" json:"url,omitempty"`
 	LeaIP              *string    `json:"ip,omitempty"`
 	IsSmartCenter      bool       `json:"smartcenter,omitempty"`
 	SouIDLeontel       int64      `sql:"-" json:"sou_id_leontel"`
