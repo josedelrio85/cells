@@ -12,6 +12,7 @@ type Kinkon struct {
 	Portability *Portability `gorm:"embedded" json:"portability"`
 	HolderData  *HolderData  `gorm:"embedded" json:"holder_data"`
 	BillingInfo *BillingInfo `gorm:"embedded" json:"billing_info"`
+	Product     *string      `json:"product,omitempty"`
 }
 
 // CovData represents the data structure for coverture data

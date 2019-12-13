@@ -255,34 +255,64 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		args := []*string{}
 
 		if lead.Kinkon != nil {
+			coverture := "Cobertura"
+			args = append(args, &coverture)
+			args = append(args, lead.Kinkon.Coverture)
+
+			product := "Producto"
+			args = append(args, &product)
+			args = append(args, lead.Kinkon.Product)
+
 			if *lead.Kinkon.CovData != (CovData{}) {
-				args = append(args, lead.Kinkon.CovData.State)
-				args = append(args, lead.Kinkon.CovData.Town)
-				args = append(args, lead.Kinkon.CovData.Street)
-				args = append(args, lead.Kinkon.CovData.Number)
-				args = append(args, lead.Kinkon.CovData.Floor)
-				args = append(args, lead.Kinkon.CovData.CovPhone)
+				leontel.Provincia = lead.Kinkon.CovData.State
+				leontel.Poblacion = lead.Kinkon.CovData.Town
+				cargs := []*string{}
+				cargs = append(cargs, lead.Kinkon.CovData.Street)
+				cargs = append(cargs, lead.Kinkon.CovData.Number)
+				cargs = append(cargs, lead.Kinkon.CovData.Floor)
+				covargs := concatPointerStrs(cargs...)
+				leontel.Direccion = &covargs
 			}
 
 			if *lead.Kinkon.Portability != (Portability{}) {
+				leontel.Compaiaactualfibraadsl = lead.Kinkon.Portability.PhoneProvider
+				leontel.Companiaactualmovil = lead.Kinkon.Portability.MobilePhoneProvider
+
+				phone := "Teléfono fijo portabilidad:"
+				args = append(args, &phone)
 				args = append(args, lead.Kinkon.Portability.Phone)
-				args = append(args, lead.Kinkon.Portability.PhoneProvider)
+
+				mobile := "Teléfono movil portabilidad:"
+				args = append(args, &mobile)
 				args = append(args, lead.Kinkon.Portability.MobilePhone)
-				args = append(args, lead.Kinkon.Portability.MobilePhoneProvider)
+
+				phone2 := "Teléfono movil 2 portabilidad:"
+				args = append(args, &phone2)
 				args = append(args, lead.Kinkon.Portability.MobilePhone2)
+
+				provider := "Operador movil portabilidad:"
+				args = append(args, &provider)
 				args = append(args, lead.Kinkon.Portability.MobilePhoneProvider2)
 			}
 
 			if *lead.Kinkon.HolderData != (HolderData{}) {
-				args = append(args, lead.Kinkon.HolderData.Name)
-				args = append(args, lead.Kinkon.HolderData.Surname)
-				args = append(args, lead.Kinkon.HolderData.Idnumber)
-				args = append(args, lead.Kinkon.HolderData.Mail)
+				fullname := fmt.Sprintf("%s %s", *lead.Kinkon.HolderData.Name, *lead.Kinkon.HolderData.Surname)
+				leontel.Nombrecompleto = &fullname
+				leontel.Dninie = lead.Kinkon.HolderData.Idnumber
+				leontel.Email = lead.Kinkon.HolderData.Mail
+
+				contactphone := "Teléfono contacto"
+				args = append(args, &contactphone)
 				args = append(args, lead.Kinkon.HolderData.ContactPhone)
 			}
 
 			if *lead.Kinkon.BillingInfo != (BillingInfo{}) {
+				accountholder := "Titular cuenta"
+				args = append(args, &accountholder)
 				args = append(args, lead.Kinkon.BillingInfo.AccountHolder)
+
+				ccc := "CCC"
+				args = append(args, &ccc)
 				args = append(args, lead.Kinkon.BillingInfo.AccountNumber)
 			}
 

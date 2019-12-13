@@ -62,8 +62,11 @@ func (a Ontime) Perform(cont *Handler) HookResponse {
 		statuscode = http.StatusInternalServerError
 	}
 
+	a.ResultOntime = false
+
 	if a.ResultHoliday || !a.ResultOntime {
 		lead.LeatypeID = 8
+		lead.LeatypeIDLeontel = 12
 	}
 
 	return HookResponse{
