@@ -264,7 +264,7 @@ func TestLeadToLeontel(t *testing.T) {
 	t5 := "E"
 	t6 := "F"
 	t7 := "G"
-	t8 := ""
+	t9 := "J"
 	observations := "H"
 
 	obsTest := "A -- B"
@@ -272,10 +272,13 @@ func TestLeadToLeontel(t *testing.T) {
 	obsTest3 := "A -- B -- C -- D -- E -- F"
 	obsTest4 := "A -- B -- C -- D -- E -- F -- G -- A -- B -- C -- D -- E"
 	obsTest5 := "A -- B -- C"
-	obsTest6 := "B -- C -- D -- E -- F -- G"
-	obsTest7 := "B -- C -- D -- E -- F"
 
-	obsTest8 := fmt.Sprintf("%s -- %s -- %s -- %s", obsTest6, obsTest6, obsTest7, obsTest)
+	kinkonAddress9 := fmt.Sprintf("%s -- %s -- %s", t4, t5, t6)
+	obsKinkon9 := fmt.Sprintf("Cobertura -- %s -- Producto -- %s", t1, t9)
+
+	fullnameKinkon10 := fmt.Sprintf("%s %s", t2, t3)
+	obsKinkon10 := fmt.Sprintf(`%s -- Teléfono fijo portabilidad: -- %s -- Teléfono movil portabilidad: -- %s -- Teléfono movil 2 portabilidad: -- %s -- Operador movil portabilidad: -- %s -- Teléfono contacto -- %s -- Titular cuenta -- %s -- CCC -- %s`,
+		obsKinkon9, t2, t4, t6, t7, t6, t1, t2)
 
 	tests := []struct {
 		Index          int
@@ -442,6 +445,8 @@ func TestLeadToLeontel(t *testing.T) {
 				LeaPhone:      &t1,
 				IsSmartCenter: false,
 				Kinkon: &Kinkon{
+					Coverture:   &t1,
+					Product:     &t9,
 					CovData:     &CovData{},
 					Portability: &Portability{},
 					HolderData:  &HolderData{},
@@ -451,7 +456,7 @@ func TestLeadToLeontel(t *testing.T) {
 			ExpectedResult: LeadLeontel{
 				LeaSource:     73,
 				Telefono:      &t1,
-				Observaciones: &t8,
+				Observaciones: &obsKinkon9,
 			},
 		},
 		{
@@ -463,6 +468,7 @@ func TestLeadToLeontel(t *testing.T) {
 				LeatypeIDLeontel: 26,
 				Kinkon: &Kinkon{
 					Coverture: &t1,
+					Product:   &t9,
 					CovData: &CovData{
 						State:    &t2,
 						Town:     &t3,
@@ -480,7 +486,10 @@ func TestLeadToLeontel(t *testing.T) {
 			ExpectedResult: LeadLeontel{
 				LeaSource:     73,
 				LeaType:       26,
-				Observaciones: &obsTest6,
+				Provincia:     &t2,
+				Poblacion:     &t3,
+				Direccion:     &kinkonAddress9,
+				Observaciones: &obsKinkon9,
 			},
 		},
 		{
@@ -492,6 +501,7 @@ func TestLeadToLeontel(t *testing.T) {
 				LeatypeIDLeontel: 30,
 				Kinkon: &Kinkon{
 					Coverture: &t1,
+					Product:   &t9,
 					CovData: &CovData{
 						State:    &t2,
 						Town:     &t3,
@@ -523,9 +533,17 @@ func TestLeadToLeontel(t *testing.T) {
 				IsSmartCenter: false,
 			},
 			ExpectedResult: LeadLeontel{
-				LeaSource:     75,
-				LeaType:       30,
-				Observaciones: &obsTest8,
+				LeaSource:              75,
+				LeaType:                30,
+				Provincia:              &t2,
+				Poblacion:              &t3,
+				Direccion:              &kinkonAddress9,
+				Compaiaactualfibraadsl: &t3,
+				Companiaactualmovil:    &t5,
+				Dninie:                 &t4,
+				Email:                  &t5,
+				Nombrecompleto:         &fullnameKinkon10,
+				Observaciones:          &obsKinkon10,
 			},
 		},
 		{
