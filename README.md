@@ -24,4 +24,6 @@ go run main.go
 
 ## How to run the tests
 
-test
+```bash
+go test ./...
+```
