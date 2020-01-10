@@ -331,6 +331,8 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 				leontel.Observaciones = lead.Alterna.CPUS
 			}
 		}
+	case 70:
+		leontel.Observaciones = lead.Observations
 
 	default:
 
