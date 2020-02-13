@@ -75,7 +75,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		Email:     lead.LeaMail,
 		Dninie:    lead.LeaDNI,
 		Wsid:      lead.ID,
-		// TODO set GaClientID value into LeadLeontel struct
+		Ncliente:  lead.GaClientID,
 	}
 
 	switch souid := lead.SouID; souid {
