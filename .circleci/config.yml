@@ -54,10 +54,7 @@ jobs:
           command: |
             # install AWS CLI to interact with BySidecar's AWS resources
             sudo apt-get -y -qq update
-            sudo apt-get -y -qq install python3.4-dev
-            sudo curl -O https://bootstrap.pypa.io/get-pip.py
-            python3.4 get-pip.py --user
-            pip install awscli --upgrade --user
+            sudo apt-get -y install awscli
       - run:
           name: Set convenience environment variables
           command: |

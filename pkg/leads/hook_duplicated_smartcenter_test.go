@@ -178,11 +178,6 @@ func TestPerformDuplicatedSC(t *testing.T) {
 			assert.Equal(test.ExpectedResponse.Success, structdata.Success)
 			assert.Equal(test.ExpectedResponse.Data, structdata.Data)
 			assert.Equal(test.ExpectedResponse.Error, structdata.Error)
-
-			// TODO | I don't get the final purpose anyway! Maybe I'm not doing the right test,
-			// TODO | I am testing that the response of a mock request is equal to the input I provided previously.
-			// TODO | Obviously they will match!
-			// TODO | We are not testing if our function returns the expected output for a determined input.
 		})
 	}
 }

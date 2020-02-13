@@ -33,6 +33,7 @@ type Lead struct {
 	LeaDNI             *string    `json:"dni,omitempty"`
 	LeaURL             *string    `sql:"type:text" json:"url,omitempty"`
 	LeaIP              *string    `json:"ip,omitempty"`
+	GaClientID         *string    `json:"ga_client_id,omitempty"`
 	IsSmartCenter      bool       `json:"smartcenter,omitempty"`
 	SouIDLeontel       int64      `sql:"-" json:"sou_id_leontel"`
 	SouDescLeontel     string     `sql:"-" json:"sou_desc_leontel"`
@@ -74,6 +75,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		Email:     lead.LeaMail,
 		Dninie:    lead.LeaDNI,
 		Wsid:      lead.ID,
+		Ncliente:  lead.GaClientID,
 	}
 
 	switch souid := lead.SouID; souid {
