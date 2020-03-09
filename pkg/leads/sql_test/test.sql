@@ -1,31 +1,32 @@
-CREATE TABLE leads (
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
-  created_at timestamp NULL DEFAULT NULL,
-  updated_at timestamp NULL DEFAULT NULL,
-  deleted_at timestamp NULL DEFAULT NULL,
-  legacy_id bigint(20) DEFAULT NULL,
-  lea_ts timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  lea_smartcenter_id varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  sou_id bigint(20) DEFAULT NULL,
-  leatype_id bigint(20) DEFAULT NULL,
-  passport_id varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  passport_id_grp varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  utm_source varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  sub_source varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  lea_phone varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  lea_mail varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  lea_name varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  lea_url varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  lea_ip varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  is_smart_center tinyint(1) DEFAULT NULL,
-  lea_dni varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  gclid varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  domain varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  observations text COLLATE utf8_spanish_ci,
-  PRIMARY KEY (id),
-  KEY idx_leads_deleted_at (deleted_at)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-
+CREATE TABLE `leads` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `legacy_id` bigint(20) DEFAULT NULL,
+  `lea_ts` timestamp NULL DEFAULT current_timestamp(),
+  `lea_smartcenter_id` varchar(255) DEFAULT NULL,
+  `passport_id` varchar(255) DEFAULT NULL,
+  `passport_id_grp` varchar(255) DEFAULT NULL,
+  `sou_id` bigint(20) DEFAULT NULL,
+  `leatype_id` bigint(20) DEFAULT NULL,
+  `utm_source` varchar(255) DEFAULT NULL,
+  `sub_source` varchar(255) DEFAULT NULL,
+  `lea_phone` varchar(255) DEFAULT NULL,
+  `lea_mail` varchar(255) DEFAULT NULL,
+  `lea_name` varchar(255) DEFAULT NULL,
+  `lea_dni` varchar(255) DEFAULT NULL,
+  `lea_url` text DEFAULT NULL,
+  `lea_ip` varchar(255) DEFAULT NULL,
+  `is_smart_center` tinyint(1) DEFAULT NULL,
+  `gclid` varchar(255) DEFAULT NULL,
+  `domain` varchar(255) DEFAULT NULL,
+  `observations` text DEFAULT NULL,
+  `ga_client_id` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_leads_deleted_at` (`deleted_at`),
+  KEY `idx_leads_lea_smartcenter` (`lea_smartcenter_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1
 
 CREATE TABLE creditea (
   id int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -56,7 +57,6 @@ CREATE TABLE rcableexp (
   PRIMARY KEY (id),
   KEY idx_rcableexp_deleted_at (deleted_at)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-
 
 CREATE TABLE microsoft (
   id int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -149,17 +149,12 @@ CREATE TABLE sources (
   PRIMARY KEY (sou_id)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci ROW_FORMAT=COMPACT;
 
-
-
 CREATE TABLE leadtypes (
   leatype_id int(3) NOT NULL AUTO_INCREMENT,
   leatype_description varchar(50) CHARACTER SET utf8 COLLATE utf8_spanish_ci DEFAULT NULL,
   leatype_idcrm int(3) DEFAULT NULL,
   PRIMARY KEY (leatype_id)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci ROW_FORMAT=COMPACT;
-
-
-
 
 insert into sources (sou_id, sou_description, sou_idcrm) values (1,'CREDITEA ABANDONADOS',2);
 insert into sources (sou_id, sou_description, sou_idcrm) values (2,' CREDITEA STAND',3);
@@ -231,6 +226,8 @@ insert into sources (sou_id, sou_description, sou_idcrm) values (67,'CREDITEA ST
 insert into sources (sou_id, sou_description, sou_idcrm) values (68,'R CABLE BBDD SALIENTE',77);
 insert into sources (sou_id, sou_description, sou_idcrm) values (69,'ALTERNA',78);
 insert into sources (sou_id, sou_description, sou_idcrm) values (70,'EVO HIPOTECAS',79);
+insert into sources (sou_id, sou_description, sou_idcrm) values (71,'R CABLE WEB CARTERA',80);
+insert into sources (sou_id, sou_description, sou_idcrm) values (72,'R CABLE INBOUND',81);
 
 insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (1,'C2C',2);
 insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (2,'FORM',3);
@@ -260,4 +257,7 @@ insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (25
 insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (26,'PENDIENTE DOCUMENTACION Y FIRMA',28);
 insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (27,'PEDIDO FULL ONLINE',30);
 insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (28,'PENDIENTE DOCUMENTACION Y FIRMA',31);
-insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (29,'ALTERNA AUTO-CONSUMO',32);
+insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (29,'FORM LARGO',32);
+insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (30,'CORREGISTRO',33);
+insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (31,'DERIVADO IVR',34);
+insert into leadtypes(leatype_id, leatype_description, leatype_idcrm) values (32,'APERTURA CUENTA HIPOTECA',35);
