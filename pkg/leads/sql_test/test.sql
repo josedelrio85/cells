@@ -26,7 +26,7 @@ CREATE TABLE `leads` (
   PRIMARY KEY (`id`),
   KEY `idx_leads_deleted_at` (`deleted_at`),
   KEY `idx_leads_lea_smartcenter` (`lea_smartcenter_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 CREATE TABLE creditea (
   id int(10) unsigned NOT NULL AUTO_INCREMENT,
