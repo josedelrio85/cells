@@ -14,8 +14,8 @@ github.com/go-sql-driver/mysql
 # github.com/golang/protobuf v1.3.2
 github.com/golang/protobuf/proto
 # github.com/gomodule/redigo v2.0.0+incompatible
-github.com/gomodule/redigo/redis
 github.com/gomodule/redigo/internal
+github.com/gomodule/redigo/redis
 # github.com/gorilla/mux v1.7.2
 github.com/gorilla/mux
 # github.com/jinzhu/gorm v1.9.9
@@ -37,8 +37,8 @@ github.com/stretchr/testify/assert
 github.com/tomasen/realip
 # github.com/yuin/gopher-lua v0.0.0-20190514113301-1cd887cd7036
 github.com/yuin/gopher-lua
-github.com/yuin/gopher-lua/parse
 github.com/yuin/gopher-lua/ast
+github.com/yuin/gopher-lua/parse
 github.com/yuin/gopher-lua/pm
 # google.golang.org/appengine v1.4.0
 google.golang.org/appengine/cloudsql
