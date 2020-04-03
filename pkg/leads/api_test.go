@@ -166,7 +166,7 @@ func TestGetLeontelValues(t *testing.T) {
 			},
 		},
 		{
-			Description: "R CABLE END TO END 74 => 84 | SEM 25 => 27",
+			Description: "R CABLE END TO END 74 => 83 | SEM 25 => 27",
 			Lead: Lead{
 				SouID:     74,
 				LeatypeID: 25,
