@@ -2,7 +2,9 @@ package leads
 
 import (
 	"fmt"
+	"time"
 
+	"math/rand"
 	"net/http"
 	"strconv"
 
@@ -100,4 +102,19 @@ func (ch *Handler) HandleFunction() http.Handler {
 		id := fmt.Sprintf("%d", ch.Lead.ID)
 		responseOk(w, id, ch.Lead.IsSmartCenter)
 	})
+}
+
+//HelperRandstring lalalal
+func HelperRandstring(length int) string {
+	const charset = "abcdefghijklmnopqrstuvwxyz" +
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+	seededRand := rand.New(
+		rand.NewSource(time.Now().UnixNano()))
+
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[seededRand.Intn(len(charset))]
+	}
+	return string(b)
 }
