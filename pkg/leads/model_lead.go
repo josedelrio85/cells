@@ -253,7 +253,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 	case 57:
 		// Sanitas
 		// lea_destiny =  GSS => we must have IsLeontel = true
-	case 64, 65, 66:
+	case 64, 65, 66, 74, 75, 76:
 		args := []*string{}
 
 		if lead.Kinkon != nil {

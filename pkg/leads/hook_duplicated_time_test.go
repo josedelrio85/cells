@@ -46,6 +46,13 @@ func TestActiveDuplicated(t *testing.T) {
 			Active: true,
 		},
 		{
+			Description: "when DuplicatedTime hook is successfully activated",
+			Lead: Lead{
+				SouID: 74,
+			},
+			Active: true,
+		},
+		{
 			Description: "when DuplicatedTime hook is not activated",
 			Lead: Lead{
 				SouID: 1,

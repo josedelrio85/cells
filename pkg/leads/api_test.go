@@ -165,6 +165,19 @@ func TestGetLeontelValues(t *testing.T) {
 				LeatypeDescLeontel: "SEM",
 			},
 		},
+		{
+			Description: "R CABLE END TO END 74 => 84 | SEM 25 => 27",
+			Lead: Lead{
+				SouID:     74,
+				LeatypeID: 25,
+			},
+			ExpectedResult: Lead{
+				SouIDLeontel:       83,
+				SouDescLeontel:     "R CABLE END TO END",
+				LeatypeIDLeontel:   27,
+				LeatypeDescLeontel: "SEM",
+			},
+		},
 	}
 
 	for _, test := range tests {

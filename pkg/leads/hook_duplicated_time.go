@@ -26,6 +26,8 @@ func (d DuplicatedTime) Active(lead Lead) bool {
 		return true
 	case 64, 65, 66:
 		return true
+	case 74, 75, 76:
+		return true
 	case 63:
 		return true
 	case 70:
