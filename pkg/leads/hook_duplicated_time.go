@@ -80,6 +80,8 @@ func (d DuplicatedTime) getExpirationTime(souid int64) int {
 	switch souid {
 	case 64, 65, 66:
 		return 180
+	case 74, 75, 76:
+		return 180
 	case 63:
 		return 180
 	case 15:
