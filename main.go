@@ -17,6 +17,7 @@ import (
 )
 
 func main() {
+	log.Println("Starting Leads API...")
 	port := getSetting("DB_PORT")
 	portInt, err := strconv.ParseInt(port, 10, 64)
 	if err != nil {
@@ -39,10 +40,11 @@ func main() {
 		ActiveHooks: []lead.Hookable{
 			lead.Hibernated{},
 			lead.Phone{},
+			lead.MapType{},
 			lead.DuplicatedTime{},
 			lead.DuplicatedSmartCenter{},
 			lead.Ontime{},
-			lead.Gclid{},
+			// lead.Gclid{},
 		},
 		Redis: redisclient.Redis{
 			Pool: &redis.Pool{
