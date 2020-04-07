@@ -253,7 +253,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 	case 57:
 		// Sanitas
 		// lea_destiny =  GSS => we must have IsLeontel = true
-	case 64, 65, 66:
+	case 64, 65, 66, 74, 75, 76:
 		args := []*string{}
 
 		if lead.Kinkon != nil {
@@ -265,7 +265,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 			args = append(args, &product)
 			args = append(args, lead.Kinkon.Product)
 
-			if *lead.Kinkon.CovData != (CovData{}) {
+			if lead.Kinkon.CovData != (CovData{}) {
 				leontel.Provincia = lead.Kinkon.CovData.State
 				leontel.Poblacion = lead.Kinkon.CovData.Town
 				cargs := []*string{}
@@ -276,7 +276,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 				leontel.Direccion = &covargs
 			}
 
-			if *lead.Kinkon.Portability != (Portability{}) {
+			if lead.Kinkon.Portability != (Portability{}) {
 				leontel.Compaiaactualfibraadsl = lead.Kinkon.Portability.PhoneProvider
 				leontel.Companiaactualmovil = lead.Kinkon.Portability.MobilePhoneProvider
 
@@ -297,7 +297,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 				args = append(args, lead.Kinkon.Portability.MobilePhoneProvider2)
 			}
 
-			if *lead.Kinkon.HolderData != (HolderData{}) {
+			if lead.Kinkon.HolderData != (HolderData{}) {
 				fullname := fmt.Sprintf("%s %s", *lead.Kinkon.HolderData.Name, *lead.Kinkon.HolderData.Surname)
 				leontel.Nombrecompleto = &fullname
 				leontel.Dninie = lead.Kinkon.HolderData.Idnumber
@@ -308,7 +308,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 				args = append(args, lead.Kinkon.HolderData.ContactPhone)
 			}
 
-			if *lead.Kinkon.BillingInfo != (BillingInfo{}) {
+			if lead.Kinkon.BillingInfo != (BillingInfo{}) {
 				accountholder := "Titular cuenta"
 				args = append(args, &accountholder)
 				args = append(args, lead.Kinkon.BillingInfo.AccountHolder)

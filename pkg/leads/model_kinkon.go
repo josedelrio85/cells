@@ -6,13 +6,13 @@ import "github.com/jinzhu/gorm"
 type Kinkon struct {
 	gorm.Model
 
-	LeadID      uint         `sql:"column:lea_id"`
-	Coverture   *string      `json:"coverture,omitempty"`
-	CovData     *CovData     `gorm:"embedded" json:"cov_data"`
-	Portability *Portability `gorm:"embedded" json:"portability"`
-	HolderData  *HolderData  `gorm:"embedded" json:"holder_data"`
-	BillingInfo *BillingInfo `gorm:"embedded" json:"billing_info"`
-	Product     *string      `json:"product,omitempty"`
+	LeadID      uint        `sql:"column:lea_id"`
+	Coverture   *string     `json:"coverture,omitempty"`
+	CovData     CovData     `gorm:"embedded" json:"cov_data"`
+	Portability Portability `gorm:"embedded" json:"portability"`
+	HolderData  HolderData  `gorm:"embedded" json:"holder_data"`
+	BillingInfo BillingInfo `gorm:"embedded" json:"billing_info"`
+	Product     *string     `json:"product,omitempty"`
 }
 
 // CovData represents the data structure for coverture data

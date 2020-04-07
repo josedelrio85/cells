@@ -165,6 +165,19 @@ func TestGetLeontelValues(t *testing.T) {
 				LeatypeDescLeontel: "SEM",
 			},
 		},
+		{
+			Description: "R CABLE END TO END 74 => 83 | SEM 25 => 27",
+			Lead: Lead{
+				SouID:     74,
+				LeatypeID: 25,
+			},
+			ExpectedResult: Lead{
+				SouIDLeontel:       83,
+				SouDescLeontel:     "R CABLE END TO END",
+				LeatypeIDLeontel:   27,
+				LeatypeDescLeontel: "SEM",
+			},
+		},
 	}
 
 	for _, test := range tests {
@@ -447,10 +460,10 @@ func TestLeadToLeontel(t *testing.T) {
 				Kinkon: &Kinkon{
 					Coverture:   &t1,
 					Product:     &t9,
-					CovData:     &CovData{},
-					Portability: &Portability{},
-					HolderData:  &HolderData{},
-					BillingInfo: &BillingInfo{},
+					CovData:     CovData{},
+					Portability: Portability{},
+					HolderData:  HolderData{},
+					BillingInfo: BillingInfo{},
 				},
 			},
 			ExpectedResult: LeadLeontel{
@@ -469,7 +482,7 @@ func TestLeadToLeontel(t *testing.T) {
 				Kinkon: &Kinkon{
 					Coverture: &t1,
 					Product:   &t9,
-					CovData: &CovData{
+					CovData: CovData{
 						State:    &t2,
 						Town:     &t3,
 						Street:   &t4,
@@ -477,9 +490,9 @@ func TestLeadToLeontel(t *testing.T) {
 						Floor:    &t6,
 						CovPhone: &t7,
 					},
-					Portability: &Portability{},
-					HolderData:  &HolderData{},
-					BillingInfo: &BillingInfo{},
+					Portability: Portability{},
+					HolderData:  HolderData{},
+					BillingInfo: BillingInfo{},
 				},
 				IsSmartCenter: false,
 			},
@@ -502,7 +515,7 @@ func TestLeadToLeontel(t *testing.T) {
 				Kinkon: &Kinkon{
 					Coverture: &t1,
 					Product:   &t9,
-					CovData: &CovData{
+					CovData: CovData{
 						State:    &t2,
 						Town:     &t3,
 						Street:   &t4,
@@ -510,7 +523,7 @@ func TestLeadToLeontel(t *testing.T) {
 						Floor:    &t6,
 						CovPhone: &t7,
 					},
-					Portability: &Portability{
+					Portability: Portability{
 						Phone:                &t2,
 						PhoneProvider:        &t3,
 						MobilePhone:          &t4,
@@ -518,14 +531,14 @@ func TestLeadToLeontel(t *testing.T) {
 						MobilePhone2:         &t6,
 						MobilePhoneProvider2: &t7,
 					},
-					HolderData: &HolderData{
+					HolderData: HolderData{
 						Name:         &t2,
 						Surname:      &t3,
 						Idnumber:     &t4,
 						Mail:         &t5,
 						ContactPhone: &t6,
 					},
-					BillingInfo: &BillingInfo{
+					BillingInfo: BillingInfo{
 						AccountHolder: &t1,
 						AccountNumber: &t2,
 					},
