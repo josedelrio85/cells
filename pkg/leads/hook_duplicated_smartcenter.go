@@ -45,6 +45,8 @@ func (t DuplicatedSmartCenter) Active(lead Lead) bool {
 		return true
 	case 74, 75, 76:
 		return true
+	case 77:
+		return true
 	case 63:
 		return true
 	case 70:
