@@ -47,6 +47,7 @@ type Lead struct {
 	Creditea           *Creditea  `json:"creditea"`
 	Kinkon             *Kinkon    `json:"kinkon"`
 	Alterna            *Alterna   `json:"alterna"`
+	Adeslas            *Adeslas   `json:"adeslas"`
 }
 
 // TableName sets the default table name
@@ -335,7 +336,15 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		}
 	case 70:
 		leontel.Observaciones = lead.Observations
+	case 77:
+		args := []*string{}
 
+		if lead.Adeslas != nil {
+			args = append(args, lead.Adeslas.Product)
+			args = append(args, lead.Adeslas.Landing)
+			observations := concatPointerStrs(args...)
+			leontel.Observaciones = &observations
+		}
 	default:
 
 	}

@@ -166,6 +166,19 @@ func TestGetLeontelValues(t *testing.T) {
 			},
 		},
 		{
+			Description: "ADESLAS E2E 77 => 86 | C2C 1 => 1",
+			Lead: Lead{
+				SouID:     77,
+				LeatypeID: 1,
+			},
+			ExpectedResult: Lead{
+				SouIDLeontel:       86,
+				SouDescLeontel:     "ADESLAS END TO END",
+				LeatypeIDLeontel:   2,
+				LeatypeDescLeontel: "C2C",
+			},
+		},
+		{
 			Description: "R CABLE END TO END 74 => 83 | SEM 25 => 27",
 			Lead: Lead{
 				SouID:     74,

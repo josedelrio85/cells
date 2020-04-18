@@ -95,6 +95,10 @@ func (d *Database) AutoMigrate() error {
 	if err := d.DB.AutoMigrate(Alterna{}).Error; err != nil {
 		return err
 	}
+
+	if err := d.DB.AutoMigrate(Adeslas{}).Error; err != nil {
+		return err
+	}
 	return nil
 }
 
