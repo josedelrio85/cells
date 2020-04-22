@@ -211,3 +211,63 @@ func TestPerformMapType(t *testing.T) {
 		})
 	}
 }
+
+func TestGetNewType(t *testing.T) {
+	assert := assert.New(t)
+
+	tests := []struct {
+		Description    string
+		Lead           Lead
+		ExpectedResult int64
+	}{
+		{
+			Description: "When a lead is not from active campaign",
+			Lead: Lead{
+				SouID:     64,
+				LeatypeID: 1,
+			},
+			ExpectedResult: 1,
+		},
+		{
+			Description: "When a lead is from active campaign but lea type it is not",
+			Lead: Lead{
+				SouID:     77,
+				LeatypeID: 1,
+			},
+			ExpectedResult: 1,
+		},
+		{
+			Description: "When a lead is from active campaign but lea type it is not",
+			Lead: Lead{
+				SouID:     75,
+				LeatypeID: 10,
+			},
+			ExpectedResult: 10,
+		},
+		{
+			Description: "When a lead is from active campaign and lea type is an expected value",
+			Lead: Lead{
+				SouID:     77,
+				LeatypeID: 8,
+			},
+			ExpectedResult: 20,
+		},
+		{
+			Description: "When a lead is from active campaign and lea type is an expected value",
+			Lead: Lead{
+				SouID:     74,
+				LeatypeID: 24,
+			},
+			ExpectedResult: 9,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.Description, func(t *testing.T) {
+
+			getNewType(&test.Lead)
+
+			assert.Equal(test.Lead.LeatypeID, test.ExpectedResult)
+		})
+	}
+}

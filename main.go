@@ -40,10 +40,10 @@ func main() {
 		ActiveHooks: []lead.Hookable{
 			lead.Hibernated{},
 			lead.Phone{},
-			lead.MapType{},
 			lead.DuplicatedTime{},
 			lead.DuplicatedSmartCenter{},
 			lead.Ontime{},
+			lead.MapType{},
 			// lead.Gclid{},
 		},
 		Redis: redisclient.Redis{
