@@ -1,7 +1,6 @@
 package leads
 
 import (
-	"log"
 	"net/http"
 )
 
@@ -40,7 +39,6 @@ func (a MapType) Active(lead Lead) bool {
 // cont: pointer to Handler struct
 // Returns a HookReponse with 200 Status and updates lea_type value
 func (a MapType) Perform(cont *Handler) HookResponse {
-	log.Println("perform maptype hook")
 	listSource := map[int64]bool{
 		74: true,
 		75: true,
@@ -56,7 +54,6 @@ func (a MapType) Perform(cont *Handler) HookResponse {
 	}
 
 	if listSource[cont.Lead.SouID] && listType[cont.Lead.LeatypeID] {
-		// cont.Lead.LeatypeID = 9
 		getNewType(&cont.Lead)
 		if err := cont.Lead.GetLeontelValues(cont.Storer.Instance()); err != nil {
 			return HookResponse{
@@ -73,10 +70,6 @@ func (a MapType) Perform(cont *Handler) HookResponse {
 }
 
 func getNewType(lead *Lead) {
-
-	log.Printf("SOUID %d", lead.SouID)
-	log.Printf("OLD TYPE %d", lead.LeatypeID)
-
 	switch lead.SouID {
 	case 74, 75, 76:
 		switch lead.LeatypeID {
@@ -89,6 +82,4 @@ func getNewType(lead *Lead) {
 			lead.LeatypeID = 20
 		}
 	}
-
-	log.Printf("NEW TYPE %d", lead.LeatypeID)
 }
