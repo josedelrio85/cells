@@ -23,16 +23,8 @@ func TestActiveMapType(t *testing.T) {
 		{
 			Description: "when MapType hook is successfully activated",
 			Lead: Lead{
-				LeatypeID: 1,
-				SouID:     74,
-			},
-			Active: true,
-		},
-		{
-			Description: "when MapType hook is successfully activated",
-			Lead: Lead{
 				LeatypeID: 2,
-				SouID:     75,
+				SouID:     74,
 			},
 			Active: true,
 		},
@@ -40,7 +32,7 @@ func TestActiveMapType(t *testing.T) {
 			Description: "when MapType hook is successfully activated",
 			Lead: Lead{
 				LeatypeID: 8,
-				SouID:     76,
+				SouID:     75,
 			},
 			Active: true,
 		},
@@ -48,7 +40,15 @@ func TestActiveMapType(t *testing.T) {
 			Description: "when MapType hook is successfully activated",
 			Lead: Lead{
 				LeatypeID: 24,
-				SouID:     74,
+				SouID:     76,
+			},
+			Active: true,
+		},
+		{
+			Description: "when MapType hook is successfully activated",
+			Lead: Lead{
+				LeatypeID: 8,
+				SouID:     77,
 			},
 			Active: true,
 		},
@@ -159,7 +159,7 @@ func TestPerformMapType(t *testing.T) {
 			Description: "When a lead is from active campaign and type is a valid type",
 			Lead: Lead{
 				SouID:     74,
-				LeatypeID: 1,
+				LeatypeID: 2,
 			},
 			Helper: Lead{
 				SouIDLeontel:       83,
