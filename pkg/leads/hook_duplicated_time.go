@@ -34,6 +34,8 @@ func (d DuplicatedTime) Active(lead Lead) bool {
 		return true
 	case 77:
 		return true
+	case 69:
+		return true
 	default:
 		return false
 	}
@@ -90,6 +92,8 @@ func (d DuplicatedTime) getExpirationTime(souid int64) int {
 		return 180
 	case 15:
 		return 3
+	case 69:
+		return 180
 	default:
 		return 60
 	}
