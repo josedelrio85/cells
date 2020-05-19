@@ -2,6 +2,7 @@ package leads
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"math/rand"
@@ -41,8 +42,15 @@ func (ch *Handler) HandleFunction() http.Handler {
 			return
 		}
 
-		requestIP := realip.FromRequest(r)
-		ch.Lead.LeaIP = &requestIP
+		log.Printf("ip: %v", ch.Lead.LeaIP)
+
+		if ch.Lead.LeaIP == nil {
+			log.Println("ip is nil")
+			requestIP := realip.FromRequest(r)
+			ch.Lead.LeaIP = &requestIP
+			log.Printf("requestIP: %s", requestIP)
+		}
+		log.Printf("ip: %v", *ch.Lead.LeaIP)
 
 		if ch.Lead.LeatypeID == 0 {
 			ch.Lead.LeatypeID = 1
