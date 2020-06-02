@@ -43,13 +43,11 @@ func main() {
 	}
 
 	reportdb := &lead.Database{
-		Host: getSetting("DB_HOST_REPORT"),
-		Port: portInt,
-		User: getSetting("DB_USER_REPORT"),
-		Pass: getSetting("DB_PASS_REPORT"),
-		// TODO
-		// Dbname:    getSetting("DB_NAME"),
-		Dbname:    "leads",
+		Host:      getSetting("DB_HOST_REPORT"),
+		Port:      portInt,
+		User:      getSetting("DB_USER_REPORT"),
+		Pass:      getSetting("DB_PASS_REPORT"),
+		Dbname:    getSetting("DB_NAME"),
 		Charset:   "utf8",
 		ParseTime: "True",
 		Loc:       "Local",
