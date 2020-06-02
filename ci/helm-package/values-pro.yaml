@@ -55,7 +55,7 @@ env:
     secretKeyRef:
       name: leads-report-database
       key: user
-- name: DB_USER_PASS
+- name: DB_PASS_REPORT
   valueFrom:
     secretKeyRef:
       name: leads-report-database
