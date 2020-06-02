@@ -61,7 +61,7 @@ env:
       name: leads-report-database
       key: pass
 - name: DEV
-  value: true
+  value: "true"
 resources: {}
 nodeSelector: {}
 tolerations: []
