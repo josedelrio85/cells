@@ -24,6 +24,13 @@ func main() {
 		log.Fatalf("Error parsing to string Database's port %s, Err: %s", port, err)
 	}
 
+	dev := false
+	devstring := getSetting("DEV")
+	if devstring == "true" {
+		dev = true
+	}
+	log.Printf("Are we working on dev? %t", dev)
+
 	database := &lead.Database{
 		Host:      getSetting("DB_HOST"),
 		Port:      portInt,
@@ -35,8 +42,20 @@ func main() {
 		Loc:       "Local",
 	}
 
+	reportdb := &lead.Database{
+		Host:      getSetting("DB_HOST_REPORT"),
+		Port:      portInt,
+		User:      getSetting("DB_USER_REPORT"),
+		Pass:      getSetting("DB_PASS_REPORT"),
+		Dbname:    getSetting("DB_NAME"),
+		Charset:   "utf8",
+		ParseTime: "True",
+		Loc:       "Local",
+	}
+
 	ch := lead.Handler{
-		Storer: database,
+		Storer:   database,
+		Reporter: reportdb,
 		ActiveHooks: []lead.Hookable{
 			lead.Hibernated{},
 			lead.Phone{},
@@ -59,8 +78,10 @@ func main() {
 				},
 			},
 		},
+		Dev: dev,
 	}
 
+	// database
 	if err := database.Open(); err != nil {
 		log.Fatalf("error opening database connection. err: %s", err)
 	}
@@ -68,6 +89,19 @@ func main() {
 
 	if err := database.AutoMigrate(); err != nil {
 		log.Fatalf("error creating the table. err: %s", err)
+	}
+
+	// report
+	if !ch.Dev {
+		log.Println("Opening report DB")
+		if err := reportdb.Open(); err != nil {
+			log.Fatalf("error opening report database connection. err: %s", err)
+		}
+		defer reportdb.Close()
+
+		if err := reportdb.AutoMigrate(); err != nil {
+			log.Fatalf("error creating the table. err: %s", err)
+		}
 	}
 
 	router := mux.NewRouter()

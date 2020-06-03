@@ -18,9 +18,11 @@ import (
 type Handler struct {
 	ch          http.Handler
 	Storer      Storer
+	Reporter    Storer
 	Lead        Lead
 	ActiveHooks []Hookable
 	Redis       redis.Redis
+	Dev         bool
 }
 
 // HandleFunction is a function used to manage all received requests.
@@ -99,6 +101,14 @@ func (ch *Handler) HandleFunction() http.Handler {
 			cond := fmt.Sprintf("ID=%d", ch.Lead.ID)
 			fields := []string{"LeaSmartcenterID", leontelID}
 			ch.Storer.Update(Lead{}, cond, fields)
+		}
+
+		if !ch.Dev {
+			if err := ch.Reporter.Insert(&ch.Lead); err != nil {
+				message := fmt.Sprintf("Error inserting lead into lead-report, Err: %v", err)
+				responseError(w, message, err)
+				return
+			}
 		}
 
 		id := fmt.Sprintf("%d", ch.Lead.ID)

@@ -48,7 +48,20 @@ env:
       key: pass
 - name: CHECK_LEAD_REDIS
   value: "leads-redis-master.bysidecar.svc.cluster.local"
-
+- name: DB_HOST_REPORT
+  value: leads-report.c848y92oajny.eu-west-1.rds.amazonaws.com
+- name: DB_USER_REPORT
+  valueFrom:
+    secretKeyRef:
+      name: leads-report-database
+      key: user
+- name: DB_PASS_REPORT
+  valueFrom:
+    secretKeyRef:
+      name: leads-report-database
+      key: pass
+- name: DEV
+  value: "false"
 resources: {}
 nodeSelector: {}
 tolerations: []
