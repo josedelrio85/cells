@@ -32,8 +32,8 @@ func (a MapType) Active(lead Lead) bool {
 		default:
 			return false
 		}
-	// adeslas
-	case 77:
+	// adeslas + virgin
+	case 77, 79:
 		switch lead.LeatypeID {
 		case 8:
 			return true
@@ -55,6 +55,7 @@ func (a MapType) Perform(cont *Handler) HookResponse {
 		75: true,
 		76: true,
 		77: true,
+		79: true,
 	}
 
 	listType := map[int64]bool{
@@ -101,6 +102,11 @@ func getNewType(lead *Lead) {
 		switch lead.LeatypeID {
 		case 8:
 			lead.LeatypeID = 20
+		}
+	case 79:
+		switch lead.LeatypeID {
+		case 8:
+			lead.LeatypeID = 9
 		}
 	}
 }
