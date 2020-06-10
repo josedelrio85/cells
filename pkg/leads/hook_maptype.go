@@ -16,6 +16,15 @@ type MapType struct{}
 // Returns true if the hook gets activated.
 func (a MapType) Active(lead Lead) bool {
 	switch lead.SouID {
+	// kinkon R only
+	case 64:
+		switch lead.LeatypeID {
+		case 3, 8, 24, 27, 30:
+			return true
+		default:
+			return false
+		}
+	// kinkon-empresas
 	case 74, 75, 76:
 		switch lead.LeatypeID {
 		case 2, 8, 24:
@@ -23,6 +32,7 @@ func (a MapType) Active(lead Lead) bool {
 		default:
 			return false
 		}
+	// adeslas
 	case 77:
 		switch lead.LeatypeID {
 		case 8:
@@ -40,6 +50,7 @@ func (a MapType) Active(lead Lead) bool {
 // Returns a HookReponse with 200 Status and updates lea_type value
 func (a MapType) Perform(cont *Handler) HookResponse {
 	listSource := map[int64]bool{
+		64: true,
 		74: true,
 		75: true,
 		76: true,
@@ -48,8 +59,11 @@ func (a MapType) Perform(cont *Handler) HookResponse {
 
 	listType := map[int64]bool{
 		2:  true,
+		3:  true,
 		8:  true,
 		24: true,
+		27: true,
+		30: true,
 	}
 
 	if listSource[cont.Lead.SouID] && listType[cont.Lead.LeatypeID] {
@@ -73,6 +87,11 @@ func (a MapType) Perform(cont *Handler) HookResponse {
 
 func getNewType(lead *Lead) {
 	switch lead.SouID {
+	case 64:
+		switch lead.LeatypeID {
+		case 3, 8, 24, 27, 30:
+			lead.LeatypeID = 9
+		}
 	case 74, 75, 76:
 		switch lead.LeatypeID {
 		case 2, 8, 24:
