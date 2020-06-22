@@ -191,6 +191,19 @@ func TestGetLeontelValues(t *testing.T) {
 				LeatypeDescLeontel: "SEM",
 			},
 		},
+		{
+			Description: "ENDESA 78 => 87 | CORREGISTRO 30 => 33",
+			Lead: Lead{
+				SouID:     78,
+				LeatypeID: 30,
+			},
+			ExpectedResult: Lead{
+				SouIDLeontel:       87,
+				SouDescLeontel:     "ENDESA",
+				LeatypeIDLeontel:   33,
+				LeatypeDescLeontel: "CORREGISTRO",
+			},
+		},
 	}
 
 	for _, test := range tests {
@@ -305,6 +318,8 @@ func TestLeadToLeontel(t *testing.T) {
 	fullnameKinkon10 := fmt.Sprintf("%s %s", t2, t3)
 	obsKinkon10 := fmt.Sprintf(`%s -- Teléfono fijo portabilidad: -- %s -- Teléfono movil portabilidad: -- %s -- Teléfono movil 2 portabilidad: -- %s -- Operador movil portabilidad: -- %s -- Teléfono contacto -- %s -- Titular cuenta -- %s -- CCC -- %s`,
 		obsKinkon9, t2, t4, t6, t7, t6, t1, t2)
+	tEndesa := fmt.Sprintf(`Apellidos -- %s -- ¿Qué tipo de energía tienes en tu hogar? -- %s -- ¿Cuál es el tamaño de tu vivienda? -- %s -- ¿Cuántas personas viven en casa? -- %s -- ¿Qué tipo de energía usas en la calefacción? -- %s -- ¿Qué tipo de energía usas en la en la cocina? -- %s -- ¿Qué tipo de energía usas en el agua caliente? -- ¿Cada cuanto pones la lavadora? -- ¿Cada cuanto pones la secadora? -- ¿Cada cuanto pones el lavavajillas? -- ¿Eres el propietario de la vivienda? -- ¿Cuál es tu compañía actual?? -- Código postal -- Edad -- `,
+		t6, t1, t2, t3, t4, t5)
 
 	tests := []struct {
 		Index          int
@@ -598,11 +613,38 @@ func TestLeadToLeontel(t *testing.T) {
 				Observaciones: &t5,
 			},
 		},
+		{
+			Index:       12,
+			Description: "check data returned for sou_id 78 Endesa campaign",
+			Lead: Lead{
+				SouID:         78,
+				SouIDLeontel:  87,
+				LeaPhone:      &t7,
+				LeaName:       &t1,
+				IsSmartCenter: false,
+				Endesa: &Endesa{
+					Surname:        &t6,
+					TypeEnergy:     &t1,
+					HomeSize:       &t2,
+					HomePopulation: &t3,
+					TypeHeating:    &t4,
+					TypeKitchen:    &t5,
+				},
+			},
+			ExpectedResult: LeadLeontel{
+				LeaSource:     87,
+				Telefono:      &t7,
+				Nombre:        &t1,
+				Observaciones: &tEndesa,
+			},
+		},
 	}
 
 	for _, test := range tests {
-		leontel := test.Lead.LeadToLeontel()
-		assert.Equal(test.ExpectedResult, leontel)
+		if test.Index == 12 {
+			leontel := test.Lead.LeadToLeontel()
+			assert.Equal(test.ExpectedResult, leontel)
+		}
 	}
 }
 
