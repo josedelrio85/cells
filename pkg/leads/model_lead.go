@@ -339,13 +339,13 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		leontel.Observaciones = lead.Observations
 	case 77:
 		args := []*string{}
-
+		args = append(args, lead.Observations)
 		if lead.Adeslas != nil {
 			args = append(args, lead.Adeslas.Product)
 			args = append(args, lead.Adeslas.Landing)
-			observations := concatPointerStrs(args...)
-			leontel.Observaciones = &observations
 		}
+		observations := concatPointerStrs(args...)
+		leontel.Observaciones = &observations
 	case 78:
 		args := []*string{}
 
