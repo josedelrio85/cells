@@ -84,6 +84,14 @@ func TestActiveMapType(t *testing.T) {
 			},
 			Active: true,
 		},
+		{
+			Description: "when MapType hook is successfully activated",
+			Lead: Lead{
+				LeatypeID: 8,
+				SouID:     78,
+			},
+			Active: true,
+		},
 	}
 
 	for _, test := range tests {
@@ -237,6 +245,28 @@ func TestPerformMapType(t *testing.T) {
 				LeaTypeID: 9,
 			},
 		},
+		{
+			Description: "When a lead is from active campaign and type is a valid type",
+			Lead: Lead{
+				SouID:     78,
+				LeatypeID: 8,
+			},
+			Helper: Lead{
+				SouIDLeontel:       87,
+				SouDescLeontel:     "ENDESA",
+				LeatypeIDLeontel:   13,
+				LeatypeDescLeontel: "C2C",
+			},
+			Response: HookResponse{
+				StatusCode: http.StatusOK,
+				Err:        nil,
+			},
+			ExpectedResult: ExpectedResult{
+				Result:    true,
+				SouID:     78,
+				LeaTypeID: 9,
+			},
+		},
 	}
 
 	for _, test := range tests {
@@ -356,6 +386,14 @@ func TestGetNewType(t *testing.T) {
 			Description: "When a lead is from active campaign and lea type is an expected value",
 			Lead: Lead{
 				SouID:     79,
+				LeatypeID: 8,
+			},
+			ExpectedResult: 9,
+		},
+		{
+			Description: "When a lead is from active campaign and lea type is an expected value",
+			Lead: Lead{
+				SouID:     78,
 				LeatypeID: 8,
 			},
 			ExpectedResult: 9,

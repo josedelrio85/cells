@@ -55,6 +55,7 @@ func (a MapType) Perform(cont *Handler) HookResponse {
 		75: true,
 		76: true,
 		77: true,
+		78: true,
 		79: true,
 	}
 
