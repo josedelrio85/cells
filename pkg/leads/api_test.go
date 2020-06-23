@@ -318,8 +318,8 @@ func TestLeadToLeontel(t *testing.T) {
 	fullnameKinkon10 := fmt.Sprintf("%s %s", t2, t3)
 	obsKinkon10 := fmt.Sprintf(`%s -- Teléfono fijo portabilidad: -- %s -- Teléfono movil portabilidad: -- %s -- Teléfono movil 2 portabilidad: -- %s -- Operador movil portabilidad: -- %s -- Teléfono contacto -- %s -- Titular cuenta -- %s -- CCC -- %s`,
 		obsKinkon9, t2, t4, t6, t7, t6, t1, t2)
-	tEndesa := fmt.Sprintf(`Apellidos -- %s -- ¿Qué tipo de energía tienes en tu hogar? -- %s -- ¿Cuál es el tamaño de tu vivienda? -- %s -- ¿Cuántas personas viven en casa? -- %s -- ¿Qué tipo de energía usas en la calefacción? -- %s -- ¿Qué tipo de energía usas en la en la cocina? -- %s -- ¿Qué tipo de energía usas en el agua caliente? -- ¿Cada cuanto pones la lavadora? -- ¿Cada cuanto pones la secadora? -- ¿Cada cuanto pones el lavavajillas? -- ¿Eres el propietario de la vivienda? -- ¿Cuál es tu compañía actual?? -- Código postal -- Edad -- `,
-		t6, t1, t2, t3, t4, t5)
+	tEndesa := fmt.Sprintf(`%s -- Apellidos -- %s -- ¿Qué tipo de energía tienes en tu hogar? -- %s -- ¿Cuál es el tamaño de tu vivienda? -- %s -- ¿Cuántas personas viven en casa? -- %s -- ¿Qué tipo de energía usas en la calefacción? -- %s -- ¿Qué tipo de energía usas en la en la cocina? -- %s -- ¿Qué tipo de energía usas en el agua caliente? -- ¿Cada cuanto pones la lavadora? -- ¿Cada cuanto pones la secadora? -- ¿Cada cuanto pones el lavavajillas? -- ¿Eres el propietario de la vivienda? -- ¿Cuál es tu compañía actual?? -- Código postal -- Edad -- External ID -- `,
+		t9, t6, t1, t2, t3, t4, t5)
 
 	tests := []struct {
 		Index          int
@@ -622,6 +622,7 @@ func TestLeadToLeontel(t *testing.T) {
 				LeaPhone:      &t7,
 				LeaName:       &t1,
 				IsSmartCenter: false,
+				Observations:  &t9,
 				Endesa: &Endesa{
 					Surname:        &t6,
 					TypeEnergy:     &t1,
