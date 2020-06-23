@@ -21,6 +21,7 @@ type Endesa struct {
 	PostalCode     *string `json:"postal_code,omitempty"`
 	Age            *string `json:"age,omitempty"`
 	Surname        *string `json:"surname,omitempty"`
+	ExternalID     *string `json:"external_id,omitempty"`
 }
 
 // TableName sets the default table name
