@@ -638,13 +638,27 @@ func TestLeadToLeontel(t *testing.T) {
 				Observaciones: &tEndesa,
 			},
 		},
+		{
+			Index:       13,
+			Description: "check data returned for sou_id 77 Adeslas campaign",
+			Lead: Lead{
+				SouID:         77,
+				SouIDLeontel:  86,
+				LeaPhone:      &t7,
+				IsSmartCenter: false,
+				Observations:  &t2,
+			},
+			ExpectedResult: LeadLeontel{
+				LeaSource:     86,
+				Telefono:      &t7,
+				Observaciones: &t2,
+			},
+		},
 	}
 
 	for _, test := range tests {
-		if test.Index == 12 {
-			leontel := test.Lead.LeadToLeontel()
-			assert.Equal(test.ExpectedResult, leontel)
-		}
+		leontel := test.Lead.LeadToLeontel()
+		assert.Equal(test.ExpectedResult, leontel)
 	}
 }
 
