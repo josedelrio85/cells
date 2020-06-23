@@ -32,8 +32,8 @@ func (a MapType) Active(lead Lead) bool {
 		default:
 			return false
 		}
-	// adeslas + virgin
-	case 77, 79:
+	// adeslas + endesa + virgin
+	case 77, 78, 79:
 		switch lead.LeatypeID {
 		case 8:
 			return true
@@ -103,7 +103,7 @@ func getNewType(lead *Lead) {
 		case 8:
 			lead.LeatypeID = 20
 		}
-	case 79:
+	case 78, 79:
 		switch lead.LeatypeID {
 		case 8:
 			lead.LeatypeID = 9
