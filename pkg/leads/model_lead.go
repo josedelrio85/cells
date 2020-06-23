@@ -348,6 +348,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		leontel.Observaciones = &observations
 	case 78:
 		args := []*string{}
+		args = append(args, lead.Observations)
 
 		if lead.Endesa != nil {
 			q1 := "¿Qué tipo de energía tienes en tu hogar?"
@@ -364,6 +365,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 			q12 := "Código postal"
 			q13 := "Edad"
 			q14 := "Apellidos"
+			q15 := "External ID"
 
 			args = append(args, &q14, lead.Endesa.Surname)
 			args = append(args, &q1, lead.Endesa.TypeEnergy)
@@ -379,9 +381,10 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 			args = append(args, &q11, lead.Endesa.Company)
 			args = append(args, &q12, lead.Endesa.PostalCode)
 			args = append(args, &q13, lead.Endesa.Age)
-			observations := concatPointerStrs(args...)
-			leontel.Observaciones = &observations
+			args = append(args, &q15, lead.Endesa.ExternalID)
 		}
+		observations := concatPointerStrs(args...)
+		leontel.Observaciones = &observations
 	default:
 
 	}
