@@ -204,6 +204,19 @@ func TestGetLeontelValues(t *testing.T) {
 				LeatypeDescLeontel: "CORREGISTRO",
 			},
 		},
+		{
+			Description: "VIRGIN 79 => 88 | CORREGISTRO 30 => 33",
+			Lead: Lead{
+				SouID:     79,
+				LeatypeID: 30,
+			},
+			ExpectedResult: Lead{
+				SouIDLeontel:       88,
+				SouDescLeontel:     "VIRGIN",
+				LeatypeIDLeontel:   33,
+				LeatypeDescLeontel: "CORREGISTRO",
+			},
+		},
 	}
 
 	for _, test := range tests {
@@ -651,6 +664,22 @@ func TestLeadToLeontel(t *testing.T) {
 			},
 			ExpectedResult: LeadLeontel{
 				LeaSource:     86,
+				Telefono:      &t7,
+				Observaciones: &t2,
+			},
+		},
+		{
+			Index:       14,
+			Description: "check data returned for sou_id 79 Virgin campaign",
+			Lead: Lead{
+				SouID:         79,
+				SouIDLeontel:  88,
+				LeaPhone:      &t7,
+				IsSmartCenter: false,
+				Observations:  &t2,
+			},
+			ExpectedResult: LeadLeontel{
+				LeaSource:     88,
 				Telefono:      &t7,
 				Observaciones: &t2,
 			},

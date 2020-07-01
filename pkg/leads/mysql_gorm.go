@@ -103,6 +103,10 @@ func (d *Database) AutoMigrate() error {
 	if err := d.DB.AutoMigrate(Endesa{}).Error; err != nil {
 		return err
 	}
+
+	if err := d.DB.AutoMigrate(Virgin{}).Error; err != nil {
+		return err
+	}
 	return nil
 }
 

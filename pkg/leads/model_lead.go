@@ -49,6 +49,7 @@ type Lead struct {
 	Alterna            *Alterna   `json:"alterna"`
 	Adeslas            *Adeslas   `json:"adeslas"`
 	Endesa             *Endesa    `json:"endesa"`
+	Virgin             *Virgin    `json:"virgin"`
 }
 
 // TableName sets the default table name
@@ -382,6 +383,31 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 			args = append(args, &q12, lead.Endesa.PostalCode)
 			args = append(args, &q13, lead.Endesa.Age)
 			args = append(args, &q15, lead.Endesa.ExternalID)
+		}
+		observations := concatPointerStrs(args...)
+		leontel.Observaciones = &observations
+	case 79:
+		args := []*string{}
+		args = append(args, lead.Observations)
+
+		if lead.Virgin != nil {
+			q1 := "Optin"
+			q2 := "Código postal"
+			q3 := "Edad"
+			q4 := "Apellidos"
+			q5 := "External ID"
+			q6 := "Datos al mes"
+			q7 := "¿Tienes actualmente ADSL/Fibra?"
+			q8 := "Cuando lo vayas a contratar"
+
+			args = append(args, &q1, lead.Virgin.Optin)
+			args = append(args, &q2, lead.Virgin.PostalCode)
+			args = append(args, &q3, lead.Virgin.Age)
+			args = append(args, &q4, lead.Virgin.Surname)
+			args = append(args, &q5, lead.Virgin.ExternalID)
+			args = append(args, &q6, lead.Virgin.DataMonth)
+			args = append(args, &q7, lead.Virgin.HaveDSL)
+			args = append(args, &q8, lead.Virgin.WhenHiring)
 		}
 		observations := concatPointerStrs(args...)
 		leontel.Observaciones = &observations
