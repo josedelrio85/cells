@@ -16,7 +16,7 @@ type Passport struct {
 // Interaction represents the structure needed to obtain a passport
 type Interaction struct {
 	Provider    string `json:"provider"`
-	Application string ` json:"application"`
+	Application string `json:"application"`
 	IP          string `json:"ip"`
 }
 
