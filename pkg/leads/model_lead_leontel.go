@@ -360,13 +360,52 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		leontel.Observaciones = lead.Observations
 	case 77:
 		args := []*string{}
-
+		args = append(args, lead.Observations)
 		if lead.Adeslas != nil {
 			args = append(args, lead.Adeslas.Product)
 			args = append(args, lead.Adeslas.Landing)
-			observations := concatPointerStrs(args...)
-			leontel.Observaciones = &observations
 		}
+		observations := concatPointerStrs(args...)
+		leontel.Observaciones = &observations
+	case 78:
+		args := []*string{}
+		args = append(args, lead.Observations)
+
+		if lead.Endesa != nil {
+			q1 := "¿Qué tipo de energía tienes en tu hogar?"
+			q2 := "¿Cuál es el tamaño de tu vivienda?"
+			q3 := "¿Cuántas personas viven en casa?"
+			q4 := "¿Qué tipo de energía usas en la calefacción?"
+			q5 := "¿Qué tipo de energía usas en la en la cocina?"
+			q6 := "¿Qué tipo de energía usas en el agua caliente?"
+			q7 := "¿Cada cuanto pones la lavadora?"
+			q8 := "¿Cada cuanto pones la secadora?"
+			q9 := "¿Cada cuanto pones el lavavajillas?"
+			q10 := "¿Eres el propietario de la vivienda?"
+			q11 := "¿Cuál es tu compañía actual??"
+			q12 := "Código postal"
+			q13 := "Edad"
+			q14 := "Apellidos"
+			q15 := "External ID"
+
+			args = append(args, &q14, lead.Endesa.Surname)
+			args = append(args, &q1, lead.Endesa.TypeEnergy)
+			args = append(args, &q2, lead.Endesa.HomeSize)
+			args = append(args, &q3, lead.Endesa.HomePopulation)
+			args = append(args, &q4, lead.Endesa.TypeHeating)
+			args = append(args, &q5, lead.Endesa.TypeKitchen)
+			args = append(args, &q6, lead.Endesa.TypeWater)
+			args = append(args, &q7, lead.Endesa.WashingMachine)
+			args = append(args, &q8, lead.Endesa.Dryer)
+			args = append(args, &q9, lead.Endesa.Dishwasher)
+			args = append(args, &q10, lead.Endesa.Owner)
+			args = append(args, &q11, lead.Endesa.Company)
+			args = append(args, &q12, lead.Endesa.PostalCode)
+			args = append(args, &q13, lead.Endesa.Age)
+			args = append(args, &q15, lead.Endesa.ExternalID)
+		}
+		observations := concatPointerStrs(args...)
+		leontel.Observaciones = &observations
 	default:
 
 	}
