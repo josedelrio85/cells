@@ -433,6 +433,7 @@ func (lead *Lead) GetLeontelValues(db *gorm.DB) error {
 
 // Active is an implementation of Active method from Scable interface
 func (ll LeadLeontel) Active(lead Lead) bool {
+	// TODO set active campaigns for Leontel
 	return true
 }
 

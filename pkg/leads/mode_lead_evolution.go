@@ -138,6 +138,8 @@ func (lead Lead) LeadToEvolution() Evolution {
 
 // GetEvolutionValues queries for the Evolution sou_id equivalences
 func (lead *Lead) GetEvolutionValues(db *gorm.DB) error {
+	// TODO add support to map Evolution campaigns
+
 	// source := Source{}
 	// leatype := Leatype{}
 
@@ -156,6 +158,7 @@ func (lead *Lead) GetEvolutionValues(db *gorm.DB) error {
 
 // Active is an implementation of Active method from Scable interface
 func (e Evolution) Active(lead Lead) bool {
+	// TODO set active campaigns for Evolution
 	return true
 }
 

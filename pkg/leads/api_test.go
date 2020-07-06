@@ -670,50 +670,22 @@ func TestLeadToLeontel(t *testing.T) {
 				Observaciones: &t2,
 			},
 		},
-		{
-			Index:       14,
-			Description: "check data returned for sou_id 79 Virgin campaign",
-			Lead: Lead{
-				SouID:         79,
-				SouIDLeontel:  88,
-				LeaPhone:      &t7,
-				IsSmartCenter: false,
-				Observations:  &t2,
-			},
-			ExpectedResult: LeadLeontel{
-				LeaSource:     88,
-				Telefono:      &t7,
-				Observaciones: &t2,
-			},
-		},
-		{
-			Index:       15,
-			Description: "check data returned for sou_id 64 R Cable End To End (Kinkon) MVF Provider",
-			Lead: Lead{
-				SouID:            74,
-				SouIDLeontel:     83,
-				LeatypeIDLeontel: 33,
-				Kinkon: &Kinkon{
-					Mvf: Mvf{
-						LeadReferenceNumber:      &t2,
-						DistributionID:           &t3,
-						HasSwitchboard:           &t4,
-						ExtensionsNumber:         &t5,
-						PhoneAmount:              &t6,
-						EmployeeNumber:           &t7,
-						SwitchboardFunctionality: &t7,
-						Surname:                  &t7,
-						PostalCode:               &t7,
-					},
-				},
-				IsSmartCenter: false,
-			},
-			ExpectedResult: LeadLeontel{
-				LeaSource:     83,
-				LeaType:       33,
-				Observaciones: &obsMvf,
-			},
-		},
+		// {
+		// 	Index:       14,
+		// 	Description: "check data returned for sou_id 79 Virgin campaign",
+		// 	Lead: Lead{
+		// 		SouID:         79,
+		// 		SouIDLeontel:  88,
+		// 		LeaPhone:      &t7,
+		// 		IsSmartCenter: false,
+		// 		Observations:  &t2,
+		// 	},
+		// 	ExpectedResult: LeadLeontel{
+		// 		LeaSource:     88,
+		// 		Telefono:      &t7,
+		// 		Observaciones: &t2,
+		// 	},
+		// },
 	}
 
 	for _, test := range tests {
