@@ -110,27 +110,27 @@ func (lead Lead) LeadToEvolution() Evolution {
 		args := []*string{}
 		args = append(args, lead.Observations)
 
-		// if lead.Virgin != nil {
-		// 	q1 := "Optin"
-		// 	q2 := "Código postal"
-		// 	q3 := "Edad"
-		// 	q4 := "Apellidos"
-		// 	q5 := "External ID"
-		// 	q6 := "Datos al mes"
-		// 	q7 := "¿Tienes actualmente ADSL/Fibra?"
-		// 	q8 := "Cuando lo vayas a contratar"
+		if lead.Virgin != nil {
+			q1 := "Optin"
+			q2 := "Código postal"
+			q3 := "Edad"
+			q4 := "Apellidos"
+			q5 := "External ID"
+			q6 := "Datos al mes"
+			q7 := "¿Tienes actualmente ADSL/Fibra?"
+			q8 := "Cuando lo vayas a contratar"
 
-		// 	args = append(args, &q1, lead.Virgin.Optin)
-		// 	args = append(args, &q2, lead.Virgin.PostalCode)
-		// 	args = append(args, &q3, lead.Virgin.Age)
-		// 	args = append(args, &q4, lead.Virgin.Surname)
-		// 	args = append(args, &q5, lead.Virgin.ExternalID)
-		// 	args = append(args, &q6, lead.Virgin.DataMonth)
-		// 	args = append(args, &q7, lead.Virgin.HaveDSL)
-		// 	args = append(args, &q8, lead.Virgin.WhenHiring)
-		// }
-		// observations := concatPointerStrs(args...)
-		// leontel.Observaciones = &observations
+			args = append(args, &q1, lead.Virgin.Optin)
+			args = append(args, &q2, lead.Virgin.PostalCode)
+			args = append(args, &q3, lead.Virgin.Age)
+			args = append(args, &q4, lead.Virgin.Surname)
+			args = append(args, &q5, lead.Virgin.ExternalID)
+			args = append(args, &q6, lead.Virgin.DataMonth)
+			args = append(args, &q7, lead.Virgin.HaveDSL)
+			args = append(args, &q8, lead.Virgin.WhenHiring)
+		}
+		observations := concatPointerStrs(args...)
+		evolution.Properties.Observations = observations
 	default:
 	}
 	return evolution
