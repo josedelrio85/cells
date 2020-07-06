@@ -119,3 +119,9 @@ func (lead *Lead) GetPassport() error {
 
 	return nil
 }
+
+// SendLeadToEvolution bla
+func (lead *Lead) SendLeadToEvolution() error {
+
+	return nil
+}
