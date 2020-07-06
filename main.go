@@ -65,6 +65,10 @@ func main() {
 			lead.MapType{},
 			// lead.Gclid{},
 		},
+		ActiveSc: []lead.Scable{
+			lead.LeadLeontel{},
+			lead.Evolution{},
+		},
 		Redis: redisclient.Redis{
 			Pool: &redis.Pool{
 				MaxIdle:     5,
