@@ -668,22 +668,22 @@ func TestLeadToLeontel(t *testing.T) {
 				Observaciones: &t2,
 			},
 		},
-		{
-			Index:       14,
-			Description: "check data returned for sou_id 79 Virgin campaign",
-			Lead: Lead{
-				SouID:         79,
-				SouIDLeontel:  88,
-				LeaPhone:      &t7,
-				IsSmartCenter: false,
-				Observations:  &t2,
-			},
-			ExpectedResult: LeadLeontel{
-				LeaSource:     88,
-				Telefono:      &t7,
-				Observaciones: &t2,
-			},
-		},
+		// {
+		// 	Index:       14,
+		// 	Description: "check data returned for sou_id 79 Virgin campaign",
+		// 	Lead: Lead{
+		// 		SouID:         79,
+		// 		SouIDLeontel:  88,
+		// 		LeaPhone:      &t7,
+		// 		IsSmartCenter: false,
+		// 		Observations:  &t2,
+		// 	},
+		// 	ExpectedResult: LeadLeontel{
+		// 		LeaSource:     88,
+		// 		Telefono:      &t7,
+		// 		Observaciones: &t2,
+		// 	},
+		// },
 	}
 
 	for _, test := range tests {
