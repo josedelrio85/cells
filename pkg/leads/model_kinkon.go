@@ -13,6 +13,7 @@ type Kinkon struct {
 	HolderData  HolderData  `gorm:"embedded" json:"holder_data"`
 	BillingInfo BillingInfo `gorm:"embedded" json:"billing_info"`
 	Product     *string     `json:"product,omitempty"`
+	Mvf         Mvf         `gorm:"embedded" json:"mvf"`
 }
 
 // CovData represents the data structure for coverture data
@@ -48,6 +49,19 @@ type HolderData struct {
 type BillingInfo struct {
 	AccountHolder *string `json:"account_holder,omitempty"`
 	AccountNumber *string `json:"account_number,omitempty"`
+}
+
+// Mvf represents the data structure for mvf lead provider
+type Mvf struct {
+	LeadReferenceNumber      *string `sql:"column:lead_reference_number_mvf" json:"lrf,omitempty"`
+	DistributionID           *string `sql:"column:distribution_id_mvf" json:"dist_id,omitempty"`
+	HasSwitchboard           *string `sql:"column:has_switchboard_mvf" json:"has_switchboard,omitempty"`
+	ExtensionsNumber         *string `sql:"column:extensions_number_mvf" json:"extensions_number,omitempty"`
+	PhoneAmount              *string `sql:"column:phone_amount_mvf" json:"phone_amount,omitempty"`
+	EmployeeNumber           *string `sql:"column:employee_number_mvf" json:"employee_number,omitempty"`
+	SwitchboardFunctionality *string `sql:"column:switchboard_func_mvf" json:"switchboard_functionality,omitempty"`
+	Surname                  *string `sql:"column:surname_mvf" json:"surname,omitempty"`
+	PostalCode               *string `sql:"column:postal_code_mvf" json:"postal_code,omitempty"`
 }
 
 // TableName sets the default table name

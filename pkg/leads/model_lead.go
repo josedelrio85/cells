@@ -321,6 +321,28 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 				args = append(args, lead.Kinkon.BillingInfo.AccountNumber)
 			}
 
+			if lead.Kinkon.Mvf != (Mvf{}) {
+				q1 := "Lead Reference Number"
+				q2 := "Distribution ID"
+				q3 := "¿Ya tiene una centralita telefónica?"
+				q4 := "¿Cuantas extensiones necesita?"
+				q5 := "Nº exacto de teléfonos"
+				q6 := "¿Cuántos empleados tiene su empresa?"
+				q7 := "¿Qué funcionalidad de centralita necesita?"
+				q8 := "Apellidos"
+				q9 := "Código Postal"
+
+				args = append(args, &q1, lead.Kinkon.Mvf.LeadReferenceNumber)
+				args = append(args, &q2, lead.Kinkon.Mvf.DistributionID)
+				args = append(args, &q3, lead.Kinkon.Mvf.HasSwitchboard)
+				args = append(args, &q4, lead.Kinkon.Mvf.ExtensionsNumber)
+				args = append(args, &q5, lead.Kinkon.Mvf.PhoneAmount)
+				args = append(args, &q6, lead.Kinkon.Mvf.EmployeeNumber)
+				args = append(args, &q7, lead.Kinkon.Mvf.SwitchboardFunctionality)
+				args = append(args, &q8, lead.Kinkon.Mvf.Surname)
+				args = append(args, &q9, lead.Kinkon.Mvf.PostalCode)
+			}
+
 			observations := concatPointerStrs(args...)
 			leontel.Observaciones = &observations
 		}
