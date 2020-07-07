@@ -2,6 +2,7 @@ package leads
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -175,6 +176,7 @@ func (e Evolution) Send(lead Lead) ScResponse {
 		}
 	}
 
+	// TODO create env_var
 	endpoint, ok := os.LookupEnv("EVOLUTION_ENDPOINT")
 	if !ok {
 		err := errors.New("unable to load Lead Evolution URL endpoint")
@@ -186,7 +188,13 @@ func (e Evolution) Send(lead Lead) ScResponse {
 		}
 	}
 
-	resp, err := http.Post(endpoint, "application/json", bytes.NewBuffer(bytevalues))
+	// ignore expired SSL certificates
+	transCfg := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: transCfg}
+	resp, err := client.Post(endpoint, "application/json", bytes.NewBuffer(bytevalues))
+	// resp, err := http.Post(endpoint, "application/json", bytes.NewBuffer(bytevalues))
 	if err != nil {
 		return ScResponse{
 			Success:    false,
