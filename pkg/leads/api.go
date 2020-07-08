@@ -53,7 +53,7 @@ func (ch *Handler) HandleFunction() http.Handler {
 			ch.Lead.LeatypeID = 1
 		}
 
-		if err := ch.Lead.GetLeontelValues(ch.Storer.Instance()); err != nil {
+		if err := ch.Lead.GetSourceValues(ch.Storer.Instance()); err != nil {
 			message := fmt.Sprintf("Error retrieving Leontel values, Err: %v", err)
 			responseError(w, message, err)
 			return

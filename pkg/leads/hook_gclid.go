@@ -32,7 +32,7 @@ func (a Gclid) Perform(cont *Handler) HookResponse {
 	lead := &cont.Lead
 	if lead.Gclid != nil {
 		cont.Lead.SouID = a.getGclidSouID(cont.Lead.SouID)
-		if err := cont.Lead.GetLeontelValues(cont.Storer.Instance()); err != nil {
+		if err := cont.Lead.GetSourceValues(cont.Storer.Instance()); err != nil {
 			return HookResponse{
 				StatusCode: http.StatusInternalServerError,
 				Err:        err,

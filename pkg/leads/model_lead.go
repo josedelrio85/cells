@@ -119,3 +119,23 @@ func (lead *Lead) GetPassport() error {
 
 	return nil
 }
+
+// GetSourceValues queries for the SmartCenter equivalences
+// of sou_id and lea_type values
+func (lead *Lead) GetSourceValues(db *gorm.DB) error {
+	source := Source{}
+	leatype := Leatype{}
+
+	if result := db.Where("sou_id = ?", lead.SouID).First(&source); result.Error != nil {
+		return fmt.Errorf("Error retrieving SouIDLeontel value: %#v", result.Error)
+	}
+	if result := db.Where("leatype_id = ?", lead.LeatypeID).First(&leatype); result.Error != nil {
+		return fmt.Errorf("error retrieving LeatypeIDLeontel value: %#v", result.Error)
+	}
+	lead.SouIDLeontel = source.SouIdcrm
+	lead.SouDescLeontel = source.SouDescription
+	lead.SouIDEvolution = source.SouIDEvolution
+	lead.LeatypeIDLeontel = leatype.LeatypeIdcrm
+	lead.LeatypeDescLeontel = leatype.LeatypeDescription
+	return nil
+}
