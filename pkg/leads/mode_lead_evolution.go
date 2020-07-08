@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 )
 
@@ -137,30 +136,15 @@ func (lead Lead) LeadToEvolution() Evolution {
 	return evolution
 }
 
-// GetEvolutionValues queries for the Evolution sou_id equivalences
-func (lead *Lead) GetEvolutionValues(db *gorm.DB) error {
-	// TODO add support to map Evolution campaigns
-
-	// source := Source{}
-	// leatype := Leatype{}
-
-	// if result := db.Where("sou_id = ?", lead.SouID).First(&source); result.Error != nil {
-	// 	return fmt.Errorf("Error retrieving SouIDLeontel value: %#v", result.Error)
-	// }
-	// if result := db.Where("leatype_id = ?", lead.LeatypeID).First(&leatype); result.Error != nil {
-	// 	return fmt.Errorf("error retrieving LeatypeIDLeontel value: %#v", result.Error)
-	// }
-	// lead.SouIDLeontel = source.SouIdcrm
-	// lead.SouDescLeontel = source.SouDescription
-	// lead.LeatypeIDLeontel = leatype.LeatypeIdcrm
-	// lead.LeatypeDescLeontel = leatype.LeatypeDescription
-	return nil
-}
-
 // Active is an implementation of Active method from Scable interface
 func (e Evolution) Active(lead Lead) bool {
-	// TODO set active campaigns for Evolution
-	return true
+	switch lead.SouID {
+	// virgin
+	case 79:
+		return true
+	default:
+		return false
+	}
 }
 
 // Send is an implementation of Send method from Scable interface

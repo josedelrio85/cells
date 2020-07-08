@@ -9,7 +9,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 )
 
@@ -412,29 +411,13 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 	return leontel
 }
 
-// GetLeontelValues queries for the Leontel equivalences
-// of sou_id and lea_type values
-func (lead *Lead) GetLeontelValues(db *gorm.DB) error {
-	source := Source{}
-	leatype := Leatype{}
-
-	if result := db.Where("sou_id = ?", lead.SouID).First(&source); result.Error != nil {
-		return fmt.Errorf("Error retrieving SouIDLeontel value: %#v", result.Error)
-	}
-	if result := db.Where("leatype_id = ?", lead.LeatypeID).First(&leatype); result.Error != nil {
-		return fmt.Errorf("error retrieving LeatypeIDLeontel value: %#v", result.Error)
-	}
-	lead.SouIDLeontel = source.SouIdcrm
-	lead.SouDescLeontel = source.SouDescription
-	lead.LeatypeIDLeontel = leatype.LeatypeIdcrm
-	lead.LeatypeDescLeontel = leatype.LeatypeDescription
-	return nil
-}
-
 // Active is an implementation of Active method from Scable interface
 func (ll LeadLeontel) Active(lead Lead) bool {
-	// TODO set active campaigns for Leontel
-	return true
+	// for now, discard 79 (virgin)
+	if lead.SouID != 79 {
+		return true
+	}
+	return false
 }
 
 // Send is an implementation of Send method from Scable interface
@@ -499,31 +482,3 @@ func (ll LeadLeontel) Send(lead Lead) ScResponse {
 		Error:      err,
 	}
 }
-
-// TODO remove!
-// func (lead *Lead) SendLeadToLeontel() (*LeontelResp, error) {
-// 	leadLeontel := lead.LeadToLeontel()
-// 	bytevalues, err := json.Marshal(leadLeontel)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	endpoint, ok := os.LookupEnv("LEAD_LEONTEL_ENDPOINT")
-// 	if !ok {
-// 		err := errors.New("unable to load Lead Leontel URL endpoint")
-// 		return nil, err
-// 	}
-
-// 	resp, err := http.Post(endpoint, "application/json", bytes.NewBuffer(bytevalues))
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	defer resp.Body.Close()
-
-// 	data, _ := ioutil.ReadAll(resp.Body)
-// 	leontelresp := []LeontelResp{}
-// 	if err := json.Unmarshal(data, &leontelresp); err != nil {
-// 		return nil, err
-// 	}
-// 	return &leontelresp[0], nil
-// }
