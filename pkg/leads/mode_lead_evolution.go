@@ -2,7 +2,6 @@ package leads
 
 import (
 	"bytes"
-	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -182,12 +181,24 @@ func (e Evolution) Send(lead Lead) ScResponse {
 		}
 	}
 
-	// ignore expired SSL certificates
-	transCfg := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	req, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewBuffer(bytevalues))
+	if err != nil {
+		return ScResponse{
+			Success:    false,
+			StatusCode: http.StatusInternalServerError,
+			ID:         0,
+			Error:      err,
+		}
 	}
-	client := &http.Client{Transport: transCfg}
-	resp, err := client.Post(endpoint, "application/json", bytes.NewBuffer(bytevalues))
+	req.Header.Add("accept", "text/plain")
+	req.Header.Add("Content-Type", "application/json")
+	// TODO set env_var
+	userid := "bySideCar"
+	password := "47Qh5qQy5JsRZQCzAiRi"
+	req.SetBasicAuth(userid, password)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
 		return ScResponse{
 			Success:    false,
@@ -199,17 +210,14 @@ func (e Evolution) Send(lead Lead) ScResponse {
 	defer resp.Body.Close()
 
 	data, _ := ioutil.ReadAll(resp.Body)
-	evolutionresp := EvolutionResp{}
-	if err := json.Unmarshal(data, &evolutionresp); err != nil {
-		return ScResponse{
-			Success:    false,
-			StatusCode: http.StatusInternalServerError,
-			ID:         0,
-			Error:      err,
-		}
+	txtresp := string(data)
+	evolutionresp := EvolutionResp{
+		Success: false,
+	}
+	if txtresp == "true" {
+		evolutionresp.Success = true
 	}
 
-	log.Println(evolutionresp.Success)
 	err = nil
 	status := http.StatusOK
 	if !evolutionresp.Success {
