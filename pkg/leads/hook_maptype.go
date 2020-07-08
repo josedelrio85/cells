@@ -70,7 +70,7 @@ func (a MapType) Perform(cont *Handler) HookResponse {
 
 	if listSource[cont.Lead.SouID] && listType[cont.Lead.LeatypeID] {
 		getNewType(&cont.Lead)
-		if err := cont.Lead.GetLeontelValues(cont.Storer.Instance()); err != nil {
+		if err := cont.Lead.GetSourceValues(cont.Storer.Instance()); err != nil {
 			return HookResponse{
 				StatusCode: http.StatusInternalServerError,
 				Err:        err,

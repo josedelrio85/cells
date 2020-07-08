@@ -238,7 +238,7 @@ func TestGetLeontelValues(t *testing.T) {
 				WithArgs(test.Lead.LeatypeID).
 				WillReturnRows(rs2)
 
-			err := test.Lead.GetLeontelValues(db)
+			err := test.Lead.GetSourceValues(db)
 			assert.NoError(err)
 
 			assert.Equal(test.ExpectedResult.SouIDLeontel, test.Lead.SouIDLeontel)
