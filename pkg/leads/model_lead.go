@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"net/http"
 	"time"
@@ -36,11 +37,10 @@ type Lead struct {
 	SouDescLeontel     string     `sql:"-" json:"sou_desc_leontel"`
 	LeatypeIDLeontel   int64      `sql:"-" json:"lea_type_leontel"`
 	LeatypeDescLeontel string     `sql:"-" json:"lea_type_desc_leontel"`
-	SouIDEvolution     string     `sql:"-" json:"sou_id_evolution"`
+	SouIDEvolution     int64      `sql:"-" json:"sou_id_evolution"`
 	Gclid              *string    `json:"gclid,omitempty"`
 	Domain             *string    `json:"domain,omitempty"`
 	Observations       *string    `sql:"type:text" json:"observations,omitempty"`
-	SCType             int64
 	RcableExp          *RcableExp `json:"rcableexp"`
 	Microsoft          *Microsoft `json:"microsoft"`
 	Creditea           *Creditea  `json:"creditea"`
@@ -137,5 +137,6 @@ func (lead *Lead) GetSourceValues(db *gorm.DB) error {
 	lead.SouIDEvolution = source.SouIDEvolution
 	lead.LeatypeIDLeontel = leatype.LeatypeIdcrm
 	lead.LeatypeDescLeontel = leatype.LeatypeDescription
+	log.Printf("souid %d  Leontel %d   Evolution %d", lead.SouID, lead.SouIDLeontel, lead.SouIDEvolution)
 	return nil
 }
