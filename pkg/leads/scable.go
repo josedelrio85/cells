@@ -9,7 +9,7 @@ type Scable interface {
 // ScResponse represents an Smart Center response
 type ScResponse struct {
 	Success    bool  `json:"success"`
-	StatusCode int64 `json:"status"`
+	StatusCode int   `json:"status"`
 	ID         int64 `json:"id"`
 	Error      error `json:"error,omitempty"`
 }

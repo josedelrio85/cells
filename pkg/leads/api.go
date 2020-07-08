@@ -127,6 +127,7 @@ func (ch *Handler) HandleFunction() http.Handler {
 				scID := strconv.FormatInt(scresponse.ID, 10)
 				ch.Lead.LeaSmartcenterID = scID
 
+				// update sc value
 				cond := fmt.Sprintf("ID=%d", ch.Lead.ID)
 				fields := []string{"LeaSmartcenterID", scID}
 				ch.Storer.Update(Lead{}, cond, fields)

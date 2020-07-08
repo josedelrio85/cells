@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -415,6 +416,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 func (ll LeadLeontel) Active(lead Lead) bool {
 	// for now, discard 79 (virgin)
 	if lead.SouID != 79 {
+		log.Printf("souid %d Leontel active", lead.SouID)
 		return true
 	}
 	return false
@@ -471,13 +473,15 @@ func (ll LeadLeontel) Send(lead Lead) ScResponse {
 	}
 
 	err = nil
+	status := http.StatusOK
 	if leontelresp[0].Error != "" {
 		err = errors.New(leontelresp[0].Error)
+		status = http.StatusUnprocessableEntity
 	}
 
 	return ScResponse{
 		Success:    leontelresp[0].Success,
-		StatusCode: http.StatusOK,
+		StatusCode: status,
 		ID:         leontelresp[0].ID,
 		Error:      err,
 	}
