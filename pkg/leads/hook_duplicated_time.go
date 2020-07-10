@@ -30,12 +30,15 @@ func (d DuplicatedTime) Active(lead Lead) bool {
 		return true
 	case 63:
 		return true
+	case 69:
+		return true
 	case 70:
 		return true
 	case 77:
 		return true
-	case 69:
+	case 78:
 		return true
+	// TODO virgin?
 	default:
 		return false
 	}
@@ -82,17 +85,21 @@ func (d DuplicatedTime) Perform(cont *Handler) HookResponse {
 // Returns an integer
 func (d DuplicatedTime) getExpirationTime(souid int64) int {
 	switch souid {
+	case 15:
+		return 3
 	case 64, 65, 66:
 		return 180
 	case 74, 75, 76:
 		return 180
 	case 63:
 		return 180
+	case 69:
+		return 180
+	case 70:
+		return 180
 	case 77:
 		return 180
-	case 15:
-		return 3
-	case 69:
+	case 78:
 		return 180
 	default:
 		return 60
