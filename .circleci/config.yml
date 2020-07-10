@@ -23,6 +23,8 @@ jobs:
             echo 'export LEAD_LEONTEL_ENDPOINT="https://ws.bysidecar.es/lead/smartcenter/store"' >> $BASH_ENV
             echo 'export CHECK_LEAD_LEONTEL_ENDPOINT="https://ws.bysidecar.es/lead/smartcenter/isopen"' >> $BASH_ENV
             echo 'export CHECK_LEAD_REDIS="127.0.0.1"' >> $BASH_ENV
+            echo 'export EVOLUTION_AUTH_USER="user"' >> $BASH_ENV
+            echo 'export EVOLUTION_AUTH_PASS="passw0rd"' >> $BASH_ENV
       - run:
       # Our primary container isn't MYSQL so run a sleep command until it's ready.
           name: Waiting for MySQL to be ready

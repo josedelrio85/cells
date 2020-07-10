@@ -89,21 +89,6 @@ func (ch *Handler) HandleFunction() http.Handler {
 			return
 		}
 
-		// if ch.Lead.IsSmartCenter {
-		// 	leonresp, err := ch.Lead.SendLeadToLeontel()
-		// 	if err != nil {
-		// 		message := fmt.Sprintf("Error sending lead to SmartCenter, Err: %v", err)
-		// 		// TODO should break the flow? Maybe pass some info to responseOK method and handle the response in client
-		// 		responseUnprocessable(w, message, err)
-		// 	}
-		// 	leontelID := strconv.FormatInt(leonresp.ID, 10)
-		// 	ch.Lead.LeaSmartcenterID = leontelID
-
-		// 	cond := fmt.Sprintf("ID=%d", ch.Lead.ID)
-		// 	fields := []string{"LeaSmartcenterID", leontelID}
-		// 	ch.Storer.Update(Lead{}, cond, fields)
-		// }
-
 		if ch.Lead.IsSmartCenter {
 			for _, sc := range ch.ActiveSc {
 				if !sc.Active(ch.Lead) {
