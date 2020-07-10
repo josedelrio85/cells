@@ -86,22 +86,15 @@ type EvolutionResp struct {
 
 // LeadToEvolution maps leads values to Evolution struct
 func (lead Lead) LeadToEvolution() Evolution {
-	// TODO this code should be removed when Evolution API
-	// allows to send empty data in this fields
-	f1 := "2020-07-08"
-	f2 := "2020-07-12"
 
 	evolution := Evolution{
 		Properties: Properties{
-			OriginalID:  *lead.LeaPhone,
-			CampaingID:  lead.SouIDEvolution,
-			Phone:       *lead.LeaPhone,
-			Name:        checkPointerValue(lead.LeaName),
-			Email:       checkPointerValue(lead.LeaMail),
-			DNI:         checkPointerValue(lead.LeaDNI),
-			BirthDate:   f1,
-			SignupDate:  f1,
-			NextContact: f2,
+			OriginalID: *lead.LeaPhone,
+			CampaingID: lead.SouIDEvolution,
+			Phone:      *lead.LeaPhone,
+			Name:       checkPointerValue(lead.LeaName),
+			Email:      checkPointerValue(lead.LeaMail),
+			DNI:        checkPointerValue(lead.LeaDNI),
 		},
 		AdditionalData: AdditionalData{
 			AddProp1: checkPointerValue(lead.LeaURL),
@@ -192,9 +185,27 @@ func (e Evolution) Send(lead Lead) ScResponse {
 	}
 	req.Header.Add("accept", "text/plain")
 	req.Header.Add("Content-Type", "application/json")
-	// TODO set env_var
-	userid := "bySideCar"
-	password := "47Qh5qQy5JsRZQCzAiRi"
+
+	userid, ok := os.LookupEnv("EVOLUTION_AUTH_USER")
+	if !ok {
+		err := errors.New("unable to load Evolution Authentication user")
+		return ScResponse{
+			Success:    false,
+			StatusCode: http.StatusInternalServerError,
+			ID:         0,
+			Error:      err,
+		}
+	}
+	password, ok := os.LookupEnv("EVOLUTION_AUTH_PASS")
+	if !ok {
+		err := errors.New("unable to load Evolution Authentication password")
+		return ScResponse{
+			Success:    false,
+			StatusCode: http.StatusInternalServerError,
+			ID:         0,
+			Error:      err,
+		}
+	}
 	req.SetBasicAuth(userid, password)
 
 	client := &http.Client{}
