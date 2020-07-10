@@ -154,7 +154,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 	case 12:
 		// Euskaltel
 	case 13:
-		// Adeslas
+		// AdeslasOLD
 	case 17, 18, 19, 20:
 		// Yoigo
 		// producto, cobertura, impuesto
@@ -277,6 +277,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		// Sanitas
 		// lea_destiny =  GSS => we must have IsLeontel = true
 	case 64, 65, 66, 74, 75, 76:
+		// kinkon + r-empresas
 		args := []*string{}
 
 		if lead.Kinkon != nil {
@@ -368,6 +369,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		}
 
 	case 69:
+		// Alterna
 		if lead.Alterna != nil {
 			leontel.CP = lead.Alterna.PostalCode
 			leontel.Calle = lead.Alterna.Street
@@ -381,6 +383,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 	case 70:
 		leontel.Observaciones = lead.Observations
 	case 77:
+		// Adeslas
 		args := []*string{}
 		args = append(args, lead.Observations)
 		if lead.Adeslas != nil {
@@ -390,6 +393,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		observations := concatPointerStrs(args...)
 		leontel.Observaciones = &observations
 	case 78:
+		// Endesa
 		args := []*string{}
 		args = append(args, lead.Observations)
 
@@ -429,7 +433,6 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		observations := concatPointerStrs(args...)
 		leontel.Observaciones = &observations
 	default:
-
 	}
 	return leontel
 }
@@ -453,8 +456,7 @@ func (ll LeadLeontel) Send(lead Lead) ScResponse {
 			Success:    false,
 			StatusCode: http.StatusInternalServerError,
 			ID:         0,
-			// Error:      fmt.Sprintf("%s", err.Error()),
-			Error: err,
+			Error:      err,
 		}
 	}
 
@@ -465,8 +467,7 @@ func (ll LeadLeontel) Send(lead Lead) ScResponse {
 			Success:    false,
 			StatusCode: http.StatusInternalServerError,
 			ID:         0,
-			// Error:      fmt.Sprintf("%s", err.Error()),
-			Error: err,
+			Error:      err,
 		}
 	}
 
@@ -476,8 +477,7 @@ func (ll LeadLeontel) Send(lead Lead) ScResponse {
 			Success:    false,
 			StatusCode: http.StatusInternalServerError,
 			ID:         0,
-			// Error:      fmt.Sprintf("%s", err.Error()),
-			Error: err,
+			Error:      err,
 		}
 	}
 	defer resp.Body.Close()
@@ -489,8 +489,7 @@ func (ll LeadLeontel) Send(lead Lead) ScResponse {
 			Success:    false,
 			StatusCode: http.StatusInternalServerError,
 			ID:         0,
-			// Error:      fmt.Sprintf("%s", err.Error()),
-			Error: err,
+			Error:      err,
 		}
 	}
 
