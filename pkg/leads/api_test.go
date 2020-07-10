@@ -334,6 +334,8 @@ func TestLeadToLeontel(t *testing.T) {
 	tEndesa := fmt.Sprintf(`%s -- Apellidos -- %s -- ¿Qué tipo de energía tienes en tu hogar? -- %s -- ¿Cuál es el tamaño de tu vivienda? -- %s -- ¿Cuántas personas viven en casa? -- %s -- ¿Qué tipo de energía usas en la calefacción? -- %s -- ¿Qué tipo de energía usas en la en la cocina? -- %s -- ¿Qué tipo de energía usas en el agua caliente? -- ¿Cada cuanto pones la lavadora? -- ¿Cada cuanto pones la secadora? -- ¿Cada cuanto pones el lavavajillas? -- ¿Eres el propietario de la vivienda? -- ¿Cuál es tu compañía actual?? -- Código postal -- Edad -- External ID -- `,
 		t9, t6, t1, t2, t3, t4, t5)
 
+	obsMvf := fmt.Sprintf(`Cobertura -- Producto -- Lead Reference Number -- %s -- Distribution ID -- %s -- ¿Ya tiene una centralita telefónica? -- %s -- ¿Cuantas extensiones necesita? -- %s -- Nº exacto de teléfonos -- %s -- ¿Cuántos empleados tiene su empresa? -- %s -- ¿Qué funcionalidad de centralita necesita? -- %s -- Apellidos -- %s -- Código Postal -- %s`, t2, t3, t4, t5, t6, t7, t7, t7, t7)
+
 	tests := []struct {
 		Index          int
 		Description    string
@@ -684,11 +686,41 @@ func TestLeadToLeontel(t *testing.T) {
 				Observaciones: &t2,
 			},
 		},
+		{
+			Index:       15,
+			Description: "check data returned for sou_id 64 R Cable End To End (Kinkon) MVF Provider",
+			Lead: Lead{
+				SouID:            74,
+				SouIDLeontel:     83,
+				LeatypeIDLeontel: 33,
+				Kinkon: &Kinkon{
+					Mvf: Mvf{
+						LeadReferenceNumber:      &t2,
+						DistributionID:           &t3,
+						HasSwitchboard:           &t4,
+						ExtensionsNumber:         &t5,
+						PhoneAmount:              &t6,
+						EmployeeNumber:           &t7,
+						SwitchboardFunctionality: &t7,
+						Surname:                  &t7,
+						PostalCode:               &t7,
+					},
+				},
+				IsSmartCenter: false,
+			},
+			ExpectedResult: LeadLeontel{
+				LeaSource:     83,
+				LeaType:       33,
+				Observaciones: &obsMvf,
+			},
+		},
 	}
 
 	for _, test := range tests {
 		leontel := test.Lead.LeadToLeontel()
-		assert.Equal(test.ExpectedResult, leontel)
+		if test.Index == 15 {
+			assert.Equal(test.ExpectedResult, leontel)
+		}
 	}
 }
 
