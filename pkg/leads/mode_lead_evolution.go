@@ -23,7 +23,7 @@ type Evolution struct {
 type Properties struct {
 	// SubjectID       string `json:"idsujeto"`
 	OriginalID      string `json:"idoriginal"`
-	CampaingID      int64  `json:"idcampanya"`
+	CampaignID      int64  `json:"idcampanya"`
 	Name            string `json:"nombre"`
 	Surname         string `json:"apellido"`
 	Surname2        string `json:"apellidO2"`
@@ -90,7 +90,7 @@ func (lead Lead) LeadToEvolution() Evolution {
 	evolution := Evolution{
 		Properties: Properties{
 			OriginalID: *lead.LeaPhone,
-			CampaingID: lead.SouIDEvolution,
+			CampaignID: lead.SouIDEvolution,
 			Phone:      *lead.LeaPhone,
 			Name:       checkPointerValue(lead.LeaName),
 			Email:      checkPointerValue(lead.LeaMail),

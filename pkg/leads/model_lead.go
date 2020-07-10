@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net"
 	"net/http"
 	"time"
@@ -137,6 +136,5 @@ func (lead *Lead) GetSourceValues(db *gorm.DB) error {
 	lead.SouIDEvolution = source.SouIDEvolution
 	lead.LeatypeIDLeontel = leatype.LeatypeIdcrm
 	lead.LeatypeDescLeontel = leatype.LeatypeDescription
-	log.Printf("souid %d  Leontel %d   Evolution %d", lead.SouID, lead.SouIDLeontel, lead.SouIDEvolution)
 	return nil
 }
