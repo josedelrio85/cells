@@ -63,7 +63,17 @@ env:
 - name: DEV
   value: "false"
 - name: EVOLUTION_ENDPOINT
-  value: "https://10.1.10.19/API/Bysidecar/CargaCliente"
+  value: "https://bysidecar.icr.webersolutions.es/API/Bysidecar/CargaCliente"
+- name: EVOLUTION_AUTH_USER
+  valueFrom:
+    secretKeyRef:
+      name: evolution-authentication
+      key: user
+- name: EVOLUTION_AUTH_PASS
+  valueFrom:
+    secretKeyRef:
+      name: evolution-authentication
+      key: password
 resources: {}
 nodeSelector: {}
 tolerations: []
