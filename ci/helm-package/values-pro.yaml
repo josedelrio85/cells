@@ -74,6 +74,8 @@ env:
     secretKeyRef:
       name: evolution-authentication
       key: password
+- name: PASSPORT_ENDPOINT
+  value: "https://passport.bysidecar.me/id/settle"    
 resources: {}
 nodeSelector: {}
 tolerations: []

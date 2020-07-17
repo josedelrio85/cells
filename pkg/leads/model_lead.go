@@ -103,6 +103,7 @@ func concatPointerStrs(args ...*string) string {
 func (lead *Lead) GetPassport() error {
 	passport := Passport{}
 
+	// TODO maybe use desc from leads instead Leontel
 	interaction := Interaction{
 		Provider:    lead.SouDescLeontel,
 		Application: lead.LeatypeDescLeontel,

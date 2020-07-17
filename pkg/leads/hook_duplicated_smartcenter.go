@@ -38,6 +38,7 @@ type RespSC struct {
 //
 // Returns true if the hook gets activated.
 func (t DuplicatedSmartCenter) Active(lead Lead) bool {
+	// REMEMBER exclude Evolution sou_id's
 	switch lead.SouID {
 	case 15:
 		return true

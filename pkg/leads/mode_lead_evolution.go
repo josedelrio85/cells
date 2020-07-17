@@ -89,6 +89,7 @@ func (lead Lead) LeadToEvolution() Evolution {
 
 	evolution := Evolution{
 		Properties: Properties{
+			// TODO passport?
 			OriginalID: *lead.LeaPhone,
 			CampaignID: lead.SouIDEvolution,
 			Phone:      *lead.LeaPhone,
@@ -103,6 +104,7 @@ func (lead Lead) LeadToEvolution() Evolution {
 		},
 		Localizators: Localizators{
 			AddProp1: int64(lead.ID),
+			AddProp2: int64(lead.LeatypeID),
 		},
 	}
 
