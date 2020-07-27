@@ -15,6 +15,7 @@ type Virgin struct {
 	DataMonth  *string `json:"data_month,omitempty"`
 	HaveDSL    *string `json:"have_dsl,omitempty"`
 	WhenHiring *string `json:"when_hiring,omitempty"`
+	ContacTime *string `json:"contact_time,omitempty"`
 }
 
 // TableName sets the default table name

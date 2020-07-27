@@ -122,6 +122,7 @@ func (lead Lead) LeadToEvolution() Evolution {
 			q6 := "Datos al mes"
 			q7 := "¿Tienes actualmente ADSL/Fibra?"
 			q8 := "Cuando lo vayas a contratar"
+			q9 := "Hora preferida de contacto"
 
 			args = append(args, &q1, lead.Virgin.Optin)
 			args = append(args, &q2, lead.Virgin.PostalCode)
@@ -131,6 +132,7 @@ func (lead Lead) LeadToEvolution() Evolution {
 			args = append(args, &q6, lead.Virgin.DataMonth)
 			args = append(args, &q7, lead.Virgin.HaveDSL)
 			args = append(args, &q8, lead.Virgin.WhenHiring)
+			args = append(args, &q9, lead.Virgin.ContacTime)
 		}
 		observations := concatPointerStrs(args...)
 		evolution.Properties.Observations = observations

@@ -66,7 +66,8 @@ func TestLeadToEvolution(t *testing.T) {
 		fmt.Sprintf(" External ID %s %s %s", sep, empty, sep),
 		fmt.Sprintf(" Datos al mes %s %s %s", sep, empty, sep),
 		fmt.Sprintf(" ¿Tienes actualmente ADSL/Fibra? %s %s %s", sep, empty, sep),
-		fmt.Sprintf(" Cuando lo vayas a contratar %s %s", sep, empty),
+		fmt.Sprintf(" Cuando lo vayas a contratar %s %s %s", sep, empty, sep),
+		fmt.Sprintf(" Hora preferida de contacto %s %s", sep, empty),
 	}
 
 	tests := []struct {
@@ -93,6 +94,7 @@ func TestLeadToEvolution(t *testing.T) {
 					DataMonth:  &empty,
 					HaveDSL:    &empty,
 					WhenHiring: &empty,
+					ContacTime: &empty,
 				},
 			},
 			ExpectedResult: Evolution{
