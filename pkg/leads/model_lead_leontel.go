@@ -279,6 +279,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 	case 64, 65, 66, 74, 75, 76:
 		// kinkon + r-empresas
 		args := []*string{}
+		args = append(args, lead.Observations)
 
 		if lead.Kinkon != nil {
 			coverture := "Cobertura"
