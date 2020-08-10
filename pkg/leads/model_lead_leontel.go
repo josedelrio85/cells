@@ -364,10 +364,9 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 				args = append(args, &q8, lead.Kinkon.Mvf.Surname)
 				args = append(args, &q9, lead.Kinkon.Mvf.PostalCode)
 			}
-
-			observations := concatPointerStrs(args...)
-			leontel.Observaciones = &observations
 		}
+		observations := concatPointerStrs(args...)
+		leontel.Observaciones = &observations
 
 	case 69:
 		// Alterna
