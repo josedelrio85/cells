@@ -258,6 +258,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		// lea_destiny =  GSS => we must have IsLeontel = true
 	case 64, 65, 66, 74, 75, 76:
 		args := []*string{}
+		args = append(args, lead.Observations)
 
 		if lead.Kinkon != nil {
 			coverture := "Cobertura"
@@ -342,10 +343,10 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 				args = append(args, &q8, lead.Kinkon.Mvf.Surname)
 				args = append(args, &q9, lead.Kinkon.Mvf.PostalCode)
 			}
-
-			observations := concatPointerStrs(args...)
-			leontel.Observaciones = &observations
 		}
+
+		observations := concatPointerStrs(args...)
+		leontel.Observaciones = &observations
 
 	case 69:
 		if lead.Alterna != nil {
