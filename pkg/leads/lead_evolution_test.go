@@ -67,7 +67,9 @@ func TestLeadToEvolution(t *testing.T) {
 		fmt.Sprintf(" Datos al mes %s %s %s", sep, empty, sep),
 		fmt.Sprintf(" ¿Tienes actualmente ADSL/Fibra? %s %s %s", sep, empty, sep),
 		fmt.Sprintf(" Cuando lo vayas a contratar %s %s %s", sep, empty, sep),
-		fmt.Sprintf(" Hora preferida de contacto %s %s", sep, empty),
+		fmt.Sprintf(" Hora preferida de contacto %s %s %s", sep, empty, sep),
+		fmt.Sprintf(" ¿Tienes permanencia? %s %s %s", sep, empty, sep),
+		fmt.Sprintf(" ¿De que compañia eres? %s %s", sep, empty),
 	}
 
 	tests := []struct {
@@ -86,15 +88,17 @@ func TestLeadToEvolution(t *testing.T) {
 				LeaIP:          &ip,
 				IsSmartCenter:  false,
 				Virgin: &Virgin{
-					Optin:      &empty,
-					PostalCode: &empty,
-					Age:        &empty,
-					Surname:    &empty,
-					ExternalID: &empty,
-					DataMonth:  &empty,
-					HaveDSL:    &empty,
-					WhenHiring: &empty,
-					ContacTime: &empty,
+					Optin:         &empty,
+					PostalCode:    &empty,
+					Age:           &empty,
+					Surname:       &empty,
+					ExternalID:    &empty,
+					DataMonth:     &empty,
+					HaveDSL:       &empty,
+					WhenHiring:    &empty,
+					ContacTime:    &empty,
+					Permanence:    &empty,
+					ActualCompany: &empty,
 				},
 			},
 			ExpectedResult: Evolution{
