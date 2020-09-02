@@ -423,6 +423,8 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 			q7 := "¿Tienes actualmente ADSL/Fibra?"
 			q8 := "Cuando lo vayas a contratar"
 			q9 := "Hora preferida de contacto"
+			q10 := "¿Tienes permanencia?"
+			q11 := "¿De que compañia eres?"
 
 			args = append(args, &q1, lead.Virgin.Optin)
 			args = append(args, &q2, lead.Virgin.PostalCode)
@@ -432,8 +434,9 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 			args = append(args, &q6, lead.Virgin.DataMonth)
 			args = append(args, &q7, lead.Virgin.HaveDSL)
 			args = append(args, &q8, lead.Virgin.WhenHiring)
-
 			args = append(args, &q9, lead.Virgin.ContacTime)
+			args = append(args, &q10, lead.Virgin.Permanence)
+			args = append(args, &q11, lead.Virgin.ActualCompany)
 		}
 		observations := concatPointerStrs(args...)
 		leontel.Observaciones = &observations
