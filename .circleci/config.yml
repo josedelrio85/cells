@@ -34,11 +34,11 @@ jobs:
               sleep 1
             done
             echo Failed waiting for MySQL && exit 1
-      - run:
-          name: Install MySQL CLI; Create table for tests
-          command: |
-            sudo apt-get install default-mysql-client --fix-missing
-            mysql -h ${DB_HOST} -u ${DB_USER} -p${DB_PASS} ${DB_NAME} < pkg/leads/sql_test/test.sql
+      # - run:
+      #     name: Install MySQL CLI; Create table for tests
+      #     command: |
+      #       sudo apt-get install default-mysql-client --fix-missing
+      #       mysql -h ${DB_HOST} -u ${DB_USER} -p${DB_PASS} ${DB_NAME} < pkg/leads/sql_test/test.sql
       - run:
           name: Execute go function
           command: |
