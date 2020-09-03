@@ -23,17 +23,17 @@ jobs:
             echo 'export LEAD_LEONTEL_ENDPOINT="https://ws.bysidecar.es/lead/smartcenter/store"' >> $BASH_ENV
             echo 'export CHECK_LEAD_LEONTEL_ENDPOINT="https://ws.bysidecar.es/lead/smartcenter/isopen"' >> $BASH_ENV
             echo 'export CHECK_LEAD_REDIS="127.0.0.1"' >> $BASH_ENV
-      - run:
-      # Our primary container isn't MYSQL so run a sleep command until it's ready.
-          name: Waiting for MySQL to be ready
-          command: |
-            for i in `seq 1 10`;
-            do
-              nc -z ${DB_HOST} ${DB_PORT} && echo Success && exit 0
-              echo -n .
-              sleep 1
-            done
-            echo Failed waiting for MySQL && exit 1
+      # - run:
+      # # Our primary container isn't MYSQL so run a sleep command until it's ready.
+      #     name: Waiting for MySQL to be ready
+      #     command: |
+      #       for i in `seq 1 10`;
+      #       do
+      #         nc -z ${DB_HOST} ${DB_PORT} && echo Success && exit 0
+      #         echo -n .
+      #         sleep 1
+      #       done
+      #       echo Failed waiting for MySQL && exit 1
       # - run:
       #     name: Install MySQL CLI; Create table for tests
       #     command: |
