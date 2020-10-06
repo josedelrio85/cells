@@ -1,6 +1,9 @@
 version: 2
 jobs:
   test:
+    branches:
+      only:
+        - master
     docker:
       - image: circleci/golang:1.12
       - image: circleci/mysql:5.7
@@ -48,9 +51,6 @@ jobs:
             go test -mod=vendor -v ./...
   build:
     machine: true
-    branches:
-      only:
-        - master
     steps:
       - checkout
       - run:
