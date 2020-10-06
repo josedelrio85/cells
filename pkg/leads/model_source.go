@@ -5,6 +5,7 @@ type Source struct {
 	SouID          int64
 	SouDescription string
 	SouIdcrm       int64
+	SouIDEvolution int64
 }
 
 // TableName sets the default table name

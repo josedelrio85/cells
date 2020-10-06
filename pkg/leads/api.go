@@ -2,13 +2,15 @@ package leads
 
 import (
 	"fmt"
+	"log"
+	"strconv"
 	"time"
 
 	"math/rand"
 	"net/http"
-	"strconv"
 
 	redis "github.com/bysidecar/leads/pkg/leads/redis"
+	guuid "github.com/google/uuid"
 
 	"github.com/tomasen/realip"
 )
@@ -21,6 +23,7 @@ type Handler struct {
 	Reporter    Storer
 	Lead        Lead
 	ActiveHooks []Hookable
+	ActiveSc    []Scable
 	Redis       redis.Redis
 	Dev         bool
 }
@@ -29,6 +32,10 @@ type Handler struct {
 func (ch *Handler) HandleFunction() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ch.Lead = Lead{}
+
+		reqid := guuid.New()
+		ch.Lead.RequestID = reqid.String()
+		log.Printf("Request ID: %s\n", reqid.String())
 
 		if err := ch.Lead.Decode(r.Body); err != nil {
 			message := fmt.Sprintf("Error decoding lead, Err: %v", err)
@@ -52,7 +59,7 @@ func (ch *Handler) HandleFunction() http.Handler {
 			ch.Lead.LeatypeID = 1
 		}
 
-		if err := ch.Lead.GetLeontelValues(ch.Storer.Instance()); err != nil {
+		if err := ch.Lead.GetSourceValues(ch.Storer.Instance()); err != nil {
 			message := fmt.Sprintf("Error retrieving Leontel values, Err: %v", err)
 			responseError(w, message, err)
 			return
@@ -89,18 +96,33 @@ func (ch *Handler) HandleFunction() http.Handler {
 		}
 
 		if ch.Lead.IsSmartCenter {
-			leonresp, err := ch.Lead.SendLeadToLeontel()
-			if err != nil {
-				message := fmt.Sprintf("Error sending lead to SmartCenter, Err: %v", err)
-				// TODO should break the flow? Maybe pass some info to responseOK method and handle the response in client
-				responseUnprocessable(w, message, err)
-			}
-			leontelID := strconv.FormatInt(leonresp.ID, 10)
-			ch.Lead.LeaSmartcenterID = leontelID
+			for _, sc := range ch.ActiveSc {
+				if !sc.Active(ch.Lead, ch.Dev) {
+					continue
+				}
 
-			cond := fmt.Sprintf("ID=%d", ch.Lead.ID)
-			fields := []string{"LeaSmartcenterID", leontelID}
-			ch.Storer.Update(Lead{}, cond, fields)
+				scresponse := sc.Send(ch.Lead)
+
+				if scresponse.StatusCode == http.StatusUnprocessableEntity {
+					message := fmt.Sprintf("Undesired status response from SmartCenter, Err: %v", scresponse.Error)
+					responseUnprocessable(w, message, scresponse.Error)
+					return
+				}
+
+				if scresponse.Error != nil {
+					message := fmt.Sprintf("Error sending lead to SmartCenter, Err: %v", scresponse.Error)
+					responseError(w, message, scresponse.Error)
+					return
+				}
+
+				scID := strconv.FormatInt(scresponse.ID, 10)
+				ch.Lead.LeaSmartcenterID = scID
+
+				// update sc value
+				cond := fmt.Sprintf("ID=%d", ch.Lead.ID)
+				fields := []string{"LeaSmartcenterID", scID}
+				ch.Storer.Update(Lead{}, cond, fields)
+			}
 		}
 
 		if !ch.Dev {
