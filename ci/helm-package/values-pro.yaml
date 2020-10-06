@@ -62,6 +62,20 @@ env:
       key: pass
 - name: DEV
   value: "false"
+- name: EVOLUTION_ENDPOINT
+  value: "https://bysidecar.icr.webersolutions.es/API/Bysidecar/CargaCliente"
+- name: EVOLUTION_AUTH_USER
+  valueFrom:
+    secretKeyRef:
+      name: evolution-authentication
+      key: user
+- name: EVOLUTION_AUTH_PASS
+  valueFrom:
+    secretKeyRef:
+      name: evolution-authentication
+      key: password
+- name: PASSPORT_ENDPOINT
+  value: "https://passport.bysidecar.me/id/settle"    
 resources: {}
 nodeSelector: {}
 tolerations: []
