@@ -439,10 +439,11 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 
 // Active is an implementation of Active method from Scable interface
 func (ll LeadLeontel) Active(lead Lead, dev bool) bool {
-	// TODO for now, discard 79 (virgin)
+	// TODO (delete) keep this hack to use virgin as Leontel campaign in pro environment
 	if !dev {
 		return true
 	}
+	// (TODO for now, discard 79 (virgin) ||
 	if lead.SouID != 79 {
 		log.Printf("souid %d Leontel active", lead.SouID)
 		return true

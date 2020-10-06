@@ -9,6 +9,7 @@ require (
 	github.com/bysidecar/voalarm v1.0.1
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/gomodule/redigo v2.0.0+incompatible
+	github.com/google/uuid v1.1.2
 	github.com/gorilla/mux v1.7.2
 	github.com/jinzhu/gorm v1.9.9
 	github.com/nyaruka/phonenumbers v1.0.52

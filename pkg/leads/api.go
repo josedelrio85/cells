@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	redis "github.com/bysidecar/leads/pkg/leads/redis"
+	guuid "github.com/google/uuid"
 
 	"github.com/tomasen/realip"
 )
@@ -30,6 +31,9 @@ type Handler struct {
 func (ch *Handler) HandleFunction() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ch.Lead = Lead{}
+
+		reqid := guuid.New()
+		ch.Lead.RequestID = reqid.String()
 
 		if err := ch.Lead.Decode(r.Body); err != nil {
 			message := fmt.Sprintf("Error decoding lead, Err: %v", err)

@@ -150,7 +150,7 @@ func (e Evolution) Active(lead Lead, dev bool) bool {
 	switch lead.SouID {
 	// virgin
 	case 79:
-		// TODO
+		// TODO (delete) keep this hack to use virgin as Evolution campaign in pre environment
 		if !dev {
 			return false
 		}
