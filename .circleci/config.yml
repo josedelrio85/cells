@@ -1,9 +1,6 @@
 version: 2
 jobs:
   test:
-    branches:
-      only:
-        - master
     docker:
       - image: circleci/golang:1.12
       - image: circleci/mysql:5.7
