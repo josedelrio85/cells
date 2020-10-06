@@ -438,8 +438,11 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 }
 
 // Active is an implementation of Active method from Scable interface
-func (ll LeadLeontel) Active(lead Lead) bool {
-	// for now, discard 79 (virgin)
+func (ll LeadLeontel) Active(lead Lead, dev bool) bool {
+	// TODO for now, discard 79 (virgin)
+	if !dev {
+		return true
+	}
 	if lead.SouID != 79 {
 		log.Printf("souid %d Leontel active", lead.SouID)
 		return true

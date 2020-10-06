@@ -146,10 +146,14 @@ func (lead Lead) LeadToEvolution() Evolution {
 }
 
 // Active is an implementation of Active method from Scable interface
-func (e Evolution) Active(lead Lead) bool {
+func (e Evolution) Active(lead Lead, dev bool) bool {
 	switch lead.SouID {
 	// virgin
 	case 79:
+		// TODO
+		if !dev {
+			return false
+		}
 		log.Printf("souid %d Evolution active", lead.SouID)
 		return true
 	default:

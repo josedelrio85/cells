@@ -45,7 +45,7 @@ func TestActiveEvolution(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result := test.Evolution.Active(test.Lead)
+		result := test.Evolution.Active(test.Lead, true)
 		assert.Equal(result, test.ExpectedResult)
 	}
 }

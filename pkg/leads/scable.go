@@ -2,7 +2,7 @@ package leads
 
 // Scable is an interface to handle lead logic at smarcenter phase
 type Scable interface {
-	Active(Lead) bool
+	Active(Lead, bool) bool
 	Send(Lead) ScResponse
 }
 

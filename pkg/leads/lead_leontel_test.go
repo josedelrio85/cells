@@ -52,7 +52,7 @@ func TestActiveLeontel(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result := test.Leontel.Active(test.Lead)
+		result := test.Leontel.Active(test.Lead, true)
 		assert.Equal(result, test.ExpectedResult)
 	}
 }

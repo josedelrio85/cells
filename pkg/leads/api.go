@@ -91,7 +91,7 @@ func (ch *Handler) HandleFunction() http.Handler {
 
 		if ch.Lead.IsSmartCenter {
 			for _, sc := range ch.ActiveSc {
-				if !sc.Active(ch.Lead) {
+				if !sc.Active(ch.Lead, ch.Dev) {
 					continue
 				}
 
