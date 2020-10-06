@@ -2,6 +2,7 @@ package leads
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"time"
 
@@ -34,6 +35,7 @@ func (ch *Handler) HandleFunction() http.Handler {
 
 		reqid := guuid.New()
 		ch.Lead.RequestID = reqid.String()
+		log.Printf("Request ID: %s\n", reqid.String())
 
 		if err := ch.Lead.Decode(r.Body); err != nil {
 			message := fmt.Sprintf("Error decoding lead, Err: %v", err)
