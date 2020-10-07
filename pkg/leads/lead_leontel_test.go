@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -85,6 +86,27 @@ func TestLeadToLeontel(t *testing.T) {
 	tEndesa := fmt.Sprintf(`%s -- Apellidos -- %s -- ¿Qué tipo de energía tienes en tu hogar? -- %s -- ¿Cuál es el tamaño de tu vivienda? -- %s -- ¿Cuántas personas viven en casa? -- %s -- ¿Qué tipo de energía usas en la calefacción? -- %s -- ¿Qué tipo de energía usas en la en la cocina? -- %s -- ¿Qué tipo de energía usas en el agua caliente? -- ¿Cada cuanto pones la lavadora? -- ¿Cada cuanto pones la secadora? -- ¿Cada cuanto pones el lavavajillas? -- ¿Eres el propietario de la vivienda? -- ¿Cuál es tu compañía actual?? -- Código postal -- Edad -- External ID -- `,
 		t9, t6, t1, t2, t3, t4, t5)
 	obsMvf := fmt.Sprintf(`Cobertura -- Producto -- Lead Reference Number -- %s -- Distribution ID -- %s -- ¿Ya tiene una centralita telefónica? -- %s -- ¿Cuantas extensiones necesita? -- %s -- Nº exacto de teléfonos -- %s -- ¿Cuántos empleados tiene su empresa? -- %s -- ¿Qué funcionalidad de centralita necesita? -- %s -- Apellidos -- %s -- Código Postal -- %s`, t2, t3, t4, t5, t6, t7, t7, t7, t7)
+
+	sep := "--"
+	empty := ""
+
+	igniumdata := []string{
+		fmt.Sprintf("Cobertura %s %s", sep, empty),
+		fmt.Sprintf("Producto %s %s", sep, empty),
+		fmt.Sprintf("Optin %s %s %s", sep, empty, sep),
+		fmt.Sprintf(" Código postal %s %s %s", sep, empty, sep),
+		fmt.Sprintf(" Edad %s %s %s", sep, empty, sep),
+		fmt.Sprintf(" Apellidos %s %s %s", sep, empty, sep),
+		fmt.Sprintf(" External ID %s %s %s", sep, empty, sep),
+		fmt.Sprintf(" Datos al mes %s %s %s", sep, empty, sep),
+		fmt.Sprintf(" ¿Tienes actualmente ADSL/Fibra? %s %s %s", sep, empty, sep),
+		fmt.Sprintf(" Cuando lo vas a contratar %s %s %s", sep, empty, sep),
+		fmt.Sprintf(" Hora preferida de contacto %s %s %s", sep, empty, sep),
+		fmt.Sprintf(" ¿Tienes permanencia? %s %s %s", sep, empty, sep),
+		fmt.Sprintf(" ¿De que compañia eres? %s %s %s", sep, empty, sep),
+		fmt.Sprintf(" Tarifa %s %s", sep, empty),
+	}
+	igniumobs := strings.Join(igniumdata, empty)
 
 	tests := []struct {
 		Index          int
@@ -446,6 +468,37 @@ func TestLeadToLeontel(t *testing.T) {
 				LeaSource:     83,
 				LeaType:       33,
 				Observaciones: &obsMvf,
+			},
+		},
+		{
+			Index:       15,
+			Description: "check data returned for sou_id 64 R Cable End To End (Kinkon) Ignium Provider",
+			Lead: Lead{
+				SouID:            74,
+				SouIDLeontel:     83,
+				LeatypeIDLeontel: 33,
+				Kinkon: &Kinkon{
+					Ignium: Ignium{
+						Optin:         &empty,
+						PostalCode:    &empty,
+						Age:           &empty,
+						Surname:       &empty,
+						ExternalID:    &empty,
+						DataMonth:     &empty,
+						HaveDSL:       &empty,
+						WhenHiring:    &empty,
+						ContacTime:    &empty,
+						Permanence:    &empty,
+						ActualCompany: &empty,
+						Rate:          &empty,
+					},
+				},
+				IsSmartCenter: false,
+			},
+			ExpectedResult: LeadLeontel{
+				LeaSource:     83,
+				LeaType:       33,
+				Observaciones: &igniumobs,
 			},
 		},
 	}
