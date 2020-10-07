@@ -460,6 +460,38 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 		}
 		observations := concatPointerStrs(args...)
 		leontel.Observaciones = &observations
+	case 79:
+		// Virgin TODO delete when evolution is ready
+		args := []*string{}
+		args = append(args, lead.Observations)
+
+		if lead.Virgin != nil {
+			q1 := "Optin"
+			q2 := "Código postal"
+			q3 := "Edad"
+			q4 := "Apellidos"
+			q5 := "External ID"
+			q6 := "Datos al mes"
+			q7 := "¿Tienes actualmente ADSL/Fibra?"
+			q8 := "Cuando lo vayas a contratar"
+			q9 := "Hora preferida de contacto"
+			q10 := "¿Tienes permanencia?"
+			q11 := "¿De que compañia eres?"
+
+			args = append(args, &q1, lead.Virgin.Optin)
+			args = append(args, &q2, lead.Virgin.PostalCode)
+			args = append(args, &q3, lead.Virgin.Age)
+			args = append(args, &q4, lead.Virgin.Surname)
+			args = append(args, &q5, lead.Virgin.ExternalID)
+			args = append(args, &q6, lead.Virgin.DataMonth)
+			args = append(args, &q7, lead.Virgin.HaveDSL)
+			args = append(args, &q8, lead.Virgin.WhenHiring)
+			args = append(args, &q9, lead.Virgin.ContacTime)
+			args = append(args, &q10, lead.Virgin.Permanence)
+			args = append(args, &q11, lead.Virgin.ActualCompany)
+		}
+		observations := concatPointerStrs(args...)
+		leontel.Observaciones = &observations
 	default:
 	}
 	return leontel
@@ -469,6 +501,7 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 func (ll LeadLeontel) Active(lead Lead, dev bool) bool {
 	// TODO (delete) keep this hack to use virgin as Leontel campaign in pro environment
 	if !dev {
+		log.Printf("TEMPORAL HACK LEONTEL-EVOLUTION: ALL CAMPAIGNS ARE LEONTEL WHEN DEV IS %t", dev)
 		return true
 	}
 	// (TODO for now, discard 79 (virgin) ||
