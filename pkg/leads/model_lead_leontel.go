@@ -364,6 +364,34 @@ func (lead *Lead) LeadToLeontel() LeadLeontel {
 				args = append(args, &q8, lead.Kinkon.Mvf.Surname)
 				args = append(args, &q9, lead.Kinkon.Mvf.PostalCode)
 			}
+
+			if lead.Kinkon.Ignium != (Ignium{}) {
+				q1 := "Optin"
+				q2 := "Código postal"
+				q3 := "Edad"
+				q4 := "Apellidos"
+				q5 := "External ID"
+				q6 := "Datos al mes"
+				q7 := "¿Tienes actualmente ADSL/Fibra?"
+				q8 := "Cuando lo vas a contratar"
+				q9 := "Hora preferida de contacto"
+				q10 := "¿Tienes permanencia?"
+				q11 := "¿De que compañia eres?"
+				q12 := "Tarifa"
+
+				args = append(args, &q1, lead.Kinkon.Ignium.Optin)
+				args = append(args, &q2, lead.Kinkon.Ignium.PostalCode)
+				args = append(args, &q3, lead.Kinkon.Ignium.Age)
+				args = append(args, &q4, lead.Kinkon.Ignium.Surname)
+				args = append(args, &q5, lead.Kinkon.Ignium.ExternalID)
+				args = append(args, &q6, lead.Kinkon.Ignium.DataMonth)
+				args = append(args, &q7, lead.Kinkon.Ignium.HaveDSL)
+				args = append(args, &q8, lead.Kinkon.Ignium.WhenHiring)
+				args = append(args, &q9, lead.Kinkon.Ignium.ContacTime)
+				args = append(args, &q10, lead.Kinkon.Ignium.Permanence)
+				args = append(args, &q11, lead.Kinkon.Ignium.ActualCompany)
+				args = append(args, &q12, lead.Kinkon.Ignium.Rate)
+			}
 		}
 		observations := concatPointerStrs(args...)
 		leontel.Observaciones = &observations

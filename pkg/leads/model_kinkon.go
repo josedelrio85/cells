@@ -14,6 +14,7 @@ type Kinkon struct {
 	BillingInfo BillingInfo `gorm:"embedded" json:"billing_info"`
 	Product     *string     `json:"product,omitempty"`
 	Mvf         Mvf         `gorm:"embedded" json:"mvf"`
+	Ignium      Ignium      `gorm:"embedded;embeddedPrefix:ignium_" json:"ignium"`
 }
 
 // CovData represents the data structure for coverture data
@@ -62,6 +63,22 @@ type Mvf struct {
 	SwitchboardFunctionality *string `sql:"column:switchboard_func_mvf" json:"switchboard_functionality,omitempty"`
 	Surname                  *string `sql:"column:surname_mvf" json:"surname,omitempty"`
 	PostalCode               *string `sql:"column:postal_code_mvf" json:"postal_code,omitempty"`
+}
+
+// Ignium represents the data structure for Ignium lead provider
+type Ignium struct {
+	Optin         *string `sql:"column:optin_ignium" json:"optin_ignium,omitempty"`
+	PostalCode    *string `sql:"column:postal_code_ignium" json:"postal_code_ignium,omitempty"`
+	Age           *string `sql:"column:age_ignium" json:"age_ignium,omitempty"`
+	Surname       *string `sql:"column:surname_ignium" json:"surname_ignium,omitempty"`
+	ExternalID    *string `sql:"column:external_id_ignium" json:"external_id_ignium,omitempty"`
+	DataMonth     *string `sql:"column:data_month_ignium" json:"data_month_ignium,omitempty"`
+	HaveDSL       *string `sql:"column:have_dsl_ignium" json:"have_dsl_ignium,omitempty"`
+	WhenHiring    *string `sql:"column:column:when_hiring_ignium" json:"when_hiring_ignium,omitempty"`
+	ContacTime    *string `sql:"column:contact_time_ignium" json:"contact_time_ignium,omitempty"`
+	Permanence    *string `sql:"column:permanence_ignium" json:"permanence_ignium,omitempty"`
+	ActualCompany *string `sql:"column:actual_company_ignium" json:"actual_company_ignium,omitempty"`
+	Rate          *string `sql:"column:rate_ignium" json:"rate_ignium,omitempty"`
 }
 
 // TableName sets the default table name
