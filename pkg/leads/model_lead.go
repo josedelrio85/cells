@@ -41,6 +41,7 @@ type Lead struct {
 	Domain             *string    `json:"domain,omitempty"`
 	Observations       *string    `sql:"type:text" json:"observations,omitempty"`
 	RequestID          string     `json:"-"`
+	OriginalID         uint       `json:"-"`
 	RcableExp          *RcableExp `json:"rcableexp"`
 	Microsoft          *Microsoft `json:"microsoft"`
 	Creditea           *Creditea  `json:"creditea"`

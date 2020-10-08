@@ -126,6 +126,11 @@ func (ch *Handler) HandleFunction() http.Handler {
 		}
 
 		if !ch.Dev {
+			// avoid dependency of primary keys between leads and leads-report
+			ch.Lead.OriginalID = ch.Lead.ID
+			var z uint
+			ch.Lead.ID = z
+
 			if err := ch.Reporter.Insert(&ch.Lead); err != nil {
 				message := fmt.Sprintf("Error inserting lead into lead-report, Err: %v", err)
 				responseError(w, message, err)
@@ -138,7 +143,7 @@ func (ch *Handler) HandleFunction() http.Handler {
 	})
 }
 
-//HelperRandstring lalalal
+//HelperRandstring generates a random string
 func HelperRandstring(length int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyz" +
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
