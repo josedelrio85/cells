@@ -62,6 +62,7 @@ func main() {
 			lead.DuplicatedTime{},
 			lead.DuplicatedSmartCenter{},
 			lead.Ontime{},
+			lead.RejectSC{},
 			lead.MapType{},
 			// lead.Gclid{},
 		},
