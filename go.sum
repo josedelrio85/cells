@@ -15,10 +15,10 @@ github.com/alicebob/miniredis v2.5.0+incompatible h1:yBHoLpsyjupjz3NL3MhKMVkR41j
 github.com/alicebob/miniredis v2.5.0+incompatible/go.mod h1:8HZjEj4yU0dwhYHky+DxYx+6BMjkBbe5ONFIF1MXffk=
 github.com/apache/thrift v0.12.0/go.mod h1:cp2SuWMxlEZw2r+iP2GNCdIi4C1qmUzdZFSVb+bacwQ=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
-github.com/bysidecar/voalarm v1.0.0 h1:Twr+sSOsBo0SzAhiF5dSXvBGbRKCTUwpMywrmxwxuYc=
-github.com/bysidecar/voalarm v1.0.0/go.mod h1:NC08uAI/2TBuPfOge8QQp8WZT55CryzQZZ5Z1Go+LlE=
-github.com/bysidecar/voalarm v1.0.1 h1:ANcahhEIUdEL9/gdtWhYQOZC+g7HxdnX5sKazGjz7fk=
-github.com/bysidecar/voalarm v1.0.1/go.mod h1:s8g+TKLNrgk6IcKmZqufcHSWN/nIbPcBtvscbxNU6+8=
+github.com/josedelrio85/voalarm v1.0.0 h1:Twr+sSOsBo0SzAhiF5dSXvBGbRKCTUwpMywrmxwxuYc=
+github.com/josedelrio85/voalarm v1.0.0/go.mod h1:NC08uAI/2TBuPfOge8QQp8WZT55CryzQZZ5Z1Go+LlE=
+github.com/josedelrio85/voalarm v1.0.1 h1:ANcahhEIUdEL9/gdtWhYQOZC+g7HxdnX5sKazGjz7fk=
+github.com/josedelrio85/voalarm v1.0.1/go.mod h1:s8g+TKLNrgk6IcKmZqufcHSWN/nIbPcBtvscbxNU6+8=
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
 github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
 github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=

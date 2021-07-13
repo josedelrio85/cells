@@ -8,8 +8,8 @@ RUN apk update && apk add --no-cache \
   && update-ca-certificates
 
 # Add source files and set the proper work dir
-COPY . $GOPATH/src/github.com/bysidecar/leads/
-WORKDIR $GOPATH/src/github.com/bysidecar/leads/
+COPY . $GOPATH/src/github.com/josedelrio85/leads/
+WORKDIR $GOPATH/src/github.com/josedelrio85/leads/
 
 # Fetch dependencies.
 # RUN go get -d -v

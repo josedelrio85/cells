@@ -1,4 +1,4 @@
-module github.com/bysidecar/leads
+module github.com/josedelrio85/leads
 
 go 1.12
 
@@ -6,7 +6,7 @@ require (
 	github.com/DATA-DOG/go-sqlmock v1.3.3
 	github.com/alicebob/gopher-json v0.0.0-20180125190556-5a6b3ba71ee6 // indirect
 	github.com/alicebob/miniredis v2.5.0+incompatible
-	github.com/bysidecar/voalarm v1.0.1
+	github.com/josedelrio85/voalarm v1.0.1
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/google/uuid v1.1.2

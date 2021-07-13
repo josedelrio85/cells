@@ -20,16 +20,16 @@ ingress:
   paths:
     - /
   hosts:
-    - leads-pre.bysidecar.me
+    - leads-pre.josedelrio85.me
   tls:
-    - secretName: tls-leads-pre-bysidecar-me
+    - secretName: tls-leads-pre-josedelrio85-me
       hosts:
-        - leads-pre.bysidecar.me
+        - leads-pre.josedelrio85.me
 env:
 - name: LEAD_LEONTEL_ENDPOINT
-  value: "https://ws.bysidecar.es/lead/smartcenter/store"
+  value: "https://ws.josedelrio85.es/lead/smartcenter/store"
 - name: CHECK_LEAD_LEONTEL_ENDPOINT
-  value: "https://ws.bysidecar.es/lead/smartcenter/isopen"
+  value: "https://ws.josedelrio85.es/lead/smartcenter/isopen"
 - name: DB_HOST
   value: "leads-pre.c848y92oajny.eu-west-1.rds.amazonaws.com"
 - name: DB_PORT
@@ -47,7 +47,7 @@ env:
       name: leads-database
       key: pass
 - name: CHECK_LEAD_REDIS
-  value: "leads-pre-redis-master.bysidecar-pre.svc.cluster.local"
+  value: "leads-pre-redis-master.josedelrio85-pre.svc.cluster.local"
 - name: DB_HOST_REPORT
   value: leads-report.c848y92oajny.eu-west-1.rds.amazonaws.com
 - name: DB_USER_REPORT
@@ -63,7 +63,7 @@ env:
 - name: DEV
   value: "true"
 - name: EVOLUTION_ENDPOINT
-  value: "https://bysidecar.icr.webersolutions.es/API/Bysidecar/CargaCliente"
+  value: "https://josedelrio85.icr.webersolutions.es/API/josedelrio85/CargaCliente"
 - name: EVOLUTION_AUTH_USER
   valueFrom:
     secretKeyRef:
@@ -75,7 +75,7 @@ env:
       name: evolution-authentication
       key: password
 - name: PASSPORT_ENDPOINT
-  value: "https://passport-pre.bysidecar.me/id/settle"
+  value: "https://passport-pre.josedelrio85.me/id/settle"
 resources: {}
 nodeSelector: {}
 tolerations: []
