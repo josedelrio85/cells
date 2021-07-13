@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/alicebob/miniredis"
-	redisclient "github.com/bysidecar/leads/pkg/leads/redis"
+	redisclient "github.com/josedelrio85/leads/pkg/leads/redis"
 
 	"github.com/gomodule/redigo/redis"
 	"github.com/pkg/errors"

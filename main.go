@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"time"
 
-	lead "github.com/bysidecar/leads/pkg/leads"
-	redisclient "github.com/bysidecar/leads/pkg/leads/redis"
 	"github.com/gomodule/redigo/redis"
+	lead "github.com/josedelrio85/leads/pkg/leads"
+	redisclient "github.com/josedelrio85/leads/pkg/leads/redis"
 
 	"github.com/rs/cors"
 

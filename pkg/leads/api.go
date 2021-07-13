@@ -9,8 +9,8 @@ import (
 	"math/rand"
 	"net/http"
 
-	redis "github.com/bysidecar/leads/pkg/leads/redis"
 	guuid "github.com/google/uuid"
+	redis "github.com/josedelrio85/leads/pkg/leads/redis"
 
 	"github.com/tomasen/realip"
 )

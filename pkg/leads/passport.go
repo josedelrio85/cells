@@ -22,7 +22,7 @@ type Interaction struct {
 
 // Get function retrieves a passport for the incoming lead
 func (p *Passport) Get(interaction Interaction) error {
-	url := "https://passport.bysidecar.me/id/settle"
+	url := "https://passport.josedelrio85.me/id/settle"
 
 	data := new(bytes.Buffer)
 	if err := json.NewEncoder(data).Encode(interaction); err != nil {

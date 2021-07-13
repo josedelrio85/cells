@@ -93,7 +93,7 @@ func (a Asnef) Perform(cont *Handler) HookResponse {
 		Phone: *lead.LeaPhone,
 	}
 
-	url := "https://ws.bysidecar.es/lead/asnef/check"
+	url := "https://ws.josedelrio85.es/lead/asnef/check"
 	var statuscode int
 
 	data := new(bytes.Buffer)
@@ -219,7 +219,7 @@ func (a Asnef) Prevalidation(db *gorm.DB, lead *Lead) (bool, error) {
 // GetCandidates retrives a list of asnef candidates. NOT USED
 func GetCandidates(lead Lead) []Candidate {
 
-	url := "https://ws.bysidecar.es/lead/asnef/getcandidates"
+	url := "https://ws.josedelrio85.es/lead/asnef/getcandidates"
 
 	candidate := make([]Candidate, 0)
 	data := new(bytes.Buffer)
